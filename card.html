@@ -131,9 +131,22 @@
             width: 100%;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
         }
         .modal-box h2 { font-size: 20px; margin-bottom: 15px; color: #ffffff; }
         
+        .close-modal-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .close-modal-btn:hover { color: #ffffff; }
+
         .form-group {
             margin-bottom: 16px;
             display: flex;
@@ -259,8 +272,9 @@
     </div>
 
     <!-- Doorstep Delivery Setup Overlay Box -->
-    <div class="modal-overlay" id="orderModal">
-        <div class="modal-box">
+    <div class="modal-overlay" id="orderModal" onclick="handleOutsideClick(event)">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <button class="close-modal-btn" onclick="toggleModal(false)">&times;</button>
             
             <!-- Form State Content Blocks -->
             <div id="formContainerState">
@@ -271,25 +285,25 @@
 
                 <form id="deliveryOrderForm" onsubmit="executeInstantCardTransaction(event)">
                     <div class="form-group">
-                        <label>📍 Street Delivery Address</label>
+                        <label for="deliveryAddress">📍 Street Delivery Address</label>
                         <textarea id="deliveryAddress" rows="2" placeholder="House/Apartment Number, Street Name, City, State" required></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label>📞 Secure Contact Phone Line</label>
-                        <input type="tel" id="deliveryPhone" placeholder="Mobile phone number for the courier agent" required>
+                        <label for="deliveryPhone">📞 Secure Contact Phone Line</label>
+                        <input type="tel" id="deliveryPhone" placeholder="Mobile phone number for the courier agent" autocomplete="tel" required>
                     </div>
 
                     <div class="form-group">
-                        <label>💳 Dispatch Agent Settlement Terms</label>
+                        <label>¼ Dispatch Agent Settlement Terms</label>
                         <div class="payment-options-box">
                             <label class="radio-label">
                                 <input type="radio" name="paymentPlan" value="split" checked onclick="calculatePriceMatrix(200)">
-                                <div>Pay <strong id="splitPayLabel">200</strong> Now (Balance <span id="splitRemainLabel">300</span> On Delivery)</div>
+                                <div>Pay <strong id="splitPayLabel">...</strong> Now (Balance <span id="splitRemainLabel">...</span> On Delivery)</div>
                             </label>
                             <label class="radio-label">
                                 <input type="radio" name="paymentPlan" value="full" onclick="calculatePriceMatrix(500)">
-                                <div>Pay Full <strong id="fullPayLabel">500</strong> Instantly Now</div>
+                                <div>Pay Full <strong id="fullPayLabel">...</strong> Instantly Now</div>
                             </label>
                         </div>
                     </div>
@@ -314,11 +328,15 @@
 
     <script>
         var targetCardName = "";
-        var activeChargeAmount = 200.00; // Default down payment choice amount
+        var activeChargeAmount = 200.00; 
         var userSymbol = "$";
         var usersArray = [];
         var liveUserIndex = -1;
         var liveUserData = null;
+
+        function formatCurrency(value) {
+            return parseFloat(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
 
         function initCardInterface() {
             var session = JSON.parse(localStorage.getItem('apexon_current_session'));
@@ -338,33 +356,44 @@
             liveUserData = usersArray[liveUserIndex];
             userSymbol = liveUserData.currency || "$";
 
-            // Update balance displays inside elements
-            document.getElementById('displayUserBalance').innerText = userSymbol + parseFloat(liveUserData.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            // Render current balances and structures
+            document.getElementById('displayUserBalance').innerText = userSymbol + formatCurrency(liveUserData.balance);
 
-            // Apply currency symbol text variables to matching markup label tokens
             document.querySelectorAll('.currency-token').forEach(el => el.innerText = userSymbol);
-            document.getElementById('splitPayLabel').innerText = userSymbol + "200.00";
-            document.getElementById('splitRemainLabel').innerText = userSymbol + "300.00";
-            document.getElementById('fullPayLabel').innerText = userSymbol + "500.00";
+            document.getElementById('splitPayLabel').innerText = userSymbol + formatCurrency(200);
+            document.getElementById('splitRemainLabel').innerText = userSymbol + formatCurrency(300);
+            document.getElementById('fullPayLabel').innerText = userSymbol + formatCurrency(500);
 
-            // Stamp owner titles
             var holderName = (liveUserData.fullName || "Card Holder").toUpperCase();
             document.querySelectorAll('.holder-label').forEach(el => el.innerText = holderName);
+        }
+
+        function toggleModal(show) {
+            var modal = document.getElementById('orderModal');
+            if(show) {
+                modal.classList.add('active');
+            } else {
+                modal.classList.remove('active');
+            }
+        }
+
+        function handleOutsideClick(e) {
+            toggleModal(false);
         }
 
         function openOrderDesk(cardVariant) {
             targetCardName = cardVariant;
             document.getElementById('modalHeadlineTitle').innerText = cardVariant + " Allocation";
             
-            // Default pricing variables state metrics on modal openings
             document.getElementsByName('paymentPlan')[0].checked = true;
             activeChargeAmount = 200.00;
             
             document.getElementById('errIndicator').style.display = "none";
             document.getElementById('formContainerState').style.display = "block";
             document.getElementById('successContainerState').style.display = "none";
+            document.getElementById('deliveryOrderForm').reset();
             
-            document.getElementById('orderModal').classList.add('active');
+            toggleModal(true);
         }
 
         function calculatePriceMatrix(amt) {
@@ -377,17 +406,14 @@
 
             var currentBalance = parseFloat(liveUserData.balance || 0);
 
-            // Check if the user has enough money for the selected payment option
             if (currentBalance < activeChargeAmount) {
                 document.getElementById('errIndicator').style.display = "block";
                 return;
             }
 
-            // Deduct the money instantly from the ledger
             var adjustedBalance = currentBalance - activeChargeAmount;
             usersArray[liveUserIndex].balance = adjustedBalance.toFixed(2);
 
-            // Structure system calendar dates
             var d = new Date();
             var dateStr = d.toISOString().split('T')[0];
             var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -399,8 +425,7 @@
             var enteredAddress = document.getElementById('deliveryAddress').value;
             var paymentTypeMemo = (activeChargeAmount === 200.00) ? " (Split Plan: 200 Paid, 300 Outstanding)" : " (Full Pre-Paid Plan)";
 
-            // Push transaction as instantly Successful directly into the history ledger
-            usersArray[liveUserIndex].transactions.push({
+            usersArray[liveUserIndex].transactions.unshift({
                 description: "Debit Card Production: " + targetCardName + paymentTypeMemo,
                 sender: usersArray[liveUserIndex].fullName,
                 receiver: "Agent Delivery Routing Node: " + enteredAddress,
@@ -408,17 +433,15 @@
                 type: "debit",
                 date: dateStr,
                 time: timeStr,
-                status: "Successful ✅" // Settled instantly without any pending holding patterns
+                status: "Successful ¼"
             });
 
-            // Write back to database cache files instantly
             localStorage.setItem('apexon_users', JSON.stringify(usersArray));
 
-            // Show success window
             document.getElementById('formContainerState').style.display = "none";
             document.getElementById('successContainerState').style.display = "block";
             
-            var textBody = "Your account was successfully debited <strong>" + userSymbol + activeChargeAmount.toFixed(2) + "</strong>. Your card request design has been generated. Our local agent has received your delivery address details and will call you shortly.";
+            var textBody = "Your account was successfully debited <strong>" + userSymbol + formatCurrency(activeChargeAmount) + "</strong>. Your card request design has been generated. Our local agent has received your delivery address details and will call you shortly.";
             document.getElementById('successNarrationText').innerHTML = textBody;
         }
 
@@ -427,7 +450,7 @@
         }
 
         // Initialize setup logic execution
-        initCardInterface();
+        window.addEventListener('DOMContentLoaded', initCardInterface);
     </script>
 </body>
 </html>

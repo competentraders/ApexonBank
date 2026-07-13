@@ -27,6 +27,45 @@
             flex-direction: column;
             overflow-x: hidden;
             padding-bottom: 85px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Dark Mode Extensions */
+        body.dark-theme-active {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+        body.dark-theme-active header,
+        body.dark-theme-active .bottom-nav {
+            background-color: #1e293b;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        body.dark-theme-active .back-btn {
+            border-color: #475569;
+            color: #94a3b8;
+        }
+        body.dark-theme-active .filter-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+        body.dark-theme-active .filter-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            border-color: #ffffff;
+        }
+        body.dark-theme-active .statement-ledger {
+            background: #1e293b;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        body.dark-theme-active .ledger-row {
+            border-bottom-color: #334155;
+        }
+        body.dark-theme-active .tx-title {
+            color: #f1f5f9 !important;
+        }
+        body.dark-theme-active .tx-party {
+            color: #94a3b8 !important;
         }
 
         header {
@@ -85,6 +124,10 @@
             margin-bottom: 16px;
             overflow-x: auto;
             padding-bottom: 4px;
+        }
+
+        .filter-bar::-webkit-scrollbar {
+            display: none;
         }
 
         .filter-btn {
@@ -171,7 +214,8 @@
         }
 
         .nav-item.active { color: #b38728; }
-        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        .nav-icon { margin-bottom: 4px; display: flex; align-items: center; justify-content: center; }
+        .nav-icon svg { width: 20px; height: 20px; fill: currentColor; }
 
         /* PRINT STYLES SHEET */
         @media print {
@@ -182,6 +226,7 @@
             .summary-card p, .summary-card h2, .summary-card span { color: #000000 !important; }
             .statement-ledger { border: none !important; }
             .ledger-row { border-bottom: 1px solid #000000 !important; page-break-inside: avoid; }
+            .ledger-row .tx-title { color: #000000 !important; }
         }
     </style>
 </head>
@@ -189,7 +234,7 @@
 
     <header>
         <div class="logo">Apexon Bank</div>
-        <a href="index.html" class="back-btn">✕ Close</a>
+        <a href="index.html" class="back-btn">&times; Close</a>
     </header>
 
     <div class="statement-container">
@@ -231,47 +276,48 @@
     <!-- PERSISTENT APP DOCK STRUCTURE -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item">
-            <div class="nav-icon">🏛️</div>
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            </div>
             <div>Home</div>
         </a>
         <a href="loans.html" class="nav-item">
-            <div class="nav-icon">💰</div>
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            </div>
             <div>Loans</div>
         </a>
         <a href="card.html" class="nav-item">
-            <div class="nav-icon">💳</div>
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+            </div>
             <div>Cards</div>
         </a>
         <a href="profile.html" class="nav-item">
-            <div class="nav-icon">👤</div>
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v2h-16v-2c0-2.66 5.33-4 8-4z"/></svg>
+            </div>
             <div>Profile</div>
         </a>
         <a href="settings.html" class="nav-item">
-            <div class="nav-icon">⚙️</div>
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            </div>
             <div>Settings</div>
         </a>
     </div>
 
     <script>
-
-
-// Paste this at the start of your script blocks on ALL pages to keep sync:
-function applyGlobalSettings() {
-    var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
-    if (config.darkMode) {
-        document.body.classList.add('dark-theme-active');
-    } else {
-        document.body.classList.remove('dark-theme-active');
+    // Global Config Sync
+    function applyGlobalSettings() {
+        var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
+        if (config.darkMode) {
+            document.body.classList.add('dark-theme-active');
+        } else {
+            document.body.classList.remove('dark-theme-active');
+        }
     }
-}
-applyGlobalSettings();
-
-
-
-
-
-
-
+    applyGlobalSettings();
 
     var activeFilterMode = "all";
 
@@ -315,12 +361,10 @@ applyGlobalSettings();
 
         var rowsHtml = "";
         
-        // Loop backward from length to zero to position incoming transactions first
         for (var i = transactions.length - 1; i >= 0; i--) {
             var tx = transactions[i];
             var txType = tx.type.toLowerCase();
 
-            // Filter Engine Check
             if (activeFilterMode === 'credit' && txType !== 'credit' && txType !== 'deposit') continue;
             if (activeFilterMode === 'debit' && txType !== 'debit') continue;
 
@@ -330,13 +374,13 @@ applyGlobalSettings();
             var formattedTxAmt = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             
             var partyLabel = isCredit ? "From: " + (tx.sender || "External Network") : "To: " + (tx.receiver || tx.description || "Beneficiary Account");
-            var fullTimestamp = tx.date + " • " + (tx.time || "");
+            var fullTimestamp = tx.date + " &bull; " + (tx.time || "");
 
             rowsHtml += `
                 <div class="ledger-row">
                     <div>
-                        <p style="font-size: 13px; font-weight: 700; color: #0f172a;">${tx.description || (isCredit ? "Deposit Settlement" : "Outbound Remittance")}</p>
-                        <p style="font-size: 11px; color: #475569; margin-top: 3px;">${partyLabel}</p>
+                        <p class="tx-title" style="font-size: 13px; font-weight: 700; color: #0f172a;">${tx.description || (isCredit ? "Deposit Settlement" : "Outbound Remittance")}</p>
+                        <p class="tx-party" style="font-size: 11px; color: #475569; margin-top: 3px;">${partyLabel}</p>
                         <p style="font-size: 10px; color: #94a3b8; margin-top: 2px;">${fullTimestamp}</p>
                     </div>
                     <div style="text-align: right;">
@@ -357,7 +401,6 @@ applyGlobalSettings();
     function applyLedgerFilter(mode, buttonElement) {
         activeFilterMode = mode;
         
-        // Toggle selected styling classes across filter layout array
         var buttons = document.getElementsByClassName('filter-btn');
         for (var i = 0; i < buttons.length; i++) {
             buttons[i].classList.remove('active');
