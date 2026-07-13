@@ -10,6 +10,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* CSS GLOBAL THEME VARIABLES */
+        :root {
+            --bg-primary: #f4f6f8;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border-color: rgba(0,0,0,0.05);
+            --header-bg: #ffffff;
+            --text-dark-override: #0f172a;
+            --hero-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --hero-border: #b38728;
+        }
+
+        /* DARK MODE STYLES OVERRIDE */
+        body.dark-theme-active {
+            --bg-primary: #0b0f19;
+            --bg-card: #151f32;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-color: rgba(255,255,255,0.06);
+            --header-bg: #111827;
+            --text-dark-override: #ffffff;
+            --hero-bg: linear-gradient(135deg, #090d16 0%, #111827 100%);
+            --hero-border: #aa771C;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -21,12 +47,13 @@
         body {
             width: 100vw;
             min-height: 100vh;
-            background-color: #f4f6f8;
-            color: #1e293b;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
             padding-bottom: 85px; 
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         header {
@@ -34,11 +61,12 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 20px;
-            background-color: #ffffff;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
             z-index: 1000;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .logo {
@@ -52,12 +80,12 @@
 
         .logout-btn {
             background: none;
-            border: 1px solid #cbd5e1;
+            border: 1px solid var(--text-sub);
             padding: 8px 14px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: 600;
-            color: #64748b;
+            color: var(--text-sub);
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -65,19 +93,21 @@
         .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
 
         .hero-banner {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: var(--hero-bg);
             color: #ffffff;
             padding: 30px 20px;
-            border-bottom: 3px solid #b38728;
+            border-bottom: 3px solid var(--hero-border);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
 
         .balance-card {
-            background: #ffffff;
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 24px 20px;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
             box-shadow: 0 4px 12px rgba(0,0,0,0.02);
             margin-top: -20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .gold-accent-text { font-weight: 700; color: #b38728; }
@@ -90,8 +120,8 @@
         }
 
         .action-card {
-            background: #ffffff;
-            border: 1px solid rgba(0,0,0,0.05);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 16px;
             text-align: center;
@@ -101,15 +131,16 @@
             transition: all 0.2s ease;
         }
 
-        .action-card:active { transform: scale(0.97); background-color: #f8fafc; }
+        .action-card:active { transform: scale(0.97); opacity: 0.8; }
         .action-icon { font-size: 24px; margin-bottom: 6px; display: inline-block; }
 
         .transaction-list {
-            background: #ffffff;
+            background: var(--bg-card);
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
             margin-top: 20px;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .transaction-item {
@@ -117,7 +148,7 @@
             justify-content: space-between;
             align-items: flex-start;
             padding: 14px 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .transaction-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -128,13 +159,14 @@
             left: 0;
             width: 100%;
             height: 65px;
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
+            background: var(--header-bg);
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 9999;
             box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .nav-item {
@@ -142,7 +174,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #64748b;
+            color: var(--text-sub);
             text-decoration: none;
             font-size: 11px;
             font-weight: 600;
@@ -154,6 +186,11 @@
 
         .nav-item.active { color: #b38728; }
         .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        
+        /* Interactive dynamic overrides */
+        .card-title-text { font-size: 13px; font-weight: 700; color: var(--text-dark-override); }
+        .card-label-style { font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-value-style { color: var(--text-dark-override); font-weight: 600; }
     </style>
 </head>
 <body>
@@ -173,60 +210,60 @@
         <div class="balance-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
                 <div>
-                    <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Available Clear Balance</p>
-                    <h2 style="font-size: 32px; font-weight: 700; color: #0f172a; margin-top: 4px;" id="accountBalance">$0.00</h2>
+                    <p class="card-label-style">Available Clear Balance</p>
+                    <h2 style="font-size: 32px; font-weight: 700; color: var(--text-dark-override); margin-top: 4px;" id="accountBalance">$0.00</h2>
                 </div>
                 <span style="background: #f0fdf4; color: #166534; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 9999px; border: 1px solid #bbf7d0;">● Live</span>
             </div>
             
-            <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; display: flex; justify-content: space-between; font-size: 13px;">
+            <div style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; justify-content: space-between; font-size: 13px;">
                 <div>
-                    <span style="color: #64748b;">Account No:</span>
-                    <span style="color: #0f172a; font-weight: 600; margin-left: 4px;" id="accountNumber">0000000000</span>
+                    <span style="color: var(--text-sub);">Account No:</span>
+                    <span class="card-value-style" style="margin-left: 4px;" id="accountNumber">0000000000</span>
                 </div>
                 <div>
-                    <span style="color: #64748b;">Routing :</span>
+                    <span style="color: var(--text-sub);">Routing :</span>
                     <span class="gold-accent-text" style="margin-left: 4px;">APX-02948</span>
                 </div>
             </div>
         </div>
 
-        <h3 style="font-size: 14px; font-weight: 700; color: #475569; margin-top: 25px; text-transform: uppercase; letter-spacing: 0.5px;">Clearing Operations</h3>
+        <h3 style="font-size: 14px; font-weight: 700; color: var(--text-sub); margin-top: 25px; text-transform: uppercase; letter-spacing: 0.5px;">Clearing Operations</h3>
         
         <div class="quick-action-grid">
             <a href="wire.html" class="action-card">
                 <div class="action-icon">💸</div>
-                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Wire Transfer</div>
+                <div class="card-title-text">Wire Transfer</div>
             </a>
             
             <a href="statement.html" class="action-card">
                 <div class="action-icon">📄</div>
-                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Statements</div>
+                <div class="card-title-text">Statements</div>
             </a>
 
             <a href="deposit.html" class="action-card">
                 <div class="action-icon">📥</div>
-                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Deposit Funds</div>
+                <div class="card-title-text">Deposit Funds</div>
             </a>
 
             <a href="cryptocurrency.html" class="action-card">
                 <div class="action-icon">🪙</div>
-                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Cryptocurrency</div>
+                <div class="card-title-text">Cryptocurrency</div>
             </a>
 
             <a href="airtime.html" class="action-card">
                 <div class="action-icon">📱</div>
-                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Buy Airtime</div>
+                <div class="card-title-text">Buy Airtime</div>
             </a>
 
             <a href="card.html" class="action-card">
                 <div class="action-icon">💳</div>
-                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Credit Card</div>
+                <div class="card-title-text">Credit Card</div>
             </a>
         </div>
 
         <div class="transaction-list">
-            <h3 style="font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Recent Activity</h3>
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--text-dark-override); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Recent Activity</h3>
             <div id="ledgerContainer">
                 <!-- Transactions will be loaded here dynamically by JavaScript -->
             </div>
@@ -256,31 +293,23 @@
         </a>
     </div>
 
-
-
-
-
     <script>
-
-
-// Paste this at the start of your script blocks on ALL pages to keep sync:
-function applyGlobalSettings() {
-    var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
-    if (config.darkMode) {
-        document.body.classList.add('dark-theme-active');
-    } else {
-        document.body.classList.remove('dark-theme-active');
+    // Paste this at the start of your script blocks on ALL pages to keep sync:
+    function applyGlobalSettings() {
+        var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
+        if (config.darkMode) {
+            document.body.classList.add('dark-theme-active');
+        } else {
+            document.body.classList.remove('dark-theme-active');
+        }
+        return config;
     }
-}
-applyGlobalSettings();
-
-
-
-
-
-
+    applyGlobalSettings();
 
     function syncLiveDashboard() {
+        // Run config checks inside the interval so changes take effect in real time
+        var config = applyGlobalSettings();
+
         var currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
         if (!currentSession) {
             window.location.href = "login.html";
@@ -297,26 +326,34 @@ applyGlobalSettings();
         var rawAccountNo = liveUserData.accountNo || "Unavailable";
         var currencySign = liveUserData.currency || "$"; 
         
+        // Formatted clear values
         var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
-        document.getElementById('accountBalance').innerText = formattedBalance;
         document.getElementById('accountNumber').innerText = rawAccountNo;
+
+        // CHECK EYE-HIDE CONFIGURATION STATE FOR THE MAIN BALANCE DISPLAY
+        if (config.hideBalance === true) {
+            document.getElementById('accountBalance').innerText = "••••••";
+        } else {
+            document.getElementById('accountBalance').innerText = formattedBalance;
+        }
 
         // DYNAMIC TRANSACTION LEDGER ENGINE
         var ledgerContainer = document.getElementById('ledgerContainer');
         var transactions = liveUserData.transactions || [];
 
         if (transactions.length === 0) {
+            var initialDisplayBalance = config.hideBalance === true ? "••••••" : formattedBalance;
             ledgerContainer.innerHTML = `
                 <div class="transaction-item">
                     <div>
-                        <p style="font-size: 13px; font-weight: 600; color: #0f172a;">Initial Account Provision</p>
-                        <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">System Setup Allocation</p>
+                        <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">Initial Account Provision</p>
+                        <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">System Setup Allocation</p>
                     </div>
                     <div style="text-align: right;">
-                        <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${formattedBalance}</p>
-                        <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Settled</p>
+                        <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${initialDisplayBalance}</p>
+                        <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">Settled</p>
                     </div>
                 </div>
             `;
@@ -328,18 +365,18 @@ applyGlobalSettings();
                 var txStatus = tx.status || "Successful";
                 
                 // Color formatting configurations mapping
-                var amtColor = "#0f172a"; 
+                var amtColor = "var(--text-dark-override)"; 
                 var prefix = "";
-                var badgeBg = "#f1f5f9";
-                var badgeText = "#475569";
+                var badgeBg = "rgba(100, 116, 139, 0.1)";
+                var badgeText = "var(--text-sub)";
 
                 if (txStatus === "Successful") {
                     amtColor = isCredit ? "#166534" : "#ef4444";
-                    prefix = isCredit ? "+ " : "- "; // Displays requested absolute negative removal sign if successful debit
+                    prefix = isCredit ? "+ " : "- "; 
                     badgeBg = "#e8f5e9";
                     badgeText = "#2e7d32";
                 } else if (txStatus === "Rejected") {
-                    amtColor = "#64748b"; // Neutral gray because no balance was altered
+                    amtColor = "var(--text-sub)"; 
                     prefix = ""; 
                     badgeBg = "#ffebee";
                     badgeText = "#c62828";
@@ -350,28 +387,33 @@ applyGlobalSettings();
                     badgeText = "#f57f17";
                 }
 
-                var formattedTxAmt = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                // Check Eye-Hide configurations specifically for individual transaction ledger list values
+                var txAmountDisplay = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                if (config.hideBalance === true) {
+                    txAmountDisplay = prefix + "••••••";
+                }
+
                 var partnerLabel = isCredit ? "From: " + (tx.sender || "External Sender") : "To: " + (tx.receiver || tx.description || "Beneficiary");
                 var txTimestamp = tx.date + " • " + (tx.time || "");
 
                 htmlContent += `
                     <div class="transaction-item">
                         <div style="flex-grow: 1; padding-right: 12px;">
-                            <p style="font-size: 13px; font-weight: 600; color: #0f172a;">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
-                            <p style="font-size: 11px; color: #64748b; margin-top: 2px;">${partnerLabel}</p>
-                            <p style="font-size: 10px; color: #94a3b8; margin-top: 1px;">${txTimestamp}</p>
+                            <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
+                            <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">${partnerLabel}</p>
+                            <p style="font-size: 10px; color: var(--text-sub); margin-top: 1px;">${txTimestamp}</p>
                             
                             <!-- WRITTEN NOTE REJECTION WARNING BANNER INJECTION -->
                             ${txStatus === 'Rejected' && tx.rejectionReason ? `
-                                <div style="margin-top: 8px; padding: 8px 12px; background: #fff5f5; border-left: 3px solid #ef4444; border-radius: 4px;">
-                                    <p style="color: #c53030; font-size: 11px; font-weight: 600; line-height: 1.4;">
+                                <div style="margin-top: 8px; padding: 8px 12px; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 4px;">
+                                    <p style="color: #ef4444; font-size: 11px; font-weight: 600; line-height: 1.4;">
                                         ⚠️ <strong>Note:</strong> ${tx.rejectionReason}
                                     </p>
                                 </div>
                             ` : ''}
                         </div>
                         <div style="text-align: right; flex-shrink: 0;">
-                            <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${formattedTxAmt}</p>
+                            <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${txAmountDisplay}</p>
                             <span style="background: ${badgeBg}; color: ${badgeText}; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
                                 ${txStatus}
                             </span>
