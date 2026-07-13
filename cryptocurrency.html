@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | Crypto Asset Node</title>
+
+
+<!-- PWA MANIFEST LINK -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- SERVICE WORKER REGISTRATION SCRIPT -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
+        .catch(err => console.log('Registration failed:', err));
+    });
+  }
+</script>
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 85px;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .crypto-card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .crypto-card.selected {
+            border-color: #b38728;
+            box-shadow: 0 0 0 2px rgba(179, 135, 40, 0.2);
+            background: #fdfbf7;
+        }
+
+        .crypto-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .crypto-icon {
+            font-size: 24px;
+            width: 44px;
+            height: 44px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .crypto-meta h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .crypto-meta p {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .crypto-metrics {
+            text-align: right;
+        }
+
+        .crypto-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .crypto-change {
+            font-size: 11px;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .crypto-change.negative {
+            color: #ef4444;
+        }
+
+        .route-tabs {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .route-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .route-tab.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #b38728;
+            box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.15);
+        }
+
+        .calculation-preview {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border: 1px dashed #cbd5e1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .error-msg {
+            font-size: 11px;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+            font-weight: 600;
+        }
+
+        /* OVERLAY PANEL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 360px;
+            padding: 30px 24px;
+            text-align: center;
+            border: 2px solid #b38728;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        /* BOTTOM NAVIGATION DOCK */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="user-dashboard.html" style="text-decoration: none; color: #b38728; font-size: 22px; font-weight: bold; padding-right: 15px;">←</a>
+        <div class="logo">Apexon Crypto Node</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <!-- LIVE SESSION BALANCES -->
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 24px 20px; border-bottom: 3px solid #b38728; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Fiat Vault Ledger</p>
+            <h2 style="font-size: 22px; font-weight: 700; margin-top: 2px; color: #ffffff;" id="liveBalanceDisplay">...</h2>
+        </div>
+        <div style="text-align: right;">
+            <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Engine Status</p>
+            <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid #10b981; display: inline-block; margin-top: 4px;">Node Connected</span>
+        </div>
+    </div>
+
+    <div style="padding: 24px 20px;">
+        
+        <!-- TICKER CARDS -->
+        <div class="crypto-grid">
+            <div class="crypto-card selected" id="cardBTC" onclick="selectAsset('BTC', 67420.50)">
+                <div class="crypto-info">
+                    <div class="crypto-icon" style="color: #f59e0b;">₿</div>
+                    <div class="crypto-meta">
+                        <h4>Bitcoin</h4>
+                        <p>BTC / USD</p>
+                    </div>
+                </div>
+                <div class="crypto-metrics">
+                    <div class="crypto-price">$67,420.50</div>
+                    <div class="crypto-change">+3.42%</div>
+                </div>
+            </div>
+
+            <div class="crypto-card" id="cardETH" onclick="selectAsset('ETH', 3480.25)">
+                <div class="crypto-info">
+                    <div class="crypto-icon" style="color: #6366f1;">Ξ</div>
+                    <div class="crypto-meta">
+                        <h4>Ethereum</h4>
+                        <p>ETH / USD</p>
+                    </div>
+                </div>
+                <div class="crypto-metrics">
+                    <div class="crypto-price">$3,480.25</div>
+                    <div class="crypto-change">+1.85%</div>
+                </div>
+            </div>
+
+            <div class="crypto-card" id="cardSOL" onclick="selectAsset('SOL', 142.80)">
+                <div class="crypto-info">
+                    <div class="crypto-icon" style="color: #a855f7;">◎</div>
+                    <div class="crypto-meta">
+                        <h4>Solana</h4>
+                        <p>SOL / USD</p>
+                    </div>
+                </div>
+                <div class="crypto-metrics">
+                    <div class="crypto-price">$142.80</div>
+                    <div class="crypto-change negative">-0.64%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION SELECTION TABS -->
+        <div class="route-tabs">
+            <div class="route-tab active" id="tabBuy" onclick="switchMode('buy')">Buy Asset</div>
+            <div class="route-tab" id="tabSell" onclick="switchMode('sell')">Sell Asset</div>
+        </div>
+
+        <!-- EXECUTION ORDER FORM -->
+        <form id="cryptoForm" style="background: #ffffff; border-radius: 16px; padding: 24px 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.01);">
+            
+            <div class="input-group">
+                <label id="amountLabel">Amount to Invest (<span class="userCurrencySymbol">$</span>)</label>
+                <input type="number" step="0.01" min="1" id="orderAmount" placeholder="0.00" required oninput="calculateOutput()">
+                <div class="error-msg" id="cryptoError"></div>
+            </div>
+
+            <div class="calculation-preview">
+                <span>Estimated Received:</span>
+                <span id="outputTokens" style="font-weight: 700; color: #0f172a;">0.000000 BTC</span>
+            </div>
+
+            <div class="input-group">
+                <label for="walletAddress">Secure Gateway Destination Node</label>
+                <input type="text" id="walletAddress" placeholder="Autofilled Internal Vault Node Address" value="0x8f2d...93ee-Internal-Vault" readonly style="background: #f8fafc; color: #64748b;">
+            </div>
+
+            <button type="submit" class="action-btn" id="submitBtn">
+                Execute Purchase Node Block
+            </button>
+        </form>
+    </div>
+
+    <!-- NAVIGATION BAR DOCK -->
+    <div class="bottom-nav">
+        <a href="user-dashboard.html" class="nav-item">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <!-- OVERLAY POPUP NOTIFICATION -->
+    <div class="modal-overlay" id="cryptoModal">
+        <div class="modal-card">
+            <div style="font-size: 48px; margin-bottom: 14px;" id="modalIcon">⏳</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="modalTitle">Processing Order</h2>
+            <p style="font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 24px;" id="modalBody">
+                Syncing liquidity protocols across automated order ledger entries...
+            </p>
+            <button id="modalCloseBtn" style="width: 100%; padding: 12px; background: #b38728; color: #ffffff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: none;">
+                Return to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <script>
+        var currentMode = 'buy';
+        var selectedTicker = 'BTC';
+        var selectedPrice = 67420.50;
+        
+        var liveUserIndex = -1;
+        var liveUserData = null;
+        var usersArray = [];
+
+        function initCryptoGateway() {
+            var session = JSON.parse(localStorage.getItem('apexon_current_session'));
+            if (!session) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            liveUserIndex = usersArray.findIndex(u => u.username === session.username);
+            
+            if (liveUserIndex === -1) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            liveUserData = usersArray[liveUserIndex];
+
+            // Update currency indicators throughout layout
+            var symbol = liveUserData.currency || "$";
+            var currencyElements = document.querySelectorAll('.userCurrencySymbol');
+            currencyElements.forEach(el => el.innerText = symbol);
+            
+            var formattedBal = symbol + parseFloat(liveUserData.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('liveBalanceDisplay').innerText = formattedBal;
+        }
+
+        function selectAsset(ticker, price) {
+            selectedTicker = ticker;
+            selectedPrice = price;
+
+            document.getElementById('cardBTC').classList.remove('selected');
+            document.getElementById('cardETH').classList.remove('selected');
+            document.getElementById('cardSOL').classList.remove('selected');
+
+            document.getElementById('card' + ticker).classList.add('selected');
+            
+            switchMode(currentMode);
+            calculateOutput();
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            var tabBuy = document.getElementById('tabBuy');
+            var tabSell = document.getElementById('tabSell');
+            var amountLabel = document.getElementById('amountLabel');
+            var submitBtn = document.getElementById('submitBtn');
+            var symbol = liveUserData ? liveUserData.currency || "$" : "$";
+
+            if (mode === 'buy') {
+                tabBuy.classList.add('active');
+                tabSell.classList.remove('active');
+                amountLabel.innerHTML = `Amount to Invest (${symbol})`;
+                submitBtn.innerText = "Execute Purchase Node Block";
+            } else {
+                tabSell.classList.add('active');
+                tabBuy.classList.remove('active');
+                amountLabel.innerHTML = `Amount to Liquidate (${selectedTicker})`;
+                submitBtn.innerText = "Liquidate Asset to Vault";
+            }
+            calculateOutput();
+        }
+
+        function calculateOutput() {
+            var inputVal = parseFloat(document.getElementById('orderAmount').value);
+            var outputField = document.getElementById('outputTokens');
+            var symbol = liveUserData ? liveUserData.currency || "$" : "$";
+
+            if (isNaN(inputVal) || inputVal <= 0) {
+                outputField.innerText = currentMode === 'buy' ? `0.000000 ${selectedTicker}` : `${symbol}0.00`;
+                return;
+            }
+
+            if (currentMode === 'buy') {
+                var calculatedTokens = inputVal / selectedPrice;
+                outputField.innerText = calculatedTokens.toFixed(6) + " " + selectedTicker;
+            } else {
+                var calculatedCash = inputVal * selectedPrice;
+                outputField.innerText = symbol + calculatedCash.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            }
+        }
+
+        document.getElementById('cryptoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            var inputVal = parseFloat(document.getElementById('orderAmount').value);
+            var errorField = document.getElementById('cryptoError');
+            errorField.style.display = 'none';
+
+            var currentBalance = parseFloat(liveUserData.balance || 0);
+
+            // Validations
+            if (currentMode === 'buy' && inputVal > currentBalance) {
+                errorField.innerText = "Insufficient funding balance in fiat vault node.";
+                errorField.style.display = 'block';
+                return;
+            }
+
+            var modal = document.getElementById('cryptoModal');
+            var mTitle = document.getElementById('modalTitle');
+            var mBody = document.getElementById('modalBody');
+            var mBtn = document.getElementById('modalCloseBtn');
+            var mIcon = document.getElementById('modalIcon');
+
+            modal.classList.add('active');
+
+            setTimeout(function() {
+                mTitle.innerText = "Confirming Ledger Block";
+                mBody.innerText = "Writing structural encryption signature keys directly to the database...";
+                
+                setTimeout(function() {
+                    var finalBalance = currentBalance;
+                    var descriptionMemo = "";
+                    var txAmount = 0;
+
+                    if (currentMode === 'buy') {
+                        finalBalance = currentBalance - inputVal;
+                        var tokensBought = inputVal / selectedPrice;
+                        descriptionMemo = `Purchased ${tokensBought.toFixed(5)} ${selectedTicker}`;
+                        txAmount = inputVal.toFixed(2);
+                    } else {
+                        var cashEarned = inputVal * selectedPrice;
+                        finalBalance = currentBalance + cashEarned;
+                        descriptionMemo = `Liquidated ${inputVal} ${selectedTicker}`;
+                        txAmount = cashEarned.toFixed(2);
+                    }
+
+                    // Save new balance update
+                    usersArray[liveUserIndex].balance = finalBalance.toFixed(2);
+
+                    var d = new Date();
+                    var dateStr = d.toISOString().split('T')[0];
+                    var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                    if (!usersArray[liveUserIndex].transactions) {
+                        usersArray[liveUserIndex].transactions = [];
+                    }
+
+                    // Append high priority crypto transaction log using unshift
+                    usersArray[liveUserIndex].transactions.unshift({
+                        description: descriptionMemo,
+                        sender: currentMode === 'buy' ? "Apexon Central Liquid Base" : "Crypto Wallet Node",
+                        receiver: usersArray[liveUserIndex].fullName,
+                        amount: txAmount,
+                        type: currentMode === 'buy' ? "debit" : "credit",
+                        date: dateStr,
+                        time: timeStr,
+                        status: "Successful ✅"
+                    });
+
+                    localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+
+                    // Instant UI update
+                    var symbol = liveUserData.currency || "$";
+                    document.getElementById('liveBalanceDisplay').innerText = symbol + finalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+                    mIcon.innerText = "✅";
+                    mTitle.innerText = "Order Settled";
+                    mBody.innerHTML = `Your digital asset instruction cleared perfectly.<br><br><strong>Transaction Block Hash:</strong> OX-${Math.floor(Math.random()*899999+100000)}X9`;
+                    mBtn.style.display = "block";
+                }, 2000);
+
+            }, 1500);
+        });
+
+        document.getElementById('modalCloseBtn').addEventListener('click', function() {
+            window.location.href = "user-dashboard.html";
+        });
+
+        initCryptoGateway();
+    </script>
+</body>
+</html>
