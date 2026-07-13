@@ -1,9 +1,9 @@
 {
-  "short_name": "ApexonVault",
-  "name": "Apexon Bank Vault Node",
+  "short_name": "ApexonBank",
+  "name": "Apexon Bank ",
   "icons": [
     {
-      "src": "https://img.icons8.com/fluency/192/castle.png",
+      "src": "apex.png",
       "type": "image/png",
       "sizes": "192x192"
     },
