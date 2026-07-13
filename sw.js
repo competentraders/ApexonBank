@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apexon-vault-v1';
+const CACHE_NAME = 'apexon-vault-v3';
 const ASSETS = [
   '/user-dashboard.html',
   '/cryptocurrency.html',
@@ -8,20 +8,30 @@ const ASSETS = [
   '/settings.html'
 ];
 
-// Install the Service Worker and cache essential interfaces
+// Safe install that skips missing files instead of breaking
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return Promise.allSettled(
+        ASSETS.map(asset => {
+          return cache.add(asset).catch(err => {
+            console.warn(`Asset skipped (not found on server): ${asset}`);
+          });
+        })
+      );
     })
   );
 });
 
-// Intercept network requests for instant asset delivery
+// Resilient request interception
 self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
+      // Serve cached file if available, otherwise fetch from network
+      return cachedResponse || fetch(e.request).catch(() => {
+        // Fallback safety so the user doesn't get a browser crash screen
+        console.log('Network request failed and asset not in cache.');
+      });
     })
   );
 });
