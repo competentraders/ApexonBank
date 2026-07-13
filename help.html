@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ApexonBank | Help Center Portal</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            color: #212529;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .search-input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Accordion Smooth Transitions */
+        .accordion-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .accordion-header:active {
+            background-color: #f1f5f9 !important;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 1000px; /* Large enough boundary for content */
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+        }
+
+        .accordion-item.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .chevron-icon {
+            transition: transform 0.25s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-shell" style="display: flex; flex-direction: column; width: 100%; min-height: 100vh;">
+        
+        <!-- App Mobile Top Navigation Header Frame -->
+        <header style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; padding: 16px 20px; background-color: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;">
+            <a href="index.html" style="text-decoration: none; color: #0d6efd; font-size: 20px; font-weight: bold; padding-right: 15px; display: flex; align-items: center;">
+                ←
+            </a>
+            
+            <div class="logo" style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
+                ApexonBank Support
+            </div>
+
+            <a href="agent-support.html" style="text-decoration: none; color: #ffffff; background-color: #198754; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 20px; white-space: nowrap;">
+                ⚡ Live Desk
+            </a>
+        </header>
+
+        <!-- HELP HERO & ENGINE SECTOR -->
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 35px 20px; text-align: center; border-bottom: 3px solid #b38728;">
+            <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px;">How can we guide you today?</h1>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                Tap a financial category down below to explore processing guidelines, rules, and instant tools.
+            </p>
+            
+            <!-- Dynamic Keyword Filter Box -->
+            <div style="position: relative; max-width: 480px; margin: 0 auto;">
+                <span style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px;">🔍</span>
+                <input id="helpSearchInput" class="search-input" type="text" placeholder="Search categories (e.g. 'limits', 'scam')..." style="width: 100%; padding: 14px 16px 14px 44px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.08); color: #ffffff; font-size: 14px; outline: none;">
+            </div>
+        </div>
+
+        <!-- MAIN CLICK-TO-OPEN ACCORDION CONTAINER -->
+        <div class="app-body" style="flex-grow: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px;">
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 700; margin-bottom: -2px;">
+                Interactive Support Modules
+            </div>
+
+            <!-- ACCORDION OPTION 1: WITHDRAWALS & RETRIEVALS -->
+            <div class="accordion-item" data-keywords="withdraw cashout secure payout error processing wrong address transfer recovery limit time" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <!-- Header Trigger -->
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px; background: rgba(13, 110, 253, 0.06); padding: 6px; border-radius: 8px;">💰</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Withdrawals & Mistaken Claims</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <!-- Slidedown Dropdown Content -->
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569;">
+                        <div style="padding-top: 12px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">What is the typical processing timeframe?</div>
+                        <p style="margin-bottom: 12px; line-height: 1.4;">Standard domestic processing settles within 1–3 operational days. Blockchain settlement times are dependent on live network gas limits and confirmations.</p>
+                        
+                        <div style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">Can I reverse an incorrect ledger address transfer?</div>
+                        <p style="margin-bottom: 14px; line-height: 1.4;">If transactions remain inside our internal custody stack, reversals can be initiated using our retrieval panels. Completed cross-chain actions cannot be altered.</p>
+                        
+                        <a href="withdraw-help.html" style="display: inline-block; background: #0d6efd; color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                            Open Retrieval Portal
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCORDION OPTION 2: SECURITY & ANTI-FRAUD SECTION -->
+            <div class="accordion-item" data-keywords="fraud emergency secure locks compromise abuse scam report safety security team hack identity password lock" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px; background: rgba(220, 53, 69, 0.06); padding: 6px; border-radius: 8px;">🚨</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Anti-Fraud & System Safety</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569;">
+                        <div style="padding-top: 12px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">How do I report suspicious account access?</div>
+                        <p style="margin-bottom: 12px; line-height: 1.4;">If you notice unauthorized log-ins or signature changes, click the "Emergency Isolation Lock" right away to put your wallet addresses into read-only mode.</p>
+                        
+                        <div style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">What security parameters protect my assets?</div>
+                        <p style="margin-bottom: 14px; line-height: 1.4;">All accounts enforce mandatory multi-sig challenges, hardware-encrypted keys, and threshold encryption rules across clearing pathways.</p>
+                        
+                        <a href="fraud.html" style="display: inline-block; background: #dc3545; color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                            File Fraud Incident Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCORDION OPTION 3: LOAN CONFIGURATIONS & FINANCING -->
+            <div class="accordion-item" data-keywords="loan flexible matrix flash liquidity credit allocation asset growth business capital finance borrowed rate interest" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px; background: rgba(251, 191, 36, 0.08); padding: 6px; border-radius: 8px;">📊</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Loan Programs & Flash Capital</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569;">
+                        <div style="padding-top: 12px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Who is eligible for liquidity injections?</div>
+                        <p style="margin-bottom: 12px; line-height: 1.4;">Active accounts processing regular transactional data volumes for more than 30 consecutive days are automatically structured into capital brackets.</p>
+                        
+                        <div style="font-weight: 700; color: #1e293b; margin-bottom: 4px;">What are the fixed interest baselines?</div>
+                        <p style="margin-bottom: 14px; line-height: 1.4;">Rates scale flexibly depending on the asset tier chosen and total collateral lock duration. Check your exact eligibility threshold below.</p>
+                        
+                        <a href="faq.html#loans" style="display: inline-block; background: #b38728; color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                            Check Loan Allocation
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCORDION OPTION 4: CRYPTOCURRENCY & FOREX SETTLEMENTS -->
+            <div class="accordion-item" data-keywords="cryptocurrency coin fx ticker rates blockchain wallet wrong address spread token exchange conversion arbitrage" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px; background: rgba(74, 222, 128, 0.08); padding: 6px; border-radius: 8px;">🌐</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Cryptocurrency & FX Arbitrage</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569;">
+                        <div style="padding-top: 12px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">How are dynamic ledger spreads verified?</div>
+                        <p style="margin-bottom: 12px; line-height: 1.4;">Our cross-border matching system checks pricing feeds from decentralized exchanges and traditional banking liquidity spots every single second.</p>
+                        
+                        <p style="margin-bottom: 14px; line-height: 1.4;">Make sure your crypto wallet address keys align exactly with the specific chain framework chosen before confirming any balance conversion requests.</p>
+                        
+                        <a href="security.html" style="display: inline-block; background: #198754; color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+                            Inspect Clearing Pools
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DYNAMIC SEARCH EMPTY STATE NOTIFICATION -->
+            <div id="noResultsState" style="display: none; padding: 30px 20px; text-align: center; color: #64748b; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                <span style="font-size: 24px; display: block; margin-bottom: 8px;">⚠️</span>
+                <div style="font-weight: 700; font-size: 14px; color: #0f172a; margin-bottom: 4px;">No matching modules found</div>
+                <p style="font-size: 12px;">Refine your search term or launch an escalation node directly below.</p>
+            </div>
+
+            <!-- STICKY BACK-ROW LIVE CHANNELS FOOTER BAR -->
+            <div style="background: #1e293b; color: #ffffff; padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                <div style="font-size: 13px; font-weight: bold; color: #ffffff;">Still require immediate system backing?</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <a href="customer-service.html" style="text-decoration: none; background: rgba(255,255,255,0.06); color: #ffffff; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 6px; font-size: 12px; font-weight: bold; text-align: center; display: block;">
+                        🤝 Customer Desk
+                    </a>
+                    <a href="agent-support.html" style="text-decoration: none; background: #0d6efd; color: #ffffff; border-radius: 10px; padding: 12px 6px; font-size: 12px; font-weight: bold; text-align: center; display: block;">
+                        ⚡ 24/7 Live
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- UNIFIED DESIGN SYSTEM PLATFORM COMPACT FOOTER -->
+        <footer style="background-color: #0f172a; color: #94a3b8; padding: 24px 20px; border-top: 1px solid rgba(255, 255, 255, 0.06); width: 100%; box-sizing: border-box; font-size: 11px; text-align: center;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; text-align: left;">
+                <a href="faq.html" style="color: #cbd5e1; text-decoration: none;">❓ FAQ Portal</a>
+                <a href="security.html" style="color: #cbd5e1; text-decoration: none;">🛡️ Security Team</a>
+                <a href="customer-service.html" style="color: #cbd5e1; text-decoration: none;">🤝 Service Hub</a>
+                <a href="fraud.html" style="color: #f87171; text-decoration: none; font-weight: 600;">🚨 Anti-Fraud</a>
+            </div>
+            <div style="height: 1px; background: rgba(255,255,255,0.06); width: 100%; margin-bottom: 12px;"></div>
+            <p style="color: #475569; font-size: 10px; line-height: 1.3; margin-bottom: 4px;">
+                © 2026 ApexonBank Infrastructure Group. Verified worldwide under financial routing clearings.
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- CLIENT INTERACTIVE ACCORDION & SEARCH INTERPRETER SCRIPT -->
+    <script>
+    (function() {
+        var accordionHeaders = document.querySelectorAll('.accordion-header');
+        var searchInput = document.getElementById('helpSearchInput');
+        var items = document.querySelectorAll('.accordion-item');
+        var noResults = document.getElementById('noResultsState');
+
+        // 1. CLICK-TO-OPEN ACCORDION CONTROLLER ENGINE
+        accordionHeaders.forEach(function(header) {
+            header.addEventListener('click', function() {
+                var currentItem = this.parentElement;
+                var isOpen = currentItem.classList.contains('active');
+                
+                // Close any currently active accordion tabs to prevent layout overlapping
+                items.forEach(function(item) {
+                    item.classList.remove('active');
+                });
+
+                // Toggle visibility flag on targeted module container
+                if (!isOpen) {
+                    currentItem.classList.add('active');
+                }
+            });
+        });
+
+        // 2. REAL-TIME FILTER MATCH INTELLIGENCE
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                var term = e.target.value.toLowerCase().trim();
+                var visibleCount = 0;
+
+                items.forEach(function(item) {
+                    var keywords = item.getAttribute('data-keywords') || '';
+                    if (term === '' || keywords.toLowerCase().indexOf(term) !== -1) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                        
+                        // Automatically drop open accordion sections if a user explicitly searches for their inner content match
+                        if (term !== '') {
+                            item.classList.add('active');
+                        } else {
+                            item.classList.remove('active');
+                        }
+                    } else {
+                        item.style.display = 'none';
+                        item.classList.remove('active');
+                    }
+                });
+
+                if (visibleCount === 0 && term !== '') {
+                    if (noResults) noResults.style.display = 'block';
+                } else {
+                    if (noResults) noResults.style.display = 'none';
+                }
+            });
+        }
+    })();
+    </script>
+</body>
+</html>

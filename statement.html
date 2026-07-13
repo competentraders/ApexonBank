@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | Account Statement</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-bottom: 85px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: none;
+            border: 1px solid #cbd5e1;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover { border-color: #b38728; color: #b38728; }
+
+        .statement-container {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #b38728;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .filter-btn {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: #0f172a;
+            color: #ffffff;
+            border-color: #0f172a;
+        }
+
+        .statement-ledger {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 16px;
+        }
+
+        .ledger-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .ledger-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .print-btn {
+            background: #b38728;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(179, 135, 40, 0.2);
+        }
+
+        .print-btn:active { transform: scale(0.99); }
+
+        /* BOTTOM NAVIGATION DOCK */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+        /* PRINT STYLES SHEET */
+        @media print {
+            body { background: #ffffff; color: #000000; padding-bottom: 0; }
+            header, .bottom-nav, .filter-bar, .print-btn, .back-btn { display: none !important; }
+            .statement-container { padding: 0; }
+            .summary-card { background: #ffffff !important; color: #000000 !important; border: 1px solid #000 !important; padding: 15px; }
+            .summary-card p, .summary-card h2, .summary-card span { color: #000000 !important; }
+            .statement-ledger { border: none !important; }
+            .ledger-row { border-bottom: 1px solid #000000 !important; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apexon Bank</div>
+        <a href="index.html" class="back-btn">✕ Close</a>
+    </header>
+
+    <div class="statement-container">
+        
+        <!-- Account Overview Card Component -->
+        <div class="summary-card">
+            <p style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 600;">E-Statement Audit Record</p>
+            <h2 style="font-size: 28px; font-weight: 700; margin-top: 4px;" id="metaBalance">0.00</h2>
+            
+            <div style="margin-top: 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                <div>
+                    <span style="color: #94a3b8; display: block;">Account Holder:</span>
+                    <strong id="metaName" style="color: #ffffff;">Loading User...</strong>
+                </div>
+                <div>
+                    <span style="color: #94a3b8; display: block;">Account Number:</span>
+                    <strong id="metaAccount" style="color: #ffffff;">0000000000</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Segment Elements -->
+        <div class="filter-bar">
+            <button class="filter-btn active" onclick="applyLedgerFilter('all', this)">All Activity</button>
+            <button class="filter-btn" onclick="applyLedgerFilter('credit', this)">Credits (+)</button>
+            <button class="filter-btn" onclick="applyLedgerFilter('debit', this)">Debits (-)</button>
+        </div>
+
+        <!-- Ledger Node Container -->
+        <div class="statement-ledger">
+            <div id="statementLedgerContent">
+                <!-- Executed dynamically via local database arrays -->
+            </div>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">Print Official Statement</button>
+    </div>
+
+    <!-- PERSISTENT APP DOCK STRUCTURE -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <script>
+    var activeFilterMode = "all";
+
+    function populateAccountStatement() {
+        var currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
+        if (!currentSession) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+        var liveUserData = users.find(u => u.username === currentSession.username);
+
+        if (!liveUserData) return;
+
+        var rawFullName = liveUserData.fullName || "Valued Customer";
+        var rawBalance = liveUserData.balance || "0.00";
+        var rawAccountNo = liveUserData.accountNo || "Unavailable";
+        var currencySign = liveUserData.currency || "$";
+        
+        var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        document.getElementById('metaName').innerText = rawFullName;
+        document.getElementById('metaBalance').innerText = formattedBalance;
+        document.getElementById('metaAccount').innerText = rawAccountNo;
+
+        var targetContainer = document.getElementById('statementLedgerContent');
+        var transactions = liveUserData.transactions || [];
+
+        if (transactions.length === 0) {
+            targetContainer.innerHTML = `
+                <div class="ledger-row">
+                    <div style="width: 100%; text-align: center; padding: 20px 0; color: #64748b;">
+                        <p style="font-size: 14px; font-weight: 600;">System Provisioning Open</p>
+                        <p style="font-size: 11px; color: #94a3b8; margin-top: 4px;">Initial configuration balance is verified at ${formattedBalance}</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        var rowsHtml = "";
+        
+        // Loop backward from length to zero to position incoming transactions first
+        for (var i = transactions.length - 1; i >= 0; i--) {
+            var tx = transactions[i];
+            var txType = tx.type.toLowerCase();
+
+            // Filter Engine Check
+            if (activeFilterMode === 'credit' && txType !== 'credit' && txType !== 'deposit') continue;
+            if (activeFilterMode === 'debit' && txType !== 'debit') continue;
+
+            var isCredit = txType === 'credit' || txType === 'deposit';
+            var amtColor = isCredit ? "#166534" : "#ef4444";
+            var prefix = isCredit ? "+ " : "- ";
+            var formattedTxAmt = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            var partyLabel = isCredit ? "From: " + (tx.sender || "External Network") : "To: " + (tx.receiver || tx.description || "Beneficiary Account");
+            var fullTimestamp = tx.date + " • " + (tx.time || "");
+
+            rowsHtml += `
+                <div class="ledger-row">
+                    <div>
+                        <p style="font-size: 13px; font-weight: 700; color: #0f172a;">${tx.description || (isCredit ? "Deposit Settlement" : "Outbound Remittance")}</p>
+                        <p style="font-size: 11px; color: #475569; margin-top: 3px;">${partyLabel}</p>
+                        <p style="font-size: 10px; color: #94a3b8; margin-top: 2px;">${fullTimestamp}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${formattedTxAmt}</p>
+                        <span style="font-size: 10px; color: #166534; font-weight: 600; background: #f0fdf4; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px;">${tx.status || "Settled"}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        if (rowsHtml === "") {
+            rowsHtml = `<p style="text-align: center; color: #64748b; padding: 20px; font-size: 13px;">No transactions matching this category filter configuration.</p>`;
+        }
+
+        targetContainer.innerHTML = rowsHtml;
+    }
+
+    function applyLedgerFilter(mode, buttonElement) {
+        activeFilterMode = mode;
+        
+        // Toggle selected styling classes across filter layout array
+        var buttons = document.getElementsByClassName('filter-btn');
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].classList.remove('active');
+        }
+        buttonElement.classList.add('active');
+        
+        populateAccountStatement();
+    }
+
+    // Init configuration mount
+    populateAccountStatement();
+    
+    // Auto-update interface content array calculations every 1 second
+    setInterval(populateAccountStatement, 1000);
+    </script>
+</body>
+</html>

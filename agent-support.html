@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ApexonBank | Agent Support Desk</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .mail-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 14px 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .mail-card:active {
+            transform: scale(0.98);
+            background-color: #f8fafc;
+        }
+
+        .action-link {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0d6efd;
+            background: rgba(13, 110, 253, 0.06);
+            padding: 6px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-shell" style="display: flex; flex-direction: column; width: 100%; min-height: 100vh;">
+        
+        <!-- Top Header Navigation Bar -->
+        <header style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; padding: 16px 20px; background-color: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+            <a href="customer-service.html" style="text-decoration: none; color: #0d6efd; font-size: 22px; font-weight: bold; padding-right: 15px; display: flex; align-items: center;">
+                ←
+            </a>
+            
+            <div class="logo" style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
+                ApexonBank Clearing
+            </div>
+
+            <div style="width: 22px;"></div> <!-- Spacer alignment -->
+        </header>
+
+        <!-- PORTAL HERO HEADER -->
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 35px 20px; text-align: center; border-bottom: 3px solid #b38728;">
+            <h1 style="font-size: 22px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px;">Agent Directory</h1>
+            <p style="font-size: 13px; color: #94a3b8; max-width: 340px; margin: 0 auto; line-height: 1.4;">
+                Select a dedicated communications department below to initialize direct secure node clearance.
+            </p>
+        </div>
+
+        <!-- MAIN DEPARTMENTS GRID -->
+        <div class="app-body" style="flex-grow: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px;">
+            
+            <!-- support@apex.com -->
+            <a href="mailto:support@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">🤝 General Inquiries</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">support@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- withdrawals@apex.com -->
+            <a href="mailto:withdrawals@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">📤 Outflow Clearance</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">withdrawals@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- deposits@apex.com -->
+            <a href="mailto:deposits@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">📥 Collateral Inflow</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">deposits@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- complaints@apex.com -->
+            <a href="mailto:complaints@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">⚖️ Resolution Board</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">complaints@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- fraud@apex.com -->
+            <a href="mailto:fraud@apex.com" class="mail-card" style="border-left: 3px solid #ef4444;">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #ef4444; text-transform: uppercase; letter-spacing: 0.5px;">🚨 Integrity & Abuse</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">fraud@apexon.com</div>
+                </div>
+                <div class="action-link" style="color: #ef4444; background: rgba(239, 68, 68, 0.06);">Report</div>
+            </a>
+
+            <!-- crypto@apex.com -->
+            <a href="mailto:crypto@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">🪙 Blockchain Cryptography</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">crypto@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- transfers@apex.com -->
+            <a href="mailto:transfers@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">⛓️ Interbank Ledger Routing</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">transfers@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- security@apex.com -->
+            <a href="mailto:security@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">🛡️ Keys & Identity Vault</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">security@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- delays@apex.com -->
+            <a href="mailto:delays@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">⏳ Processing Queue Holds</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">delays@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- chat@apex.com -->
+            <a href="mailto:chat@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">💬 Asynchronous Logs</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">chat@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+            <!-- callback@apex.com -->
+            <a href="mailto:callback@apex.com" class="mail-card">
+                <div>
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">📞 Switchboard Queue Line</div>
+                    <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px;">callback@apexon.com</div>
+                </div>
+                <div class="action-link">Write</div>
+            </a>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer style="background-color: #0f172a; color: #475569; padding: 24px 20px; border-top: 1px solid rgba(255, 255, 255, 0.06); width: 100%; box-sizing: border-box; font-size: 11px; text-align: center;">
+            <p style="line-height: 1.4; max-width: 360px; margin: 0 auto;">
+                © 2026 ApexonBank Infrastructure Systems. All emails match secure administrative.
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apexon | Request Debit Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        header h1 {
+            font-size: 28px;
+            color: #ffffff;
+        }
+        header p {
+            color: #94a3b8;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+        .balance-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .balance-card span {
+            font-size: 13px;
+            color: #94a3b8;
+            display: block;
+        }
+        .balance-card strong {
+            font-size: 22px;
+            color: #b38728;
+        }
+        
+        /* Cards Grid Layout */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .card-option {
+            background: #1e293b;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            position: relative;
+        }
+        .card-option:hover {
+            transform: translateY(-5px);
+            border-color: rgba(179, 135, 40, 0.4);
+        }
+        .card-option.selected {
+            border-color: #b38728;
+            box-shadow: 0 0 15px rgba(179, 135, 40, 0.2);
+        }
+
+        /* Card Previews */
+        .preview-box {
+            width: 100%;
+            height: 160px;
+            border-radius: 14px;
+            margin-bottom: 15px;
+            position: relative;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+        
+        .theme-classic { background: linear-gradient(135deg, #1e3a8a, #0f172a); }
+        .theme-dark { background: linear-gradient(135deg, #111827, #374151); border: 1px solid rgba(255,255,255,0.08); }
+        .theme-gold { background: linear-gradient(135deg, #b38728, #453209); }
+        .theme-neon { background: linear-gradient(135deg, #7c3aed, #db2777); }
+
+        .card-chip { width: 32px; height: 24px; background: linear-gradient(135deg, #e2e8f0, #94a3b8); border-radius: 4px; }
+        .card-brand { position: absolute; top: 20px; right: 20px; font-size: 14px; font-weight: bold; opacity: 0.8; }
+        .card-number { font-size: 16px; letter-spacing: 2px; color: rgba(255,255,255,0.9); margin-top: 20px; }
+        .card-footer { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+
+        .card-details h3 { font-size: 18px; margin-bottom: 5px; }
+        .card-details p { font-size: 13px; color: #94a3b8; margin-bottom: 15px; }
+        .price-notice { font-size: 14px; font-weight: 700; color: #b38728; }
+
+        /* Dynamic Delivery Forms Overlay Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 9999;
+            padding: 20px;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 480px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .modal-box h2 { font-size: 20px; margin-bottom: 15px; color: #ffffff; }
+        
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+        }
+        .form-group label { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569;
+            background: #0f172a; color: white; font-size: 14px; outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #b38728; }
+        
+        .payment-options-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #475569;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 18px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 13.5px;
+            color: #e2e8f0;
+            margin-bottom: 8px;
+        }
+        .radio-label:last-child { margin-bottom: 0; }
+        .radio-label input { accent-color: #b38728; width: 16px; height: 16px; }
+
+        .btn-action {
+            background: #b38728; color: white; padding: 14px; border: none;
+            border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%;
+        }
+        .btn-action:hover { opacity: 0.9; }
+        .error-alert { color: #ef4444; font-size: 13px; text-align: center; margin-bottom: 10px; display: none; }
+        
+        /* Inline Success Display */
+        .success-view { text-align: center; display: none; }
+        .success-view div { font-size: 55px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Select Your Premium Debit Card</h1>
+            <p>Pick a design shell below. Our agents deliver cards globally right to your doorstep.</p>
+            <br>
+            <div class="balance-card">
+                <span>Available Clearing Funds</span>
+                <strong id="displayUserBalance">...</strong>
+            </div>
+        </header>
+
+        <!-- Cards Collection Matrix Grid -->
+        <div class="cards-grid">
+            
+            <!-- Classic Variant -->
+            <div class="card-option" onclick="openOrderDesk('Classic Blue Visa')">
+                <div class="preview-box theme-classic">
+                    <div class="card-chip"></div>
+                    <div class="card-brand">VISA</div>
+                    <div class="card-number">•••• •••• •••• 4590</div>
+                    <div class="card-footer"><div class="holder-label">HOLDER</div><div>12/31</div></div>
+                </div>
+                <div class="card-details">
+                    <h3>Classic Blue Edition</h3>
+                    <p>Standard secure electronic account utility access shell.</p>
+                    <div class="price-notice">Delivery Fee: <span class="currency-token"></span>500.00</div>
+                </div>
+            </div>
+
+            <!-- Obsidian Variant -->
+            <div class="card-option" onclick="openOrderDesk('Obsidian Black Master')">
+                <div class="preview-box theme-dark">
+                    <div class="card-chip"></div>
+                    <div class="card-brand">MC</div>
+                    <div class="card-number">•••• •••• •••• 8821</div>
+                    <div class="card-footer"><div class="holder-label">HOLDER</div><div>10/30</div></div>
+                </div>
+                <div class="card-details">
+                    <h3>Obsidian Black Profile</h3>
+                    <p>Sleek matte texture structural finish built for premium operations.</p>
+                    <div class="price-notice">Delivery Fee: <span class="currency-token"></span>500.00</div>
+                </div>
+            </div>
+
+            <!-- Gold Elite Variant -->
+            <div class="card-option" onclick="openOrderDesk('Gold Elite Premium')">
+                <div class="preview-box theme-gold">
+                    <div class="card-chip"></div>
+                    <div class="card-brand">VISA</div>
+                    <div class="card-number">•••• •••• •••• 7744</div>
+                    <div class="card-footer"><div class="holder-label">HOLDER</div><div>08/31</div></div>
+                </div>
+                <div class="card-details">
+                    <h3>Gold Elite Privilege</h3>
+                    <p>Luxury gold style overlay finish reflecting higher asset levels.</p>
+                    <div class="price-notice">Delivery Fee: <span class="currency-token"></span>500.00</div>
+                </div>
+            </div>
+
+            <!-- Neon Variant -->
+            <div class="card-option" onclick="openOrderDesk('Cyberpunk Neon Graphic')">
+                <div class="preview-box theme-neon">
+                    <div class="card-chip"></div>
+                    <div class="card-brand">VISA</div>
+                    <div class="card-number">•••• •••• •••• 9011</div>
+                    <div class="card-footer"><div class="holder-label">HOLDER</div><div>05/29</div></div>
+                </div>
+                <div class="card-details">
+                    <h3>Cyberpunk Neon Matrix</h3>
+                    <p>Limited edition glowing digital design parameters.</p>
+                    <div class="price-notice">Delivery Fee: <span class="currency-token"></span>500.00</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Doorstep Delivery Setup Overlay Box -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal-box">
+            
+            <!-- Form State Content Blocks -->
+            <div id="formContainerState">
+                <h2 id="modalHeadlineTitle">Card Shipping Coordinates</h2>
+                <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Provide delivery details for our field dispatch agent logistics loops.</p>
+                
+                <div class="error-alert" id="errIndicator">⚠️ Insufficient account balance for this choice.</div>
+
+                <form id="deliveryOrderForm" onsubmit="executeInstantCardTransaction(event)">
+                    <div class="form-group">
+                        <label>📍 Street Delivery Address</label>
+                        <textarea id="deliveryAddress" rows="2" placeholder="House/Apartment Number, Street Name, City, State" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📞 Secure Contact Phone Line</label>
+                        <input type="tel" id="deliveryPhone" placeholder="Mobile phone number for the courier agent" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>💳 Dispatch Agent Settlement Terms</label>
+                        <div class="payment-options-box">
+                            <label class="radio-label">
+                                <input type="radio" name="paymentPlan" value="split" checked onclick="calculatePriceMatrix(200)">
+                                <div>Pay <strong id="splitPayLabel">200</strong> Now (Balance <span id="splitRemainLabel">300</span> On Delivery)</div>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="paymentPlan" value="full" onclick="calculatePriceMatrix(500)">
+                                <div>Pay Full <strong id="fullPayLabel">500</strong> Instantly Now</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-action">Authorize Instant Settlement</button>
+                </form>
+            </div>
+
+            <!-- Success State Content Blocks -->
+            <div class="success-view" id="successContainerState">
+                <div>🎉</div>
+                <h2 style="color:#10b981;">Order Confirmed Successfully</h2>
+                <p style="color: #94a3b8; font-size: 14px; line-height: 1.6; margin-top: 10px;" id="successNarrationText">
+                    Your allocation has been adjusted immediately. A card agent has received your dispatch details and will contact you via your phone line shortly.
+                </p>
+                <br>
+                <button class="btn-action" onclick="closeOrderAndExit()">Return to Dashboard</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        var targetCardName = "";
+        var activeChargeAmount = 200.00; // Default down payment choice amount
+        var userSymbol = "$";
+        var usersArray = [];
+        var liveUserIndex = -1;
+        var liveUserData = null;
+
+        function initCardInterface() {
+            var session = JSON.parse(localStorage.getItem('apexon_current_session'));
+            if (!session) {
+                window.location.href = "user-dashboard.html";
+                return;
+            }
+
+            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            liveUserIndex = usersArray.findIndex(u => u.username === session.username);
+            
+            if (liveUserIndex === -1) {
+                window.location.href = "user-dashboard.html";
+                return;
+            }
+
+            liveUserData = usersArray[liveUserIndex];
+            userSymbol = liveUserData.currency || "$";
+
+            // Update balance displays inside elements
+            document.getElementById('displayUserBalance').innerText = userSymbol + parseFloat(liveUserData.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+            // Apply currency symbol text variables to matching markup label tokens
+            document.querySelectorAll('.currency-token').forEach(el => el.innerText = userSymbol);
+            document.getElementById('splitPayLabel').innerText = userSymbol + "200.00";
+            document.getElementById('splitRemainLabel').innerText = userSymbol + "300.00";
+            document.getElementById('fullPayLabel').innerText = userSymbol + "500.00";
+
+            // Stamp owner titles
+            var holderName = (liveUserData.fullName || "Card Holder").toUpperCase();
+            document.querySelectorAll('.holder-label').forEach(el => el.innerText = holderName);
+        }
+
+        function openOrderDesk(cardVariant) {
+            targetCardName = cardVariant;
+            document.getElementById('modalHeadlineTitle').innerText = cardVariant + " Allocation";
+            
+            // Default pricing variables state metrics on modal openings
+            document.getElementsByName('paymentPlan')[0].checked = true;
+            activeChargeAmount = 200.00;
+            
+            document.getElementById('errIndicator').style.display = "none";
+            document.getElementById('formContainerState').style.display = "block";
+            document.getElementById('successContainerState').style.display = "none";
+            
+            document.getElementById('orderModal').classList.add('active');
+        }
+
+        function calculatePriceMatrix(amt) {
+            activeChargeAmount = parseFloat(amt);
+        }
+
+        function executeInstantCardTransaction(e) {
+            e.preventDefault();
+            document.getElementById('errIndicator').style.display = "none";
+
+            var currentBalance = parseFloat(liveUserData.balance || 0);
+
+            // Check if the user has enough money for the selected payment option
+            if (currentBalance < activeChargeAmount) {
+                document.getElementById('errIndicator').style.display = "block";
+                return;
+            }
+
+            // Deduct the money instantly from the ledger
+            var adjustedBalance = currentBalance - activeChargeAmount;
+            usersArray[liveUserIndex].balance = adjustedBalance.toFixed(2);
+
+            // Structure system calendar dates
+            var d = new Date();
+            var dateStr = d.toISOString().split('T')[0];
+            var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            if (!usersArray[liveUserIndex].transactions) {
+                usersArray[liveUserIndex].transactions = [];
+            }
+
+            var enteredAddress = document.getElementById('deliveryAddress').value;
+            var paymentTypeMemo = (activeChargeAmount === 200.00) ? " (Split Plan: 200 Paid, 300 Outstanding)" : " (Full Pre-Paid Plan)";
+
+            // Push transaction as instantly Successful directly into the history ledger
+            usersArray[liveUserIndex].transactions.push({
+                description: "Debit Card Production: " + targetCardName + paymentTypeMemo,
+                sender: usersArray[liveUserIndex].fullName,
+                receiver: "Agent Delivery Routing Node: " + enteredAddress,
+                amount: activeChargeAmount.toFixed(2),
+                type: "debit",
+                date: dateStr,
+                time: timeStr,
+                status: "Successful ✅" // Settled instantly without any pending holding patterns
+            });
+
+            // Write back to database cache files instantly
+            localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+
+            // Show success window
+            document.getElementById('formContainerState').style.display = "none";
+            document.getElementById('successContainerState').style.display = "block";
+            
+            var textBody = "Your account was successfully debited <strong>" + userSymbol + activeChargeAmount.toFixed(2) + "</strong>. Your card request design has been generated. Our local agent has received your delivery address details and will call you shortly.";
+            document.getElementById('successNarrationText').innerHTML = textBody;
+        }
+
+        function closeOrderAndExit() {
+            window.location.href = "user-dashboard.html";
+        }
+
+        // Initialize setup logic execution
+        initCardInterface();
+    </script>
+</body>
+</html>

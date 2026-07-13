@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | Clearing Matrix Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            padding-bottom: 85px; 
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logout-btn {
+            background: none;
+            border: 1px solid #cbd5e1;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 30px 20px;
+            border-bottom: 3px solid #b38728;
+        }
+
+        .balance-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            margin-top: -20px;
+        }
+
+        .gold-accent-text { font-weight: 700; color: #b38728; }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none; 
+            display: block;
+            transition: all 0.2s ease;
+        }
+
+        .action-card:active { transform: scale(0.97); background-color: #f8fafc; }
+        .action-icon { font-size: 24px; margin-bottom: 6px; display: inline-block; }
+
+        .transaction-list {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(0,0,0,0.05);
+            margin-top: 20px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .transaction-item:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Apexon Bank</div>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+    </header>
+
+    <div class="hero-banner">
+        <p style="font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Active</p>
+        <h1 style="font-size: 24px; font-weight: 700; margin-top: 4px;" id="welcomeName">Welcome, System User</h1>
+    </div>
+
+    <div style="flex-grow: 1; padding: 0 20px 40px 20px;">
+        
+        <div class="balance-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <div>
+                    <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Available Clear Balance</p>
+                    <h2 style="font-size: 32px; font-weight: 700; color: #0f172a; margin-top: 4px;" id="accountBalance">$0.00</h2>
+                </div>
+                <span style="background: #f0fdf4; color: #166534; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 9999px; border: 1px solid #bbf7d0;">● Live</span>
+            </div>
+            
+            <div style="border-top: 1px solid #f1f5f9; padding-top: 14px; display: flex; justify-content: space-between; font-size: 13px;">
+                <div>
+                    <span style="color: #64748b;">Account No:</span>
+                    <span style="color: #0f172a; font-weight: 600; margin-left: 4px;" id="accountNumber">0000000000</span>
+                </div>
+                <div>
+                    <span style="color: #64748b;">Routing :</span>
+                    <span class="gold-accent-text" style="margin-left: 4px;">APX-02948</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 14px; font-weight: 700; color: #475569; margin-top: 25px; text-transform: uppercase; letter-spacing: 0.5px;">Clearing Operations</h3>
+        
+        <div class="quick-action-grid">
+            <a href="wire.html" class="action-card">
+                <div class="action-icon">💸</div>
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Wire Transfer</div>
+            </a>
+            
+            <a href="statement.html" class="action-card">
+                <div class="action-icon">📄</div>
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Statements</div>
+            </a>
+
+            <a href="deposit.html" class="action-card">
+                <div class="action-icon">📥</div>
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Deposit Funds</div>
+            </a>
+
+            <a href="cryptocurrency.html" class="action-card">
+                <div class="action-icon">🪙</div>
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Cryptocurrency</div>
+            </a>
+
+            <a href="airtime.html" class="action-card">
+                <div class="action-icon">📱</div>
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Buy Airtime</div>
+            </a>
+
+            <a href="card.html" class="action-card">
+                <div class="action-icon">💳</div>
+                <div style="font-size: 13px; font-weight: 700; color: #0f172a;">Credit Card</div>
+            </a>
+        </div>
+
+        <div class="transaction-list">
+            <h3 style="font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">Recent Activity</h3>
+            <div id="ledgerContainer">
+                <!-- Transactions will be loaded here dynamically by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="login.html" class="nav-item active">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <script>
+    function syncLiveDashboard() {
+        var currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
+        if (!currentSession) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+        var liveUserData = users.find(u => u.username === currentSession.username);
+
+        if (!liveUserData) return;
+
+        var rawFullName = liveUserData.fullName || "Valued Customer";
+        var rawBalance = liveUserData.balance || "0.00";
+        var rawAccountNo = liveUserData.accountNo || "Unavailable";
+        var currencySign = liveUserData.currency || "$"; 
+        
+        var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
+        document.getElementById('accountBalance').innerText = formattedBalance;
+        document.getElementById('accountNumber').innerText = rawAccountNo;
+
+        // DYNAMIC TRANSACTION LEDGER ENGINE
+        var ledgerContainer = document.getElementById('ledgerContainer');
+        var transactions = liveUserData.transactions || [];
+
+        if (transactions.length === 0) {
+            ledgerContainer.innerHTML = `
+                <div class="transaction-item">
+                    <div>
+                        <p style="font-size: 13px; font-weight: 600; color: #0f172a;">Initial Account Provision</p>
+                        <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">System Setup Allocation</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${formattedBalance}</p>
+                        <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Settled</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            var htmlContent = "";
+            for (var i = transactions.length - 1; i >= 0; i--) {
+                var tx = transactions[i];
+                var isCredit = tx.type.toLowerCase() === 'credit' || tx.type.toLowerCase() === 'deposit';
+                var txStatus = tx.status || "Successful";
+                
+                // Color formatting configurations mapping
+                var amtColor = "#0f172a"; 
+                var prefix = "";
+                var badgeBg = "#f1f5f9";
+                var badgeText = "#475569";
+
+                if (txStatus === "Successful") {
+                    amtColor = isCredit ? "#166534" : "#ef4444";
+                    prefix = isCredit ? "+ " : "- "; // Displays requested absolute negative removal sign if successful debit
+                    badgeBg = "#e8f5e9";
+                    badgeText = "#2e7d32";
+                } else if (txStatus === "Rejected") {
+                    amtColor = "#64748b"; // Neutral gray because no balance was altered
+                    prefix = ""; 
+                    badgeBg = "#ffebee";
+                    badgeText = "#c62828";
+                } else if (txStatus === "Pending Approval") {
+                    amtColor = "#b38728";
+                    prefix = "";
+                    badgeBg = "#fff8e1";
+                    badgeText = "#f57f17";
+                }
+
+                var formattedTxAmt = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                var partnerLabel = isCredit ? "From: " + (tx.sender || "External Sender") : "To: " + (tx.receiver || tx.description || "Beneficiary");
+                var txTimestamp = tx.date + " • " + (tx.time || "");
+
+                htmlContent += `
+                    <div class="transaction-item">
+                        <div style="flex-grow: 1; padding-right: 12px;">
+                            <p style="font-size: 13px; font-weight: 600; color: #0f172a;">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
+                            <p style="font-size: 11px; color: #64748b; margin-top: 2px;">${partnerLabel}</p>
+                            <p style="font-size: 10px; color: #94a3b8; margin-top: 1px;">${txTimestamp}</p>
+                            
+                            <!-- WRITTEN NOTE REJECTION WARNING BANNER INJECTION -->
+                            ${txStatus === 'Rejected' && tx.rejectionReason ? `
+                                <div style="margin-top: 8px; padding: 8px 12px; background: #fff5f5; border-left: 3px solid #ef4444; border-radius: 4px;">
+                                    <p style="color: #c53030; font-size: 11px; font-weight: 600; line-height: 1.4;">
+                                        ⚠️ <strong>Note:</strong> ${tx.rejectionReason}
+                                    </p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div style="text-align: right; flex-shrink: 0;">
+                            <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${formattedTxAmt}</p>
+                            <span style="background: ${badgeBg}; color: ${badgeText}; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                ${txStatus}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }
+            ledgerContainer.innerHTML = htmlContent;
+        }
+    }
+
+    syncLiveDashboard();
+    setInterval(syncLiveDashboard, 1000);
+
+    function handleLogout() {
+        localStorage.removeItem('apexon_current_session');
+        window.location.href = "login.html";
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | Clear Gate Wire Ledger</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 85px;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: #b38728;
+            box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.15);
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 16px) center;
+            background-size: 12px;
+        }
+
+        .error-msg {
+            font-size: 11px;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* TABS FOR ROUTING SELECTION */
+        .route-tabs {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .route-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .route-tab.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* CUSTOM MODAL OVERLAY */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 360px;
+            padding: 30px 24px;
+            text-align: center;
+            border: 2px solid #b38728;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        /* BOTTOM NAVIGATION DOCK */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" style="text-decoration: none; color: #b38728; font-size: 22px; font-weight: bold; padding-right: 15px;">←</a>
+        <div class="logo">Apexon Bank</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <!-- LIVE SESSION HEADER INFRASTRUCTURE -->
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 24px 20px; border-bottom: 3px solid #b38728; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Source Balance</p>
+            <h2 style="font-size: 22px; font-weight: 700; margin-top: 2px; color: #ffffff;" id="liveBalanceDisplay">...</h2>
+        </div>
+        <div style="text-align: right;">
+            <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Transfer Channel</p>
+            <span style="background: rgba(179, 135, 40, 0.2); color: #FCF6BA; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid #b38728; display: inline-block; margin-top: 4px;" id="channelIndicator">FedWire</span>
+        </div>
+    </div>
+
+    <div style="flex-grow: 1; padding: 24px 20px;">
+        
+        <div class="route-tabs">
+            <div class="route-tab active" id="tabLocal" onclick="switchRoute('local')">Domestic Wire</div>
+            <div class="route-tab" id="tabInter" onclick="switchRoute('international')">Inter-Continental</div>
+        </div>
+
+        <form id="wireTransferForm" style="background: #ffffff; border-radius: 16px; padding: 24px 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.01);">
+            
+            <!-- Beneficiary Account Name -->
+            <div class="input-group">
+                <label>👤 Beneficiary Account Name</label>
+                <input type="text" id="beneficiaryName" placeholder="Exact destination account name" required>
+            </div>
+
+            <!-- Beneficiary Account Number / IBAN -->
+            <div class="input-group">
+                <label id="accountNumberLabel">🔢 Beneficiary Account Number</label>
+                <input type="text" id="beneficiaryAccount" placeholder="Enter ledger account number" required>
+            </div>
+
+            <!-- Destination Bank Name -->
+            <div class="input-group">
+                <label>🏢 Destination Bank Name</label>
+                <input type="text" id="bankName" placeholder="e.g. Chase, Barclays, Access Bank" required>
+            </div>
+
+            <!-- Dynamic Routing Field (Routing Number or Swift/BIC) -->
+            <div class="input-group" id="routingGroup">
+                <label id="routingLabel">📌 Routing Transit Number (RTN)</label>
+                <input type="text" id="routingValue" placeholder="Enter 9-digit transit field" required>
+            </div>
+
+            <!-- Inter-Continental Specific Dropdown -->
+            <div class="input-group" id="countryGroup" style="display: none;">
+                <label>🌍 Destination Country</label>
+                <select id="destinationCountry">
+                    <option value="" disabled selected>Select Destination Country</option>
+                </select>
+            </div>
+
+            <!-- Transfer Amount -->
+            <div class="input-group">
+                <label>💰 Transfer Amount (<span id="currencySymbol"></span>)</label>
+                <input type="number" step="0.01" id="transferAmount" placeholder="0.00" required>
+                <div class="error-msg" id="balanceError">Insufficient clearing funds</div>
+            </div>
+
+            <!-- Description / Narration -->
+            <div class="input-group">
+                <label>📝 Narration / Reference</label>
+                <textarea id="narration" rows="2" placeholder="Purpose of funds allocation transfer (Optional)"></textarea>
+            </div>
+
+            <button type="submit" class="action-btn">
+                Authorize Transfer
+            </button>
+        </form>
+    </div>
+
+    <!-- PERSISTENT HIGH-CLASS APP DOCK -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <!-- ERROR & SUCCESS MODAL NOTIFICATION PLATFORM -->
+    <div class="modal-overlay" id="transferModal">
+        <div class="modal-card">
+            <div style="font-size: 48px; margin-bottom: 14px;" id="modalIcon">⏳</div>
+            <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="modalTitle">Processing</h2>
+            <p style="font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 24px;" id="modalBody">
+                Connecting...
+            </p>
+            <button id="modalCloseBtn" style="width: 100%; padding: 12px; background: #b38728; color: #ffffff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: none;">
+                Return to Dashboard
+            </button>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+    var activeRoute = 'local';
+    var liveUserIndex = -1;
+    var liveUserData = null;
+    var usersArray = [];
+
+    var globalCountries = ["United States", "United Kingdom", "Nigeria", "Canada", "Germany", "France", "South Africa", "Ghana", "Australia", "India", "China", "United Arab Emirates", "Kenya", "Brazil"];
+
+    function initWireGateway() {
+        var session = JSON.parse(localStorage.getItem('apexon_current_session'));
+        if (!session) {
+            window.location.href = "user-dashboard.html";
+            return;
+        }
+
+        usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+        liveUserIndex = usersArray.findIndex(u => u.username === session.username);
+        
+        if (liveUserIndex === -1) {
+            window.location.href = "user-dashboard.html";
+            return;
+        }
+
+        liveUserData = usersArray[liveUserIndex];
+
+        var symbol = liveUserData.currency || "$";
+        document.getElementById('currencySymbol').innerText = symbol;
+        
+        var formattedBal = symbol + parseFloat(liveUserData.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+        document.getElementById('liveBalanceDisplay').innerText = formattedBal;
+
+        var countryDropdown = document.getElementById('destinationCountry');
+        globalCountries.forEach(function(c) {
+            var o = document.createElement("option");
+            o.value = c;
+            o.textContent = c;
+            countryDropdown.appendChild(o);
+        });
+    }
+
+    function switchRoute(type) {
+        activeRoute = type;
+        var tabLocal = document.getElementById('tabLocal');
+        var tabInter = document.getElementById('tabInter');
+        var routingLabel = document.getElementById('routingLabel');
+        var routingValue = document.getElementById('routingValue');
+        var accountNumberLabel = document.getElementById('accountNumberLabel');
+        var beneficiaryAccount = document.getElementById('beneficiaryAccount');
+        var countryGroup = document.getElementById('countryGroup');
+        var channelIndicator = document.getElementById('channelIndicator');
+
+        if (type === 'local') {
+            tabLocal.classList.add('active');
+            tabInter.classList.remove('active');
+            routingLabel.innerText = "📌 Routing Transit Number (RTN)";
+            routingValue.placeholder = "Enter 9-digit transit field";
+            accountNumberLabel.innerText = "🔢 Beneficiary Account Number";
+            beneficiaryAccount.placeholder = "Enter ledger account number";
+            countryGroup.style.display = 'none';
+            document.getElementById('destinationCountry').removeAttribute('required');
+            channelIndicator.innerText = "FedWire Node";
+        } else {
+            tabInter.classList.add('active');
+            tabLocal.classList.remove('active');
+            routingLabel.innerText = "📌 SWIFT / BIC Network Code";
+            routingValue.placeholder = "Enter 8 or 11 alphanumeric code";
+            accountNumberLabel.innerText = "🔢 International IBAN Field";
+            beneficiaryAccount.placeholder = "Enter full alphanumeric IBAN string";
+            countryGroup.style.display = 'flex';
+            document.getElementById('destinationCountry').setAttribute('required', 'required');
+            channelIndicator.innerText = "Swift Node";
+        }
+    }
+
+    document.getElementById('wireTransferForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        var amountInp = parseFloat(document.getElementById('transferAmount').value);
+        var balanceError = document.getElementById('balanceError');
+        balanceError.style.display = 'none';
+
+        var currentBalance = parseFloat(liveUserData.balance || 0);
+
+        if (amountInp > currentBalance || amountInp <= 0 || isNaN(amountInp)) {
+            balanceError.style.display = 'block';
+            return;
+        }
+
+        var modal = document.getElementById('transferModal');
+        var mTitle = document.getElementById('modalTitle');
+        var mBody = document.getElementById('modalBody');
+        var mBtn = document.getElementById('modalCloseBtn');
+        var mIcon = document.getElementById('modalIcon');
+
+        modal.classList.add('active');
+
+        setTimeout(function() {
+            mTitle.innerText = "Verifying Route";
+            mBody.innerText = "Checking secure clearing ledger headers...";
+            
+            setTimeout(function() {
+                var d = new Date();
+                var dateStr = d.toISOString().split('T')[0];
+                var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                if (!usersArray[liveUserIndex].transactions) {
+                    usersArray[liveUserIndex].transactions = [];
+                }
+
+                var destinationName = document.getElementById('beneficiaryName').value;
+                var destinationBank = document.getElementById('bankName').value;
+                var routingInfo = document.getElementById('routingValue').value;
+                var memoText = document.getElementById('narration').value || "Outbound Wire Allocation";
+
+                // Push transaction as a pending hold status item for the administrative desk
+                usersArray[liveUserIndex].transactions.push({
+                    description: "Wire Transfer: " + memoText,
+                    sender: usersArray[liveUserIndex].fullName,
+                    receiver: destinationName + " (" + destinationBank + ")",
+                    amount: amountInp.toFixed(2),
+                    routingCode: routingInfo,
+                    channel: activeRoute === 'local' ? "Domestic (FedWire)" : "International (SWIFT)",
+                    type: "debit",
+                    date: dateStr,
+                    time: timeStr,
+                    status: "Pending Approval"
+                });
+
+                // Commit ledger payload to shared storage matrix
+                localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+
+                mIcon.innerText = "💼";
+                mTitle.innerText = "Transfer Awaiting Release";
+                mBody.innerHTML = "Your outbound transfer order has been recorded into our system secure vault pipelines.<br><br><strong>Status:</strong> Processing under administrative validation review.<br><strong>Reference Key:</strong> TXN-" + Math.floor(Math.random()*899999+100000);
+                mBtn.style.display = "block";
+            }, 2000);
+
+        }, 1500);
+    });
+
+    document.getElementById('modalCloseBtn').addEventListener('click', function() {
+        window.location.href = "user-dashboard.html";
+    });
+
+    initWireGateway();
+</script>
+
+</body>
+</html>

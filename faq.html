@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ApexonBank | FAQ Manuals Portal</title>
+    
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .accordion-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+        .accordion-header:active {
+            background-color: #f8fafc !important;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 800px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+        }
+
+        .accordion-item.active .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .chevron-icon {
+            transition: transform 0.25s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-shell" style="display: flex; flex-direction: column; width: 100%; min-height: 100vh;">
+        
+        <!-- Top Navigation Header Frame -->
+        <header style="display: grid; grid-template-columns: auto 1fr auto; align-items: center; padding: 16px 20px; background-color: #ffffff; border-bottom: 1px solid rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+            <a href="index.html" style="text-decoration: none; color: #0d6efd; font-size: 22px; font-weight: bold; padding-right: 15px; display: flex; align-items: center;">
+                ←
+            </a>
+            
+            <div class="logo" style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap;">
+                ApexonBank Clearing
+            </div>
+
+            <a href="agent-support.html" style="text-decoration: none; color: #ffffff; background-color: #10b981; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 20px; white-space: nowrap;">
+                Live
+            </a>
+        </header>
+
+        <!-- PORTAL HERO PROFILE -->
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 35px 20px; text-align: center; border-bottom: 3px solid #b38728;">
+            <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: 0.5px;">FAQ Knowledge Base</h1>
+            <p style="font-size: 13px; color: #94a3b8; max-width: 340px; margin: 0 auto; line-height: 1.4;">
+                Review foundational procedures, ledger synchronization targets, and processing benchmarks.
+            </p>
+        </div>
+
+        <!-- MAIN INTERACTIVE ACCORDION CONTAINER -->
+        <div class="app-body" style="flex-grow: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 14px;">
+            
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #64748b; font-weight: 700; margin-bottom: -2px;">
+                System Core Manuals
+            </div>
+
+            <!-- FAQ SECTION 1: ACCOUNT STACK -->
+            <div class="accordion-item" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px;">🔑</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Account Identity & Validation</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569; line-height: 1.5;">
+                        <p style="padding-top: 12px;">All digital vaults must finalize validation processes to unlock complete routing privileges. Identity parameters are processed synchronously via our key vault networks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ SECTION 2: LOAN CONFIGURATIONS (Anchor point for loan matrix links) -->
+            <div id="loans" class="accordion-item" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px;">📊</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Loan Program & Liquidity</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569; line-height: 1.5;">
+                        <p style="padding-top: 12px;">Capital allocation levels scale incrementally based on running ledger balances and consecutive multi-sig tracking compliance thresholds.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ SECTION 3: CLEARING SYSTEM -->
+            <div class="accordion-item" style="background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                <div class="accordion-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; background-color: #ffffff;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 18px;">⚡</span>
+                        <div style="font-size: 14px; font-weight: 700; color: #0f172a;">Processing Delays & Queue Releases</div>
+                    </div>
+                    <span class="chevron-icon" style="font-size: 12px; color: #64748b; font-weight: bold;">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div style="padding: 0 16px 16px 16px; border-top: 1px solid #f1f5f9; background: #fafafa; font-size: 13px; color: #475569; line-height: 1.5;">
+                        <p style="padding-top: 12px;">If a node transmission hits a pending hold queue, contact the clearing system desk with your automated ledger index sequence number to launch real-time diagnostics.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER BLOCK -->
+        <footer style="background-color: #0f172a; color: #94a3b8; padding: 24px 20px; border-top: 1px solid rgba(255, 255, 255, 0.06); width: 100%; box-sizing: border-box; font-size: 12px; text-align: center;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto;">
+                <a href="customer-service.html" style="color: #cbd5e1; text-decoration: none;">📞 Service Hotlines</a>
+                <a href="security.html" style="color: #cbd5e1; text-decoration: none;">🛡️ Vault Security</a>
+                <a href="help.html" style="color: #cbd5e1; text-decoration: none;">📋 Main Portal</a>
+                <a href="fraud.html" style="color: #f87171; text-decoration: none; font-weight: 600;">🚨 Report Abuse</a>
+            </div>
+            <div style="height: 1px; background: rgba(255,255,255,0.06); width: 100%; margin-bottom: 12px;"></div>
+            <p style="color: #475569; font-size: 11px; line-height: 1.4;">
+                © 2026 ApexonBank Infrastructure Group. Database protocols fully active.
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- ACCORDION CONTROLLER SCRIPT ENGINE -->
+    <script>
+    (function() {
+        var accordionHeaders = document.querySelectorAll('.accordion-header');
+        var items = document.querySelectorAll('.accordion-item');
+
+        accordionHeaders.forEach(function(header) {
+            header.addEventListener('click', function() {
+                var currentItem = this.parentElement;
+                var isOpen = currentItem.classList.contains('active');
+                
+                items.forEach(function(item) {
+                    item.classList.remove('active');
+                });
+
+                if (!isOpen) {
+                    currentItem.classList.add('active');
+                }
+            });
+        });
+
+        // Automatically open section if linked via anchor hash (e.g., faq.html#loans)
+        if (window.location.hash) {
+            var targetedItem = document.querySelector(window.location.hash);
+            if (targetedItem && targetedItem.classList.contains('accordion-item')) {
+                targetedItem.classList.add('active');
+                targetedItem.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    })();
+    </script>
+</body>
+</html>
