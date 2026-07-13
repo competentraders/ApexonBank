@@ -345,6 +345,24 @@
 
 
     <script>
+
+// Paste this at the start of your script blocks on ALL pages to keep sync:
+function applyGlobalSettings() {
+    var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
+    if (config.darkMode) {
+        document.body.classList.add('dark-theme-active');
+    } else {
+        document.body.classList.remove('dark-theme-active');
+    }
+}
+applyGlobalSettings();
+
+
+
+
+
+
+
     var activeRoute = 'local';
     var liveUserIndex = -1;
     var liveUserData = null;

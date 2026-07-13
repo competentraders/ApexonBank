@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | System Control & Settings</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* BASE ROOT CONSTANTS */
+        :root {
+            --bg-primary: #f4f6f8;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --border-color: rgba(0,0,0,0.05);
+            --border-dashed: #e2e8f0;
+            --header-bg: #ffffff;
+        }
+
+        /* GLOBAL DARK THEME STRUCTURAL OVERRIDES */
+        body.dark-theme-active {
+            --bg-primary: #0b0f19;
+            --bg-card: #151f32;
+            --text-main: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border-color: rgba(255,255,255,0.05);
+            --border-dashed: #334155;
+            --header-bg: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 95px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .settings-container {
+            padding: 20px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            margin: 16px 0 8px 4px;
+        }
+
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 4px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+            margin-bottom: 12px;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-dashed);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-right: 15px;
+        }
+
+        .setting-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .setting-desc {
+            font-size: 11.5px;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        /* TOGGLE SWITCHES UI */
+        .switch-toggle {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-round {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        body.dark-theme-active .slider-round {
+            background-color: #334155;
+        }
+
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 18px; width: 18px;
+            left: 3px; bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider-round {
+            background-color: #b38728;
+        }
+
+        input:checked + .slider-round:before {
+            transform: translateX(22px);
+        }
+
+        /* NAV LINK INDICATORS */
+        .chevron-link {
+            font-size: 16px;
+            color: var(--text-sub);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: var(--header-bg);
+            border-top: 1px solid var(--border-dashed);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+        /* ROBUST CONFIGURATION OVERLAYS */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; z-index: 9999;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1; pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            width: 100%; max-width: 380px;
+            padding: 24px;
+            border: 2px solid #b38728;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        .input-group {
+            display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px;
+        }
+
+        .input-group label {
+            font-size: 10.5px; font-weight: 700; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%; padding: 12px 14px; border-radius: 10px;
+            border: 1px solid var(--border-dashed); background: var(--bg-card);
+            color: var(--text-main); font-size: 14px; outline: none;
+        }
+
+        .action-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #b38728 0%, #855b18 100%);
+            color: #ffffff; border: none; border-radius: 12px;
+            font-size: 13.5px; font-weight: 700; cursor: pointer; margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="user-dashboard.html" id="backArrowLink" style="text-decoration: none; color: #b38728; font-size: 22px; font-weight: bold; padding-right: 15px;">←</a>
+        <div class="logo">Apexon Bank</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <div class="settings-container">
+
+        <!-- DISPLAY & INTERFACE SECTION -->
+        <p class="section-label">Display Preferences</p>
+        <div class="settings-card">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Dark Mode Engine</span>
+                    <span class="setting-desc">Flips the interface background to high-contrast nighttime palette across all pages.</span>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Privacy Eye Mode</span>
+                    <span class="setting-desc">Masks and hides ledger balance entries instantly across dashboard terminals.</span>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="hideBalanceToggle" onchange="toggleHideBalance()">
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- WEALTH & REWARDS INVESTMENTS MODULE -->
+        <p class="section-label">Wealth &amp; Rewards Engine</p>
+        <div class="settings-card">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Automated Yield Rewards</span>
+                    <span class="setting-desc">Activates daily algorithmic investment rewards on dashboard logs.</span>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="rewardsToggle" onchange="toggleRewardsEngine()">
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+            <div class="setting-row" onclick="openModal('investmentModal')">
+                <div class="setting-info">
+                    <span class="setting-title">Configure Portfolio Risk Tier</span>
+                    <span class="setting-desc">Set dividend allocation rates: Conservative, Growth, or Aggressive Apexon Lines.</span>
+                </div>
+                <span class="chevron-link">➔</span>
+            </div>
+        </div>
+
+        <!-- AUTHENTICATION & SECURITY DESK -->
+        <p class="section-label">Security &amp; Terminal Access</p>
+        <div class="settings-card">
+            <div class="setting-row" onclick="openModal('pinModal')">
+                <div class="setting-info">
+                    <span class="setting-title">Configure Security Pin</span>
+                    <span class="setting-desc">Manage or update your 4-digit transfer and settlement confirmation pin code.</span>
+                </div>
+                <span class="chevron-link">➔</span>
+            </div>
+            <div class="setting-row" onclick="openModal('passwordModal')">
+                <div class="setting-info">
+                    <span class="setting-title">Modify Web Password</span>
+                    <span class="setting-desc">Change the web gateway system access authentication password.</span>
+                </div>
+                <span class="chevron-link">➔</span>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Two-Factor Security (2FA)</span>
+                    <span class="setting-desc">Enforces absolute authentication tokens on administrative balance draws.</span>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="twoFactorToggle" onchange="saveGenericToggles()">
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- TRANSACTIONS & LIMIT HANDLING -->
+        <p class="section-label">System Notification Nodes</p>
+        <div class="settings-card">
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Instant Push Alerts</span>
+                    <span class="setting-desc">Receive instant transactional data signals directly to this container view.</span>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="pushAlertsToggle" onchange="saveGenericToggles()">
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-title">Email Ledger Statement Logs</span>
+                    <span class="setting-desc">Forwards system audits and weekly balance logs directly to email.</span>
+                </div>
+                <label class="switch-toggle">
+                    <input type="checkbox" id="emailLogsToggle" onchange="saveGenericToggles()">
+                    <span class="slider-round"></span>
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PERSISTENT APP LOWER DESK NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="user-dashboard.html" class="nav-item">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item active">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <!-- MODAL POPUPS STRUCTURAL OVERLAYS -->
+    
+    <!-- 1. SECURITY PIN MODAL -->
+    <div class="modal-overlay" id="pinModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 class="setting-title">Configure Secure PIN</h3>
+                <span style="cursor: pointer; font-size: 20px; font-weight: bold; color: var(--text-sub);" onclick="closeModal('pinModal')">×</span>
+            </div>
+            <div class="input-group">
+                <label>Set 4-Digit Secure Pin</label>
+                <input type="password" id="pinInput" maxlength="4" placeholder="••••" oninput="this.value=this.value.replace(/[^0-8]/g,'')">
+            </div>
+            <button class="action-btn" onclick="commitPinUpdate()">Save Security Pin</button>
+        </div>
+    </div>
+
+    <!-- 2. CHANGE PASSWORD MODAL -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 class="setting-title">Update Web Password</h3>
+                <span style="cursor: pointer; font-size: 20px; font-weight: bold; color: var(--text-sub);" onclick="closeModal('passwordModal')">×</span>
+            </div>
+            <div class="input-group">
+                <label>Current Gateway Password</label>
+                <input type="password" id="currentPassInput" placeholder="••••••••">
+            </div>
+            <div class="input-group">
+                <label>New Target Password</label>
+                <input type="password" id="newPassInput" placeholder="Minimum 6 items">
+            </div>
+            <button class="action-btn" onclick="commitPasswordUpdate()">Save Web Password</button>
+        </div>
+    </div>
+
+    <!-- 3. INVESTMENT PORTFOLIO RISK MODAL -->
+    <div class="modal-overlay" id="investmentModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 class="setting-title">Yield Allocation Profile</h3>
+                <span style="cursor: pointer; font-size: 20px; font-weight: bold; color: var(--text-sub);" onclick="closeModal('investmentModal')">×</span>
+            </div>
+            <div class="input-group">
+                <label>Target Investment Risk Allocation</label>
+                <select id="riskTierSelect">
+                    <option value="low">Conservative Yield Portfolio (1.2% Daily APY)</option>
+                    <option value="mid" selected>Balanced Compound Growth Portfolio (3.8% Daily APY)</option>
+                    <option value="high">Aggressive Alpha Wealth Tier (8.5% Daily APY)</option>
+                </select>
+            </div>
+            <button class="action-btn" onclick="commitRiskTierUpdate()">Lock Portfolio Matrix</button>
+        </div>
+    </div>
+
+    <script>
+        var globalConfig = {};
+        var usersArray = [];
+        var liveUserIndex = -1;
+        var liveUserData = null;
+
+        function initSettingsEngine() {
+            // Load global configurations mapping cross-page behaviors
+            globalConfig = JSON.parse(localStorage.getItem('apexon_global_config')) || {
+                darkMode: false,
+                hideBalance: false,
+                rewardsActive: false,
+                riskTier: "mid",
+                twoFactor: false,
+                pushAlerts: true,
+                emailLogs: false
+            };
+
+            var session = JSON.parse(localStorage.getItem('apexon_current_session'));
+            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+
+            if (!session || usersArray.length === 0) {
+                session = { username: "demo_user" };
+                usersArray = [{ username: "demo_user", password: "password123", securePin: "1234" }];
+                localStorage.setItem('apexon_current_session', JSON.stringify(session));
+                localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            }
+
+            liveUserIndex = usersArray.findIndex(u => u.username === session.username);
+            if (liveUserIndex === -1) liveUserIndex = 0;
+            liveUserData = usersArray[liveUserIndex];
+
+            // Render form settings to match loaded persistent records
+            document.getElementById('darkModeToggle').checked = globalConfig.darkMode;
+            document.getElementById('hideBalanceToggle').checked = globalConfig.hideBalance;
+            document.getElementById('rewardsToggle').checked = globalConfig.rewardsActive;
+            document.getElementById('twoFactorToggle').checked = globalConfig.twoFactor || false;
+            document.getElementById('pushAlertsToggle').checked = globalConfig.pushAlerts !== false;
+            document.getElementById('emailLogsToggle').checked = globalConfig.emailLogs || false;
+            document.getElementById('riskTierSelect').value = globalConfig.riskTier || "mid";
+
+            if (globalConfig.darkMode) {
+                document.body.classList.add('dark-theme-active');
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // CORE GLOBAL RE-THEMING CONTROLLER
+        function toggleDarkMode() {
+            globalConfig.darkMode = document.getElementById('darkModeToggle').checked;
+            localStorage.setItem('apexon_global_config', JSON.stringify(globalConfig));
+            
+            if (globalConfig.darkMode) {
+                document.body.classList.add('dark-theme-active');
+            } else {
+                document.body.classList.remove('dark-theme-active');
+            }
+        }
+
+        // TRANS-PAGE LEDGER BALANCE VISIBILITY BLOCKER
+        function toggleHideBalance() {
+            globalConfig.hideBalance = document.getElementById('hideBalanceToggle').checked;
+            localStorage.setItem('apexon_global_config', JSON.stringify(globalConfig));
+        }
+
+        // INVESTMENT ENGINE ACTIVATION TOGGLE
+        function toggleRewardsEngine() {
+            globalConfig.rewardsActive = document.getElementById('rewardsToggle').checked;
+            localStorage.setItem('apexon_global_config', JSON.stringify(globalConfig));
+            alert(globalConfig.rewardsActive ? "Daily algorithmic rewards matrix enabled." : "Yield generation tracking disabled.");
+        }
+
+        function commitRiskTierUpdate() {
+            globalConfig.riskTier = document.getElementById('riskTierSelect').value;
+            localStorage.setItem('apexon_global_config', JSON.stringify(globalConfig));
+            alert("Yield allocation parameters successfully adjusted.");
+            closeModal('investmentModal');
+        }
+
+        function saveGenericToggles() {
+            globalConfig.twoFactor = document.getElementById('twoFactorToggle').checked;
+            globalConfig.pushAlerts = document.getElementById('pushAlertsToggle').checked;
+            globalConfig.emailLogs = document.getElementById('emailLogsToggle').checked;
+            localStorage.setItem('apexon_global_config', JSON.stringify(globalConfig));
+        }
+
+        function commitPinUpdate() {
+            var val = document.getElementById('pinInput').value;
+            if (val.length !== 4) {
+                alert("Security pins must be exactly 4 digit integers.");
+                return;
+            }
+            usersArray[liveUserIndex].securePin = val;
+            localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            alert("Transactional verification PIN saved successfully.");
+            closeModal('pinModal');
+        }
+
+        function commitPasswordUpdate() {
+            var curr = document.getElementById('currentPassInput').value;
+            var nw = document.getElementById('newPassInput').value;
+
+            if (curr !== liveUserData.password) {
+                alert("Invalid existing credential verification string.");
+                return;
+            }
+            if (nw.length < 6) {
+                alert("New passwords must match structural lengths greater than 5 characters.");
+                return;
+            }
+
+            usersArray[liveUserIndex].password = nw;
+            localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            alert("System authentication parameters updated successfully.");
+            closeModal('passwordModal');
+        }
+
+        initSettingsEngine();
+    </script>
+</body>
+</html>

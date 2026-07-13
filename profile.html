@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | Institutional Profile Desk</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 85px;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .profile-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid #b38728;
+            position: relative;
+        }
+
+        .avatar-frame {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(179, 135, 40, 0.1);
+            border: 2px solid #b38728;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 12px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .user-name-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .account-tier-badge {
+            display: inline-block;
+            background: rgba(179, 135, 40, 0.2);
+            color: #FCF6BA;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            border: 1px solid #b38728;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-card-box {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+            margin-bottom: 16px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-left: 4px;
+        }
+
+        .profile-row-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+
+        .profile-row-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .profile-row-item:first-child {
+            padding-top: 0;
+        }
+
+        .item-label {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .item-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            text-align: right;
+        }
+
+        .status-pill {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .logout-btn {
+            background: #ffffff;
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.05);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+        /* SECURITY MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 380px;
+            padding: 24px;
+            border: 2px solid #b38728;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #b38728;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="user-dashboard.html" id="backArrowLink" style="text-decoration: none; color: #b38728; font-size: 22px; font-weight: bold; padding-right: 15px;">←</a>
+        <div class="logo">Apexon Bank</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <div class="profile-hero">
+        <div class="avatar-frame">👑</div>
+        <div class="user-name-title" id="profileFullName">Loading Profile...</div>
+        <div class="account-tier-badge">Private Wealth Tier</div>
+    </div>
+
+    <div style="padding: 24px 20px;">
+        
+        <!-- IDENTITY CRITERIA MATRIX -->
+        <p class="section-label">Institutional Account Records</p>
+        <div class="data-card-box">
+            <div class="profile-row-item">
+                <span class="item-label">Account Username</span>
+                <span class="item-value" id="profileUsername">...</span>
+            </div>
+            <div class="profile-row-item">
+                <span class="item-label">Primary Email Node</span>
+                <span class="item-value" id="profileEmail">...</span>
+            </div>
+            <div class="profile-row-item">
+                <span class="item-label">Assigned Currency Group</span>
+                <span class="item-value" id="profileCurrency">...</span>
+            </div>
+            <div class="profile-row-item">
+                <span class="item-label">Clearance Verification</span>
+                <span class="item-value"><span class="status-pill">Fully Verified</span></span>
+            </div>
+        </div>
+
+        <!-- SECURITY UPDATES MODULE -->
+        <p class="section-label">Security Credentials Management</p>
+        <div class="data-card-box" style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="action-btn" onclick="openPasswordModal()">🔒 Modify Authentication Password</button>
+            <button class="action-btn logout-btn" onclick="executeAppLogout()">⚠️ Terminate Session Securely</button>
+        </div>
+
+    </div>
+
+    <!-- PERSISTENT APP LOWER DESK NAVIGATION -->
+    <div class="bottom-nav">
+        <a href="user-dashboard.html" class="nav-item">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item active">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <!-- UPDATE CREDENTIALS DIALOG POPUP -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 16px; font-weight: 700; color: #0f172a;">Update Password</h3>
+                <span style="cursor: pointer; font-size: 20px; font-weight: bold; color: #94a3b8;" onclick="closePasswordModal()">×</span>
+            </div>
+
+            <div class="input-group">
+                <label>Current Account Password</label>
+                <input type="password" id="currentPassInput" placeholder="••••••••">
+            </div>
+
+            <div class="input-group">
+                <label>New Desired Password</label>
+                <input type="password" id="newPassInput" placeholder="Minimum 6 characters">
+            </div>
+
+            <button class="action-btn" style="background: linear-gradient(135deg, #b38728 0%, #855b18 100%);" onclick="commitPasswordUpdate()">Save Security Parameters</button>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+
+// Paste this at the start of your script blocks on ALL pages to keep sync:
+function applyGlobalSettings() {
+    var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
+    if (config.darkMode) {
+        document.body.classList.add('dark-theme-active');
+    } else {
+        document.body.classList.remove('dark-theme-active');
+    }
+}
+applyGlobalSettings();
+
+
+
+        var usersArray = [];
+        var liveUserIndex = -1;
+        var liveUserData = null;
+
+        function initProfileEngine() {
+            var session = JSON.parse(localStorage.getItem('apexon_current_session'));
+            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+
+            // Set up clean fallback structural profiles if working outside main stream dashboard loops
+            if (!session || usersArray.length === 0) {
+                session = { username: "demo_user" };
+                usersArray = [{
+                    username: "demo_user",
+                    fullName: "Global Account Holder",
+                    email: "wealth@apexon.internal",
+                    password: "password123",
+                    balance: "25800.00",
+                    currency: "USD ($)"
+                }];
+                localStorage.setItem('apexon_current_session', JSON.stringify(session));
+                localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            }
+
+            liveUserIndex = usersArray.findIndex(u => u.username === session.username);
+            if (liveUserIndex === -1) liveUserIndex = 0;
+
+            liveUserData = usersArray[liveUserIndex];
+
+            // Render live text nodes directly from database storage arrays
+            document.getElementById('profileFullName').innerText = liveUserData.fullName || "Corporate Account Holder";
+            document.getElementById('profileUsername').innerText = "@" + liveUserData.username;
+            document.getElementById('profileEmail').innerText = liveUserData.email || "Not Configured";
+            document.getElementById('profileCurrency').innerText = liveUserData.currency || "USD ($)";
+        }
+
+        function openPasswordModal() {
+            document.getElementById('currentPassInput').value = "";
+            document.getElementById('newPassInput').value = "";
+            document.getElementById('passwordModal').classList.add('active');
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        function commitPasswordUpdate() {
+            var currentInp = document.getElementById('currentPassInput').value;
+            var newInp = document.getElementById('newPassInput').value;
+
+            if (currentInp === "" || newInp === "") {
+                alert("Please fill in all requested fields.");
+                return;
+            }
+
+            if (currentInp !== liveUserData.password) {
+                alert("The current password entered is invalid. Security access denied.");
+                return;
+            }
+
+            if (newInp.length < 6) {
+                alert("New security credential strings must contain at least 6 characters.");
+                return;
+            }
+
+            // Commit back into persistent system storage arrays
+            usersArray[liveUserIndex].password = newInp;
+            localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            
+            alert("Security matrix credentials updated successfully.");
+            closePasswordModal();
+        }
+
+        function executeAppLogout() {
+            if (confirm("Are you sure you want to terminate this operational banking session securely?")) {
+                localStorage.removeItem('apexon_current_session');
+                window.location.href = "login.html"; // Redirect straight back into the gateway page
+            }
+        }
+
+        initProfileEngine();
+    </script>
+</body>
+</html>
