@@ -4,7 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Clearing Matrix Dashboard</title>
-    
+    <!-- PWA MANIFEST LINK -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- SERVICE WORKER REGISTRATION SCRIPT -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
+        .catch(err => console.log('Registration failed:', err));
+    });
+  }
+</script>
+
+
+
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
@@ -256,9 +275,9 @@
                 <div class="card-title-text">Buy Airtime</div>
             </a>
 
-            <a href="card.html" class="action-card">
+            <a href="gift-card.html" class="action-card">
                 <div class="action-icon">💳</div>
-                <div class="card-title-text">Credit Card</div>
+                <div class="card-title-text">Gift Card</div>
             </a>
         </div>
 
