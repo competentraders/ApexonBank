@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apexon Bank | Capital Credit Desk</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #f4f6f8;
+            color: #1e293b;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding-bottom: 85px;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 16px 20px;
+            background-color: #ffffff;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .loans-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 4px;
+        }
+
+        .loan-card {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            position: relative;
+        }
+
+        .loan-card:active {
+            transform: scale(0.99);
+        }
+
+        .loan-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .loan-icon-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(179, 135, 40, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #b38728;
+        }
+
+        .loan-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .loan-card p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .limit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 12px;
+        }
+
+        .limit-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .limit-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #b38728;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: #b38728;
+            box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.15);
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748b' viewBox='0 0 16 16'><path d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 16px) center;
+            background-size: 12px;
+        }
+
+        .rate-badge-info {
+            background: rgba(179, 135, 40, 0.08);
+            border: 1px solid rgba(179, 135, 40, 0.2);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #855b18;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .error-msg {
+            font-size: 11px;
+            color: #ef4444;
+            margin-top: 4px;
+            display: none;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 5px;
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+            transition: transform 0.1s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .wizard-steps-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .step-dot {
+            width: 24px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: #b38728;
+            width: 36px;
+        }
+
+        .verifying-text-badge {
+            font-size: 18px;
+            font-weight: 700;
+            color: #b38728;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 30px 0;
+            animation: verificationPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes verificationPulse {
+            0% { opacity: 0.1; transform: scale(0.96); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.1; transform: scale(0.96); }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 380px;
+            padding: 30px 24px;
+            text-align: center;
+            border: 2px solid #b38728;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active { color: #b38728; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="user-dashboard.html" id="backArrowLink" style="text-decoration: none; color: #b38728; font-size: 22px; font-weight: bold; padding-right: 15px;">←</a>
+        <div class="logo">Apexon Bank</div>
+        <div style="width: 22px;"></div>
+    </header>
+
+    <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 24px 20px; border-bottom: 3px solid #b38728; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Ledger Balance</p>
+            <h2 style="font-size: 22px; font-weight: 700; margin-top: 2px; color: #ffffff;" id="liveBalanceDisplay">...</h2>
+        </div>
+        <div style="text-align: right;">
+            <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Credit Line</p>
+            <span style="background: rgba(179, 135, 40, 0.2); color: #FCF6BA; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid #b38728; display: inline-block; margin-top: 4px;">Instant Draw</span>
+        </div>
+    </div>
+
+    <div style="flex-grow: 1; padding: 24px 20px;">
+        <p style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;">Available Lending Portfolios</p>
+
+        <div class="loans-stack">
+            <div class="loan-card" onclick="openLendingDesk('Personal Cash Injection', 5000, 3.5)">
+                <div class="loan-header">
+                    <div class="loan-icon-badge">👤</div>
+                    <h3>Personal Capital Advance</h3>
+                </div>
+                <p>Instant personal funding allocations for immediate invoice clearance, consumer purchases, or emergency liquidity.</p>
+                <div class="limit-row">
+                    <span class="limit-label">Maximum Limit</span>
+                    <span class="limit-value"><span class="currency-token"></span>5,000.00</span>
+                </div>
+            </div>
+
+            <div class="loan-card" onclick="openLendingDesk('Asset Acquisition Credit', 35000, 5.2)">
+                <div class="loan-header">
+                    <div class="loan-icon-badge">🚗</div>
+                    <h3>Asset &amp; Mobility Loans</h3>
+                </div>
+                <p>Structural funding lines deployed for equipment procurement, system updates, or auto-logistics assets.</p>
+                <div class="limit-row">
+                    <span class="limit-label">Maximum Limit</span>
+                    <span class="limit-value"><span class="currency-token"></span>35,000.00</span>
+                </div>
+            </div>
+
+            <div class="loan-card" onclick="openLendingDesk('Commercial Business Line', 150000, 7.8)">
+                <div class="loan-header">
+                    <div class="loan-icon-badge">🏢</div>
+                    <h3>Enterprise Expansion Portfolio</h3>
+                </div>
+                <p>High-volume commercial backing built for corporate inventory setups, operation scale-outs, or operational assets.</p>
+                <div class="limit-row">
+                    <span class="limit-label">Maximum Limit</span>
+                    <span class="limit-value"><span class="currency-token"></span>150,000.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <a href="user-dashboard.html" class="nav-item">
+            <div class="nav-icon">🏛️</div>
+            <div>Home</div>
+        </a>
+        <a href="loans.html" class="nav-item active">
+            <div class="nav-icon">💰</div>
+            <div>Loans</div>
+        </a>
+        <a href="card.html" class="nav-item">
+            <div class="nav-icon">💳</div>
+            <div>Cards</div>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">👤</div>
+            <div>Profile</div>
+        </a>
+        <a href="settings.html" class="nav-item">
+            <div class="nav-icon">⚙️</div>
+            <div>Settings</div>
+        </a>
+    </div>
+
+    <!-- MODAL POPUP WRAPPER -->
+    <div class="modal-overlay" id="loanModal">
+        <div class="modal-card" style="text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="font-size: 16px; font-weight: 700; color: #0f172a;" id="deskTitle">Lending Terminal</h2>
+                <span id="closeModalBtn" style="cursor: pointer; font-size: 20px; font-weight: bold; color: #94a3b8;" onclick="closeLendingDesk()">×</span>
+            </div>
+
+            <div class="wizard-steps-indicator" id="wizardProgressRow">
+                <div class="step-dot active" id="dot1"></div>
+                <div class="step-dot" id="dot2"></div>
+                <div class="step-dot" id="dot3"></div>
+            </div>
+
+            <!-- STAGE 1 CONTAINER -->
+            <div class="wizard-stage-view" id="stage1">
+                <div class="input-group">
+                    <label>Desired Draw Amount (<span class="currency-token"></span>)</label>
+                    <input type="number" step="0.01" id="loanAmountInput" placeholder="0.00">
+                    <div class="error-msg" id="limitErrorAlert">Requested amount exceeds portfolio limits</div>
+                </div>
+
+                <div class="input-group">
+                    <label>Repayment Amortization Term</label>
+                    <select id="loanTermSelect">
+                        <option value="6">6 Months Term Schedule</option>
+                        <option value="12" selected>12 Months Term Schedule</option>
+                        <option value="24">24 Months Term Schedule</option>
+                        <option value="48">48 Months Term Schedule</option>
+                    </select>
+                </div>
+
+                <div class="rate-badge-info">
+                    <div>Interest Rate: <span id="rateLabelDisplay" style="color: #b38728; font-weight: 700;">0.0%</span></div>
+                    <div>Status: <span style="color: #10b981; font-weight: 700;">Pre-Approved</span></div>
+                </div>
+                <button type="button" class="action-btn" onclick="goToStage2()">Next</button>
+            </div>
+
+            <!-- STAGE 2 CONTAINER -->
+            <div class="wizard-stage-view" id="stage2" style="display: none;">
+                <div class="input-group">
+                    <label>🏠 Residential Address</label>
+                    <input type="text" id="userAddress" placeholder="Full legal street address, City, State">
+                </div>
+                
+                <div class="input-group">
+                    <label>👤 Next of Kin Full Name</label>
+                    <input type="text" id="nextOfKinName" placeholder="First and last name">
+                </div>
+
+                <div class="input-group">
+                    <label>🔗 Relationship to Next of Kin</label>
+                    <input type="text" id="nextOfKinRel" placeholder="e.g. Spouse, Sibling, Parent">
+                </div>
+                <button type="button" class="action-btn" onclick="goToStage3()">Next</button>
+            </div>
+
+            <!-- STAGE 3 CONTAINER -->
+            <div class="wizard-stage-view" id="stage3" style="display: none;">
+                <div class="input-group">
+                    <label>📞 Next of Kin Contact Phone</label>
+                    <input type="tel" id="nextOfKinPhone" placeholder="+1 or Local Line Number">
+                </div>
+
+                <div class="input-group">
+                    <label>👨‍👩‍👧 Secondary Family Guarantor Contact</label>
+                    <input type="tel" id="familyContact2" placeholder="Alternative relative contact number">
+                </div>
+
+                <p style="font-size: 12px; color: #64748b; line-height: 1.4; margin-bottom: 16px;">
+                    By submitting, you authorize ApexonBank Capital Risk engines to instantly evaluate credit risk headers.
+                </p>
+                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #b38728 0%, #855b18 100%); color: #ffffff;" onclick="submitFinalLoanRequest()">ApexonBank Grant Loan</button>
+            </div>
+
+            <!-- FADING PULSE LOADER (30 SECONDS) -->
+            <div id="loadingStateBlock" style="display: none; text-align: center; padding: 25px 0;">
+                <div style="font-size: 40px; margin-bottom: 10px;">🛡️</div>
+                <div class="verifying-text-badge">ApexonBank loan verification</div>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.5; padding: 0 10px;">
+                    Parsing security verification, risk indexing, and recording immediate credits...
+                </p>
+            </div>
+
+            <!-- COMPLETION DISBURSEMENT BANNER -->
+            <div id="successStateBlock" style="display: none; text-align: center; padding: 20px 0;">
+                <div style="font-size: 48px; margin-bottom: 14px;">✅</div>
+                <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Capital Disbursed</h2>
+                <p style="font-size: 13.5px; color: #475569; line-height: 1.5;" id="successNarrative">
+                    Asset complete. Redirecting...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var selectedTierName = "";
+        var activeTierLimit = 0.00;
+        var currencySymbol = "$";
+        var usersArray = [];
+        var liveUserIndex = -1;
+        var liveUserData = null;
+
+        function initLoansEngine() {
+            var session = JSON.parse(localStorage.getItem('apexon_current_session'));
+            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+
+            // Set up clean dashboard re-routing endpoints
+            var dashboardFilename = "user-dashboard.html"; 
+            document.getElementById('backArrowLink').href = dashboardFilename;
+            var homeTab = document.querySelector('.bottom-nav a[href="user-dashboard.html"]');
+            if (homeTab) homeTab.href = dashboardFilename;
+
+            // Sandbox fallback data engine injection check
+            if (!session || usersArray.length === 0) {
+                session = { username: "demo_user" };
+                usersArray = [{
+                    username: "demo_user",
+                    fullName: "Global Account Holder",
+                    balance: "25800.00",
+                    currency: "$"
+                }];
+                localStorage.setItem('apexon_current_session', JSON.stringify(session));
+                localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            }
+
+            liveUserIndex = usersArray.findIndex(u => u.username === session.username);
+            if (liveUserIndex === -1) liveUserIndex = 0;
+            
+            liveUserData = usersArray[liveUserIndex];
+            currencySymbol = liveUserData.currency || "$";
+
+            var formattedBal = currencySymbol + parseFloat(liveUserData.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            document.getElementById('liveBalanceDisplay').innerText = formattedBal;
+
+            document.querySelectorAll('.currency-token').forEach(function(el) {
+                el.innerText = currencySymbol;
+            });
+        }
+
+        function openLendingDesk(tierName, limitValue, baseRate) {
+            selectedTierName = tierName;
+            activeTierLimit = parseFloat(limitValue);
+
+            document.getElementById('deskTitle').innerText = tierName;
+            document.getElementById('rateLabelDisplay').innerText = baseRate + "% APR";
+            
+            var amountInput = document.getElementById('loanAmountInput');
+            amountInput.max = limitValue;
+            amountInput.placeholder = "Max limit: " + limitValue.toLocaleString();
+            amountInput.value = "";
+
+            document.getElementById('userAddress').value = "";
+            document.getElementById('nextOfKinName').value = "";
+            document.getElementById('nextOfKinRel').value = "";
+            document.getElementById('nextOfKinPhone').value = "";
+            document.getElementById('familyContact2').value = "";
+
+            showStageView(1);
+            document.getElementById('limitErrorAlert').style.display = "none";
+            document.getElementById('wizardProgressRow').style.display = "flex";
+            document.getElementById('closeModalBtn').style.display = "block";
+            document.getElementById('loadingStateBlock').style.display = "none";
+            document.getElementById('successStateBlock').style.display = "none";
+
+            document.getElementById('loanModal').classList.add('active');
+        }
+
+        function closeLendingDesk() {
+            document.getElementById('loanModal').classList.remove('active');
+        }
+
+        function showStageView(stepNum) {
+            document.querySelectorAll('.wizard-stage-view').forEach(function(view) {
+                view.style.display = "none";
+            });
+            document.querySelectorAll('.step-dot').forEach(function(dot) {
+                dot.classList.remove('active');
+            });
+
+            document.getElementById('stage' + stepNum).style.display = "block";
+            document.getElementById('dot' + stepNum).classList.add('active');
+        }
+
+        // ISOLATED BUTTON CONTROL ROUTERS
+        function goToStage2() {
+            var requestedVal = parseFloat(document.getElementById('loanAmountInput').value);
+            var limitErrorAlert = document.getElementById('limitErrorAlert');
+            limitErrorAlert.style.display = "none";
+
+            if (isNaN(requestedVal) || requestedVal <= 0 || requestedVal > activeTierLimit) {
+                limitErrorAlert.style.display = "block";
+                return;
+            }
+            showStageView(2);
+        }
+
+        function goToStage3() {
+            if(document.getElementById('userAddress').value.trim() === "" || 
+               document.getElementById('nextOfKinName').value.trim() === "" || 
+               document.getElementById('nextOfKinRel').value.trim() === "") {
+                alert("Please fill in all requested fields to continue verification.");
+                return;
+            }
+            showStageView(3);
+        }
+
+        function submitFinalLoanRequest() {
+            if(document.getElementById('nextOfKinPhone').value.trim() === "" || 
+               document.getElementById('familyContact2').value.trim() === "") {
+                alert("Please complete family contact verification values.");
+                return;
+            }
+
+            // Collapse active cards & views smoothly
+            document.querySelectorAll('.wizard-stage-view').forEach(function(view) { view.style.display = "none"; });
+            document.getElementById('wizardProgressRow').style.display = "none";
+            document.getElementById('closeModalBtn').style.display = "none";
+            
+            // Render the 30-second fading pulse loader screen
+            document.getElementById('loadingStateBlock').style.display = "block";
+
+            setTimeout(function() {
+                var finalDrawValue = parseFloat(document.getElementById('loanAmountInput').value);
+                var currentBal = parseFloat(liveUserData.balance || 0);
+                
+                usersArray[liveUserIndex].balance = (currentBal + finalDrawValue).toFixed(2);
+
+                var d = new Date();
+                var dateStr = d.toISOString().split('T')[0];
+                var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                if (!usersArray[liveUserIndex].transactions) {
+                    usersArray[liveUserIndex].transactions = [];
+                }
+
+                var selectedMonths = document.getElementById('loanTermSelect').value;
+
+                usersArray[liveUserIndex].transactions.unshift({
+                    description: "Capital Disbursed: " + selectedTierName + " (" + selectedMonths + " Months Amortization)",
+                    sender: "Apexon Liquidity Underwriting Node",
+                    receiver: liveUserData.fullName,
+                    amount: finalDrawValue.toFixed(2),
+                    type: "credit",
+                    date: dateStr,
+                    time: timeStr,
+                    status: "Successful ✅"
+                });
+
+                localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+
+                document.getElementById('loadingStateBlock').style.display = "none";
+                document.getElementById('successStateBlock').style.display = "block";
+                
+                var successTxt = "An instant credit of <strong>" + currencySymbol + finalDrawValue.toLocaleString('en-US', { minimumFractionDigits: 2 }) + "</strong> has passed underwriting verification rules and been approved.";
+                document.getElementById('successNarrative').innerHTML = successTxt;
+
+                setTimeout(function() {
+                    window.location.href = "user-dashboard.html";
+                }, 2500);
+
+            }, 30000); // 30 Seconds absolute check timer loop
+        }
+
+        initLoansEngine();
+    </script>
+</body>
+</html>
