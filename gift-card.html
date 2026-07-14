@@ -14,6 +14,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* Base Reset & Variables */
@@ -32,6 +35,7 @@
             color: #ffffff;
             overflow-x: hidden;
             overflow-y: auto;
+            padding-bottom: 85px; /* Adjusting for sticky nav spacing */
         }
 
         /* Scrollbar styling */
@@ -54,9 +58,14 @@
         }
 
         @keyframes pulseGlow {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(37, 99, 235, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(179, 135, 40, 0.5); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(179, 135, 40, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(179, 135, 40, 0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* Gift card active/selected styling */
@@ -67,12 +76,53 @@
         }
         .gift-card-option:hover {
             transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(179, 135, 40, 0.4);
         }
         .gift-card-option.active {
-            border-color: #3b82f6 !important;
-            background: rgba(59, 130, 246, 0.08) !important;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+            border-color: #b38728 !important;
+            background: rgba(179, 135, 40, 0.08) !important;
+            box-shadow: 0 0 15px rgba(179, 135, 40, 0.15);
+        }
+
+        /* Responsive Bottom Nav Style */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            height: 65px;
+            background: #111827;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            width: 20%;
+            height: 100%;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active { 
+            color: #b38728; 
+        }
+        
+        .nav-icon { 
+            font-size: 18px; 
+            margin-bottom: 4px; 
         }
     </style>
 
@@ -97,15 +147,14 @@
         <!-- App Header with Navigation -->
         <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: rgba(11, 15, 25, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255, 255, 255, 0.03);">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <a href="index.html" style="text-decoration: none; color: #94a3b8; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                    <!-- Minimalist Left Arrow -->
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                <a href="user-dashboard.html" style="text-decoration: none; color: #b38728; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.03); border: 1px solid rgba(179,135,40,0.2);">
+                    <i class="fa-solid fa-arrow-left" style="font-size: 14px;"></i>
                 </a>
                 <div class="logo" style="font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ApexonBank</div>
             </div>
             
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; background: rgba(255,255,255,0.03); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">Dep. Node #04</span>
+                <span style="font-size: 11px; color: #FCF6BA; font-weight: 600; text-transform: uppercase; background: rgba(179,135,40,0.15); padding: 4px 8px; border-radius: 6px; border: 1px solid rgba(179,135,40,0.3);">easy account way to deposit</span>
             </div>
         </header>
 
@@ -119,15 +168,15 @@
             </div>
 
             <!-- DYNAMIC OPERATIONAL INSTRUCTION HEADS-UP -->
-            <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(29, 78, 216, 0.05) 100%); border-radius: 16px; padding: 18px; border: 1px solid rgba(37, 99, 235, 0.25); display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: linear-gradient(135deg, rgba(179, 135, 40, 0.1) 0%, rgba(179, 135, 40, 0.03) 100%); border-radius: 16px; padding: 18px; border: 1px solid rgba(179, 135, 40, 0.25); display: flex; flex-direction: column; gap: 12px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 20px;">🚀</span>
-                    <h3 style="font-size: 13px; font-weight: 700; color: #60a5fa; text-transform: uppercase; letter-spacing: 0.5px;">Easiest Funding Route</h3>
+                    <span style="color: #b38728; font-size: 16px;"><i class="fa-solid fa-rocket"></i></span>
+                    <h3 style="font-size: 13px; font-weight: 700; color: #FCF6BA; text-transform: uppercase; letter-spacing: 0.5px;">Easiest Funding Route</h3>
                 </div>
                 <p style="font-size: 12px; color: #e2e8f0; line-height: 1.5;">
                     The fastest way to fund your wallet balance is by providing a physical gift card asset. Acquire any brand card worth <strong>$1,000 or above</strong> and submit the details to our ledger desk below.
                 </p>
-                <div style="background: rgba(11, 15, 25, 0.5); border-radius: 8px; padding: 10px; border-left: 3px solid #22c55e;">
+                <div style="background: rgba(11, 15, 25, 0.5); border-radius: 8px; padding: 10px; border-left: 3px solid #b38728;">
                     <p style="font-size: 11px; color: #94a3b8; line-height: 1.4;">
                         <strong>Step 1:</strong> Buy a gift card worth $1,000 or more.<br>
                         <strong>Step 2:</strong> Capture a high-quality photo of the physical card (front & back).<br>
@@ -138,66 +187,66 @@
 
             <!-- THE DEPOSIT CONFIGURATOR WORKSPACE -->
             <div style="background: #111827; border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.03);">
-                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #4b5563; margin-bottom: 15px;">1. Select Card Brand</h3>
+                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 15px;">1. Select Card Brand</h3>
                 
                 <!-- Cards Selection Grid -->
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px;">
                     
                     <!-- Card: Apple -->
                     <div onclick="selectCard('Apple Gift Card', 85, '#ff4b4b')" class="gift-card-option active" id="card-apple" style="background: #1f2937; border-radius: 12px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">🍎</span>
+                        <span style="font-size: 18px; color: #ffffff;"><i class="fa-brands fa-apple"></i></span>
                         <div style="font-size: 11px; font-weight: 700;">Apple</div>
                         <div style="font-size: 9px; color: #22c55e; font-weight: 600;">85% Return</div>
                     </div>
 
                     <!-- Card: Razer Gold -->
                     <div onclick="selectCard('Razer Gold', 86, '#00ff3c')" class="gift-card-option" id="card-razer" style="background: #1f2937; border-radius: 12px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">🐍</span>
+                        <span style="font-size: 16px; color: #22c55e;"><i class="fa-solid fa-gamepad"></i></span>
                         <div style="font-size: 11px; font-weight: 700;">Razer Gold</div>
                         <div style="font-size: 9px; color: #22c55e; font-weight: 600;">86% Return</div>
                     </div>
 
                     <!-- Card: Steam -->
                     <div onclick="selectCard('Steam Wallet', 80, '#103050')" class="gift-card-option" id="card-steam" style="background: #1f2937; border-radius: 12px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">🎮</span>
+                        <span style="font-size: 16px; color: #60a5fa;"><i class="fa-brands fa-steam"></i></span>
                         <div style="font-size: 11px; font-weight: 700;">Steam</div>
                         <div style="font-size: 9px; color: #22c55e; font-weight: 600;">80% Return</div>
                     </div>
 
                     <!-- Card: Amazon -->
                     <div onclick="selectCard('Amazon US', 82, '#ff9900')" class="gift-card-option" id="card-amazon" style="background: #1f2937; border-radius: 12px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">📦</span>
+                        <span style="font-size: 16px; color: #ff9900;"><i class="fa-brands fa-amazon"></i></span>
                         <div style="font-size: 11px; font-weight: 700;">Amazon</div>
                         <div style="font-size: 9px; color: #22c55e; font-weight: 600;">82% Return</div>
                     </div>
 
                     <!-- Card: Google Play -->
                     <div onclick="selectCard('Google Play', 78, '#34a853')" class="gift-card-option" id="card-google" style="background: #1f2937; border-radius: 12px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">🤖</span>
+                        <span style="font-size: 16px; color: #34a853;"><i class="fa-brands fa-google-play"></i></span>
                         <div style="font-size: 11px; font-weight: 700;">Google</div>
                         <div style="font-size: 9px; color: #22c55e; font-weight: 600;">78% Return</div>
                     </div>
 
                     <!-- Card: Sephora -->
                     <div onclick="selectCard('Sephora Card', 83, '#e11d48')" class="gift-card-option" id="card-sephora" style="background: #1f2937; border-radius: 12px; padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">💄</span>
+                        <span style="font-size: 16px; color: #e11d48;"><i class="fa-solid fa-bag-shopping"></i></span>
                         <div style="font-size: 11px; font-weight: 700;">Sephora</div>
                         <div style="font-size: 9px; color: #22c55e; font-weight: 600;">83% Return</div>
                     </div>
 
                 </div>
 
-                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #4b5563; margin-bottom: 12px;">2. Transaction Valuation</h3>
+                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 12px;">2. Transaction Valuation</h3>
                 
                 <!-- Interactive Valuation Fields -->
                 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
                     <!-- Input: Card Face Value -->
                     <div style="background: #1f2937; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <label for="faceValue" style="font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 600;">Face Value (USD)</label>
-                            <input type="number" id="faceValue" value="1000" min="20" max="10000" oninput="calculateExchange()" style="background: transparent; border: none; outline: none; font-size: 18px; font-weight: 700; color: #ffffff; width: 120px; margin-top: 2px;">
+                            <label for="faceValue" style="font-size: 10px; text-transform: uppercase; color: #64748b; font-weight: 600;">Value (USD)</label>
+                            <input type="number" id="faceValue" value="1000" min="1000" max="20000" oninput="calculateExchange()" style="background: transparent; border: none; outline: none; font-size: 18px; font-weight: 700; color: #ffffff; width: 120px; margin-top: 2px;">
                         </div>
-                        <span id="selectedCardBadge" style="background: rgba(255,255,255,0.05); color: #ffffff; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">Apple Gift Card</span>
+                        <span id="selectedCardBadge" style="background: rgba(179, 135, 40, 0.1); color: #FCF6BA; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(179,135,40,0.3);">Apple Gift Card</span>
                     </div>
 
                     <!-- Output: Calculated Deposit Yield -->
@@ -212,7 +261,7 @@
                     </div>
                 </div>
 
-                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #4b5563; margin-bottom: 12px;">3. Secure Pin & Codes</h3>
+                <h3 style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 12px;">3. Secure Pin & Codes</h3>
 
                 <!-- Secure Input Fields -->
                 <form id="exchangeForm" onsubmit="handleExchangeSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
@@ -225,8 +274,8 @@
                         <input type="text" id="accountNo" placeholder="Apexon Acct Number" required style="width: 100%; background: #1f2937; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 14px; font-size: 13px; color: #ffffff; outline: none; font-weight: 500;">
                     </div>
 
-                    <!-- Dynamic Action Submit Button -->
-                    <button type="submit" id="submitBtn" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; border: none; border-radius: 14px; padding: 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">
+                    <!-- Dynamic Action Submit Button with brand matching style -->
+                    <button type="submit" id="submitBtn" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; border: 1px solid #b38728; border-radius: 14px; padding: 16px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(179, 135, 40, 0.15);">
                         Authorize Instant Deposit
                     </button>
                 </form>
@@ -235,30 +284,30 @@
 
             <!-- EXCHANGE PIPELINE STATE BAR -->
             <div id="processingCard" style="display: none; background: #111827; border: 1px solid rgba(255,255,255,0.03); border-radius: 16px; padding: 18px; text-align: center;">
-                <div style="display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: #3b82f6; animation: spin 1s ease-in-out infinite; margin-bottom: 12px;"></div>
+                <div style="display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.1); border-radius: 50%; border-top-color: #b38728; animation: spin 1s ease-in-out infinite; margin-bottom: 12px;"></div>
                 <h4 style="font-size: 13px; font-weight: 700; color: #ffffff; margin-bottom: 4px;">Securing Ledger Verification</h4>
                 <p style="font-size: 11px; color: #64748b; line-height: 1.4;">Checking database claims and system balances. Do not close this panel.</p>
             </div>
 
             <!-- SUCCESS ALERTS -->
             <div id="successCard" style="display: none; background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); border-radius: 16px; padding: 18px; text-align: center; animation: subtleGlow 2s infinite;">
-                <span style="font-size: 28px;">✅</span>
+                <span style="font-size: 24px; color: #22c55e;"><i class="fa-solid fa-circle-check"></i></span>
                 <h4 style="font-size: 14px; font-weight: 700; color: #22c55e; margin: 8px 0 4px 0;">Validation Pipeline Initialized</h4>
                 <p id="successMessage" style="font-size: 11px; color: #94a3b8; line-height: 1.4; max-width: 300px; margin: 0 auto;"></p>
             </div>
 
             <!-- EXPLICIT USER GUIDES FOR INSTANT VERIFICATION -->
-            <div style="background: rgba(37, 99, 235, 0.03); border: 1px solid rgba(37, 99, 235, 0.1); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
-                <h4 style="font-size: 12px; font-weight: 700; color: #3b82f6; text-transform: uppercase; letter-spacing: 0.5px;">Verification & Processing Policy</h4>
+            <div style="background: rgba(179, 135, 40, 0.03); border: 1px solid rgba(179, 135, 40, 0.1); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+                <h4 style="font-size: 12px; font-weight: 700; color: #FCF6BA; text-transform: uppercase; letter-spacing: 0.5px;">Verification & Processing Policy</h4>
                 
                 <div style="font-size: 11px; color: #94a3b8; line-height: 1.5; display: flex; flex-direction: column; gap: 8px;">
                     <div>
-                        <strong>📷 Required Supporting Documents:</strong><br>
-                        Once you finish registering your deposit order, click the blue live chat bubble to speak to an agent. You must send a clear photo of the <strong>front and back of the physical gift card</strong> alongside the claim code.
+                        <strong><i class="fa-solid fa-camera" style="color: #b38728; margin-right: 4px;"></i> Required Supporting Documents:</strong><br>
+                        Once you finish registering your deposit order, click the gold live chat bubble to speak to an agent. You must send a clear photo of the <strong>front and back of the physical gift card</strong> alongside the claim code.
                     </div>
                     <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.05);">
                     <div>
-                        <strong>⚡ VIP Immediate Processing:</strong><br>
+                        <strong><i class="fa-solid fa-bolt" style="color: #b38728; margin-right: 4px;"></i> VIP Immediate Processing:</strong><br>
                         Purchasing a new physical gift card of **$1,000 or greater** ensures priority routing. Send the photo of your card directly to live support for immediate audit clearing.
                     </div>
                 </div>
@@ -267,11 +316,11 @@
         </div>
 
         <!-- PREMIUM FLOAT CHAT TRIGGER BUBBLE WITH TEXT SIGNPOST -->
-        <div style="position: fixed; bottom: 24px; right: 24px; display: flex; align-items: center; gap: 10px; z-index: 999;">
+        <div style="position: fixed; bottom: 85px; right: 24px; display: flex; align-items: center; gap: 10px; z-index: 999;">
             <div style="background: #1e293b; color: #ffffff; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); white-space: nowrap;">
-                Send Card Details Here! 💬
+                Send Card Details Here! <i class="fa-solid fa-arrow-right" style="margin-left: 2px;"></i>
             </div>
-            <button id="customTawkTrigger" style="width: 56px; height: 56px; border-radius: 50%; background: #2563eb; border: none; outline: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); animation: pulseGlow 2.5s infinite; transition: transform 0.2s;">
+            <button id="customTawkTrigger" style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #BF953F 0%, #B38728 100%); border: none; outline: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(179, 135, 40, 0.4); animation: pulseGlow 2.5s infinite; transition: transform 0.2s;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="#ffffff"/>
                 </svg>
@@ -286,16 +335,25 @@
             
             <div style="display: flex; justify-content: center; gap: 20px; font-size: 11px;">
                 <a href="#" id="footerSupportTrigger" style="color: #64748b; text-decoration: none;">24/7 Live Agent</a>
-                <span style="color: #1e293b;">•</span>
+                <span style="color: #111827;">�</span>
                 <a href="faq.html" style="color: #64748b; text-decoration: none;">FAQ Support</a>
-                <span style="color: #1e293b;">•</span>
+                <span style="color: #111827;">�</span>
                 <a href="customer-service.html" style="color: #64748b; text-decoration: none;">Legal Framework</a>
             </div>
 
             <p style="font-size: 10px; color: #475569; line-height: 1.4; max-width: 300px; margin: 4px auto 0 auto;">
-                © 2026 ApexonBank Network Group. Secured cryptographic ledger keys active.
+                � 2026 ApexonBank Network Group.
             </p>
         </footer>
+
+        <!-- SECURE DASHBOARD STICKY NAVIGATION BAR -->
+        <div class="bottom-nav">
+            <a href="user-dashboard.html" class="nav-item"><div class="nav-icon"><i class="fa-solid fa-house"></i></div><div>Home</div></a>
+            <a href="loans.html" class="nav-item"><div class="nav-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div><div>Loans</div></a>
+            <a href="card.html" class="nav-item active"><div class="nav-icon"><i class="fa-solid fa-credit-card"></i></div><div>Cards</div></a>
+            <a href="profile.html" class="nav-item"><div class="nav-icon"><i class="fa-solid fa-user"></i></div><div>Profile</div></a>
+            <a href="settings.html" class="nav-item"><div class="nav-icon"><i class="fa-solid fa-gear"></i></div><div>Settings</div></a>
+        </div>
 
     </div>
 
@@ -373,7 +431,7 @@
                 // Success Card Frame Update with Explicit Live Support Instruction
                 document.getElementById('successMessage').innerHTML = `
                     Your deposit order has been safely initiated for card: <strong>${selectedName}</strong> ($${faceValue} USD). <br><br>
-                    <strong>🚨 Action Required:</strong> To finish processing this deposit of <strong>$${yieldVal} USD</strong> to Account <strong>${accountNo}</strong>, please click the blue chat bubble below and send:
+                    <strong><i class="fa-solid fa-triangle-exclamation"></i> Action Required:</strong> To finish processing this deposit of <strong>$${yieldVal} USD</strong> to Account <strong>${accountNo}</strong>, please click the gold chat bubble below and send:
                     <ul style="text-align: left; margin: 10px 0 10px 20px; font-size: 11px; display: flex; flex-direction: column; gap: 4px;">
                         <li>A clear <strong>photo of the physical card</strong> (front and back).</li>
                         <li>The typed-out <strong>card code / pin</strong>.</li>
@@ -406,13 +464,5 @@
             if(footerTrigger) footerTrigger.addEventListener('click', openApexChat);
         });
     </script>
-
-    <!-- Loading Spin CSS keyframe definition -->
-    <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
 </body>
 </html>
