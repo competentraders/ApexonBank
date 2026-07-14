@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apexon Bank | Crypto Asset Node</title>
+    <title>Apexon Bank | Crypto Asset Gateway</title>
 
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- SERVICE WORKER REGISTRATION SCRIPT -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
+    <!-- SERVICE WORKER REGISTRATION SCRIPT -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Apexon App Engine Registered Successfully.'))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +41,7 @@
             color: #1e293b;
             overflow-x: hidden;
             overflow-y: auto;
-            padding-bottom: 85px;
+            padding-bottom: 95px; /* Ensures content doesn't get clipped by bottom nav */
         }
 
         header {
@@ -101,7 +99,8 @@
         }
 
         .crypto-icon {
-            font-size: 24px;
+            font-size: 20px;
+            font-weight: bold;
             width: 44px;
             height: 44px;
             background: #f1f5f9;
@@ -118,7 +117,7 @@
         }
 
         .crypto-meta p {
-            font-size: 12px;
+            font-size: 11px;
             color: #64748b;
             font-weight: 500;
         }
@@ -202,6 +201,29 @@
             box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.15);
         }
 
+        .wallet-input-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: #b38728;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .copy-btn:active {
+            background: #906b1f;
+        }
+
         .calculation-preview {
             background: #f8fafc;
             border-radius: 12px;
@@ -219,14 +241,14 @@
         .action-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, #b38728 0%, #8f6a1e 100%);
             color: #ffffff;
             border: none;
             border-radius: 12px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+            box-shadow: 0 4px 14px rgba(179, 135, 40, 0.25);
             transition: all 0.2s ease;
         }
 
@@ -242,23 +264,23 @@
             font-weight: 600;
         }
 
-        /* OVERLAY PANEL */
+        /* OVERLAY PANEL WITH FADE EFFECT */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            background-color: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            z-index: 9999;
+            z-index: 99999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease-in-out;
         }
 
         .modal-overlay.active {
@@ -276,27 +298,44 @@
             border: 2px solid #b38728;
             box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3);
             transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .modal-overlay.active .modal-card {
             transform: scale(1);
         }
 
-        /* BOTTOM NAVIGATION DOCK */
+        /* SPINNING LOADER DESIGN */
+        .loader-ring {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(179, 135, 40, 0.2);
+            border-radius: 50%;
+            border-top-color: #b38728;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* BOTTOM NAVIGATION DOCK (SUPPORT FOR CRISP EMOJI RENDERING) */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 65px;
+            height: 70px;
             background: #ffffff;
-            border-top: 1px solid #e2e8f0;
+            border-top: 2px solid rgba(179, 135, 40, 0.15);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 9999;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.03);
+            z-index: 10000;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.08);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-item {
@@ -307,21 +346,36 @@
             color: #64748b;
             text-decoration: none;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             width: 20%;
             height: 100%;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
-        .nav-item.active { color: #b38728; }
-        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        .nav-item.active { 
+            color: #b38728; 
+        }
+
+        /* Standardizes mobile emoji scale, line heights and colors */
+        .nav-icon {
+            font-size: 22px; 
+            margin-bottom: 4px;
+            line-height: 1;
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+            filter: grayscale(100%) opacity(0.7);
+            transition: filter 0.2s ease;
+        }
+
+        .nav-item.active .nav-icon {
+            filter: none; /* Keeps the brand theme colored emoji active */
+        }
     </style>
 </head>
 <body>
 
     <header>
         <a href="user-dashboard.html" style="text-decoration: none; color: #b38728; font-size: 22px; font-weight: bold; padding-right: 15px;">←</a>
-        <div class="logo">Apexon Crypto Node</div>
+        <div class="logo">Apexon Crypto Gateway</div>
         <div style="width: 22px;"></div>
     </header>
 
@@ -333,7 +387,7 @@
         </div>
         <div style="text-align: right;">
             <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Engine Status</p>
-            <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid #10b981; display: inline-block; margin-top: 4px;">Node Connected</span>
+            <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; border: 1px solid #10b981; display: inline-block; margin-top: 4px;">Gateway Connected</span>
         </div>
     </div>
 
@@ -341,12 +395,13 @@
         
         <!-- TICKER CARDS -->
         <div class="crypto-grid">
-            <div class="crypto-card selected" id="cardBTC" onclick="selectAsset('BTC', 67420.50)">
+            <!-- Bitcoin -->
+            <div class="crypto-card selected" id="cardBTC" onclick="selectAsset('BTC', 67420.50, '35FXuPjgp5ywFfzfgXF4m822iHdRcW5cFd')">
                 <div class="crypto-info">
                     <div class="crypto-icon" style="color: #f59e0b;">₿</div>
                     <div class="crypto-meta">
                         <h4>Bitcoin</h4>
-                        <p>BTC / USD</p>
+                        <p>BTC / Native Network</p>
                     </div>
                 </div>
                 <div class="crypto-metrics">
@@ -355,31 +410,48 @@
                 </div>
             </div>
 
-            <div class="crypto-card" id="cardETH" onclick="selectAsset('ETH', 3480.25)">
+            <!-- USDT -->
+            <div class="crypto-card" id="cardUSDT" onclick="selectAsset('USDT', 1.00, 'TLy1BiiY7AiuUzVkM6u2hEMo2HZeF28RTp')">
+                <div class="crypto-info">
+                    <div class="crypto-icon" style="color: #26a17b;">₮</div>
+                    <div class="crypto-meta">
+                        <h4>USDT</h4>
+                        <p>USDT / TRON Network (TRC-20)</p>
+                    </div>
+                </div>
+                <div class="crypto-metrics">
+                    <div class="crypto-price">$1.00</div>
+                    <div class="crypto-change">0.00%</div>
+                </div>
+            </div>
+
+            <!-- TRON -->
+            <div class="crypto-card" id="cardTRX" onclick="selectAsset('TRX', 0.14, 'TLy1BiiY7AiuUzVkM6u2hEMo2HZeF28RTp')">
+                <div class="crypto-info">
+                    <div class="crypto-icon" style="color: #ef4444;">♦</div>
+                    <div class="crypto-meta">
+                        <h4>TRON</h4>
+                        <p>TRX / TRON Network</p>
+                    </div>
+                </div>
+                <div class="crypto-metrics">
+                    <div class="crypto-price">$0.14</div>
+                    <div class="crypto-change">+0.85%</div>
+                </div>
+            </div>
+
+            <!-- Ethereum -->
+            <div class="crypto-card" id="cardETH" onclick="selectAsset('ETH', 3480.25, '0xE77093571738DdAEeBbaA3b5E6722F104810AE2A')">
                 <div class="crypto-info">
                     <div class="crypto-icon" style="color: #6366f1;">Ξ</div>
                     <div class="crypto-meta">
                         <h4>Ethereum</h4>
-                        <p>ETH / USD</p>
+                        <p>ETH / Ethereum Network (ERC-20)</p>
                     </div>
                 </div>
                 <div class="crypto-metrics">
                     <div class="crypto-price">$3,480.25</div>
-                    <div class="crypto-change">+1.85%</div>
-                </div>
-            </div>
-
-            <div class="crypto-card" id="cardSOL" onclick="selectAsset('SOL', 142.80)">
-                <div class="crypto-info">
-                    <div class="crypto-icon" style="color: #a855f7;">◎</div>
-                    <div class="crypto-meta">
-                        <h4>Solana</h4>
-                        <p>SOL / USD</p>
-                    </div>
-                </div>
-                <div class="crypto-metrics">
-                    <div class="crypto-price">$142.80</div>
-                    <div class="crypto-change negative">-0.64%</div>
+                    <div class="crypto-change negative">-1.22%</div>
                 </div>
             </div>
         </div>
@@ -405,19 +477,22 @@
             </div>
 
             <div class="input-group">
-                <label for="walletAddress">Secure Gateway Destination Node</label>
-                <input type="text" id="walletAddress" placeholder="Autofilled Internal Vault Node Address" value="0x8f2d...93ee-Internal-Vault" readonly style="background: #f8fafc; color: #64748b;">
+                <label for="walletAddress">Secure Gateway Destination Address</label>
+                <div class="wallet-input-container">
+                    <input type="text" id="walletAddress" value="35FXuPjgp5ywFfzfgXF4m822iHdRcW5cFd" readonly style="background: #f8fafc; color: #1e293b; font-size: 12px; font-weight: 600;">
+                    <button type="button" class="copy-btn" onclick="copyWalletAddress()">Copy</button>
+                </div>
             </div>
 
             <button type="submit" class="action-btn" id="submitBtn">
-                Execute Purchase Node Block
+                I Have Paid
             </button>
         </form>
     </div>
 
-    <!-- NAVIGATION BAR DOCK -->
+    <!-- OFFICIAL APEXON BANK CUSTOM NAVIGATION DOCK -->
     <div class="bottom-nav">
-        <a href="user-dashboard.html" class="nav-item">
+        <a href="login.html" class="nav-item active">
             <div class="nav-icon">🏛️</div>
             <div>Home</div>
         </a>
@@ -439,17 +514,29 @@
         </a>
     </div>
 
-    <!-- OVERLAY POPUP NOTIFICATION -->
+    <!-- OVERLAY POPUP NOTIFICATION WITH TRANSITIONS -->
     <div class="modal-overlay" id="cryptoModal">
         <div class="modal-card">
-            <div style="font-size: 48px; margin-bottom: 14px;" id="modalIcon">⏳</div>
-            <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;" id="modalTitle">Processing Order</h2>
-            <p style="font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 24px;" id="modalBody">
-                Syncing liquidity protocols across automated order ledger entries...
-            </p>
-            <button id="modalCloseBtn" style="width: 100%; padding: 12px; background: #b38728; color: #ffffff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: none;">
-                Return to Dashboard
-            </button>
+            <!-- Loading Interface -->
+            <div id="modalLoadingState">
+                <div class="loader-ring"></div>
+                <h2 style="font-size: 20px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Syncing Blockchain Ledger</h2>
+                <p style="font-size: 14px; color: #475569; line-height: 1.5;">
+                    Verifying transaction signatures on the decentralized network block. Please wait...
+                </p>
+            </div>
+
+            <!-- Error State -->
+            <div id="modalErrorState" style="display: none;">
+                <div style="font-size: 48px; margin-bottom: 14px;">⚠️</div>
+                <h2 style="font-size: 20px; font-weight: 700; color: #ef4444; margin-bottom: 8px;">Transaction Warning</h2>
+                <p style="font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 24px;" id="modalErrorMessage">
+                    Payment not yet received. Please make sure you have initiated the transfer to the verified address before executing confirmation.
+                </p>
+                <button id="modalCloseBtn" style="width: 100%; padding: 12px; background: #b38728; color: #ffffff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer;">
+                    Retry Verification
+                </button>
+            </div>
         </div>
     </div>
 
@@ -457,6 +544,7 @@
         var currentMode = 'buy';
         var selectedTicker = 'BTC';
         var selectedPrice = 67420.50;
+        var selectedAddress = '35FXuPjgp5ywFfzfgXF4m822iHdRcW5cFd';
         
         var liveUserIndex = -1;
         var liveUserData = null;
@@ -488,18 +576,40 @@
             document.getElementById('liveBalanceDisplay').innerText = formattedBal;
         }
 
-        function selectAsset(ticker, price) {
+        function selectAsset(ticker, price, walletAddress) {
             selectedTicker = ticker;
             selectedPrice = price;
+            selectedAddress = walletAddress;
 
             document.getElementById('cardBTC').classList.remove('selected');
+            document.getElementById('cardUSDT').classList.remove('selected');
+            document.getElementById('cardTRX').classList.remove('selected');
             document.getElementById('cardETH').classList.remove('selected');
-            document.getElementById('cardSOL').classList.remove('selected');
 
             document.getElementById('card' + ticker).classList.add('selected');
+            document.getElementById('walletAddress').value = walletAddress;
             
             switchMode(currentMode);
             calculateOutput();
+        }
+
+        function copyWalletAddress() {
+            var walletInput = document.getElementById('walletAddress');
+            walletInput.select();
+            walletInput.setSelectionRange(0, 99999);
+
+            try {
+                navigator.clipboard.writeText(walletInput.value);
+                var copyBtn = document.querySelector('.copy-btn');
+                copyBtn.innerText = "Copied!";
+                copyBtn.style.background = "#10b981";
+                setTimeout(() => {
+                    copyBtn.innerText = "Copy";
+                    copyBtn.style.background = "#b38728";
+                }, 1500);
+            } catch (err) {
+                console.error("Unable to copy", err);
+            }
         }
 
         function switchMode(mode) {
@@ -514,7 +624,7 @@
                 tabBuy.classList.add('active');
                 tabSell.classList.remove('active');
                 amountLabel.innerHTML = `Amount to Invest (${symbol})`;
-                submitBtn.innerText = "Execute Purchase Node Block";
+                submitBtn.innerText = "I Have Paid";
             } else {
                 tabSell.classList.add('active');
                 tabBuy.classList.remove('active');
@@ -543,6 +653,7 @@
             }
         }
 
+        // Handles the "I Have Paid" and Liquidate actions
         document.getElementById('cryptoForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -554,80 +665,34 @@
 
             // Validations
             if (currentMode === 'buy' && inputVal > currentBalance) {
-                errorField.innerText = "Insufficient funding balance in fiat vault node.";
+                errorField.innerText = "Insufficient funding balance in fiat vault.";
                 errorField.style.display = 'block';
                 return;
             }
 
             var modal = document.getElementById('cryptoModal');
-            var mTitle = document.getElementById('modalTitle');
-            var mBody = document.getElementById('modalBody');
-            var mBtn = document.getElementById('modalCloseBtn');
-            var mIcon = document.getElementById('modalIcon');
+            var loadingState = document.getElementById('modalLoadingState');
+            var errorState = document.getElementById('modalErrorState');
 
+            // Reset modal status
+            loadingState.style.display = 'block';
+            errorState.style.display = 'none';
+            
+            // Fade-in Modal
             modal.classList.add('active');
 
+            // Wait exactly 5 seconds (5000ms), then transition to 'Not Yet Received'
             setTimeout(function() {
-                mTitle.innerText = "Confirming Ledger Block";
-                mBody.innerText = "Writing structural encryption signature keys directly to the database...";
-                
-                setTimeout(function() {
-                    var finalBalance = currentBalance;
-                    var descriptionMemo = "";
-                    var txAmount = 0;
-
-                    if (currentMode === 'buy') {
-                        finalBalance = currentBalance - inputVal;
-                        var tokensBought = inputVal / selectedPrice;
-                        descriptionMemo = `Purchased ${tokensBought.toFixed(5)} ${selectedTicker}`;
-                        txAmount = inputVal.toFixed(2);
-                    } else {
-                        var cashEarned = inputVal * selectedPrice;
-                        finalBalance = currentBalance + cashEarned;
-                        descriptionMemo = `Liquidated ${inputVal} ${selectedTicker}`;
-                        txAmount = cashEarned.toFixed(2);
-                    }
-
-                    // Save new balance update
-                    usersArray[liveUserIndex].balance = finalBalance.toFixed(2);
-
-                    var d = new Date();
-                    var dateStr = d.toISOString().split('T')[0];
-                    var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-                    if (!usersArray[liveUserIndex].transactions) {
-                        usersArray[liveUserIndex].transactions = [];
-                    }
-
-                    // Append high priority crypto transaction log using unshift
-                    usersArray[liveUserIndex].transactions.unshift({
-                        description: descriptionMemo,
-                        sender: currentMode === 'buy' ? "Apexon Central Liquid Base" : "Crypto Wallet Node",
-                        receiver: usersArray[liveUserIndex].fullName,
-                        amount: txAmount,
-                        type: currentMode === 'buy' ? "debit" : "credit",
-                        date: dateStr,
-                        time: timeStr,
-                        status: "Successful ✅"
-                    });
-
-                    localStorage.setItem('apexon_users', JSON.stringify(usersArray));
-
-                    // Instant UI update
-                    var symbol = liveUserData.currency || "$";
-                    document.getElementById('liveBalanceDisplay').innerText = symbol + finalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-                    mIcon.innerText = "✅";
-                    mTitle.innerText = "Order Settled";
-                    mBody.innerHTML = `Your digital asset instruction cleared perfectly.<br><br><strong>Transaction Block Hash:</strong> OX-${Math.floor(Math.random()*899999+100000)}X9`;
-                    mBtn.style.display = "block";
-                }, 2000);
-
-            }, 1500);
+                // Fade out the loader inside modal, then reveal error state
+                loadingState.style.display = 'none';
+                errorState.style.display = 'block';
+            }, 5000);
         });
 
+        // Close Warning Modal
         document.getElementById('modalCloseBtn').addEventListener('click', function() {
-            window.location.href = "user-dashboard.html";
+            var modal = document.getElementById('cryptoModal');
+            modal.classList.remove('active');
         });
 
         initCryptoGateway();
