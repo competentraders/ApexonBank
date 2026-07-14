@@ -3,31 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ApexonBank Mobile | Home</title>
+    <title>ApexonBank | Digital Node</title>
 
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- SERVICE WORKER REGISTRATION SCRIPT -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
-<!-- SERVICE WORKER REGISTRATION SCRIPT -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
-
-
-    <!-- Premium Google Fonts for the Header Branding -->
+    <!-- Premium Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* Global Reset & Base App Shell Styles */
@@ -35,15 +32,15 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         html, body {
             width: 100vw;
             min-height: 100vh;
-            background-color: #f8f9fa;
-            color: #212529;
+            background-color: #0b0f19; /* Dark, premium finance theme */
+            color: #ffffff;
             overflow-x: hidden;
             overflow-y: auto;
         }
@@ -56,463 +53,132 @@
             90% { transform: rotateY(180deg); } 
             100% { transform: rotateY(360deg); }
         }
-
-        /* Continuous Wave Floating Keyframes for the Actions Box */
-        @keyframes waveFloatOdd {
-            0% { transform: translateY(0px); box-shadow: 0 2px 5px rgba(13,110,253,0.04); }
-            100% { transform: translateY(-4px); box-shadow: 0 6px 12px rgba(13,110,253,0.08); }
-        }
-        @keyframes waveFloatEven {
-            0% { transform: translateY(-4px); box-shadow: 0 6px 12px rgba(13,110,253,0.08); }
-            100% { transform: translateY(0px); box-shadow: 0 2px 5px rgba(13,110,253,0.04); }
-        }
-        @keyframes waveFloatFull {
-            0% { transform: translateY(0px); box-shadow: 0 2px 5px rgba(220,53,69,0.04); }
-            100% { transform: translateY(-4px); box-shadow: 0 6px 12px rgba(220,53,69,0.08); }
-        }
     </style>
 </head>
 <body>
 
-    <div class="mobile-shell" style="display: flex; flex-direction: column; width: 100%; min-height: 100vh; padding-bottom: 40px;">
+    <div class="mobile-shell" style="display: flex; flex-direction: column; width: 100%; min-height: 100vh; max-width: 480px; margin: 0 auto; background: #0b0f19;">
         
-        <!-- App Mobile Top Navigation Header Frame -->
-        <header style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 16px 20px; background-color: #fff; border-bottom: 1px solid rgba(0,0,0,0.05); flex-shrink: 0;">
+        <!-- App Mobile Top Navigation Header -->
+        <header style="display: flex; justify-content: space-between; align-items: center; padding: 20px; background-color: rgba(11, 15, 25, 0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;">
             <!-- Beautiful Golden Font Custom Logo -->
-            <div class="logo" style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05); white-space: nowrap;">ApexonBank</div>
+            <div class="logo" style="font-family: 'Cinzel', serif; font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">ApexonBank</div>
             
-            <!-- Centralized Sign In / Sign Up Badges with Backgrounds -->
-            <div class="header-center-links" style="text-align: center; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
-                <a href="login.html" style="text-decoration: none; color: #ffffff; background-color: #0d6efd; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 5px; transition: opacity 0.2s; display: inline-block;">
-                    Sign in (login)
+            <!-- Sleek Login / Register Badges -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <a href="login.html" style="text-decoration: none; color: #ffffff; background-color: #2563eb; font-size: 11px; font-weight: 600; padding: 8px 14px; border-radius: 20px; transition: all 0.2s;">
+                    Sign in
                 </a>
-
-
-
-                <a href="register.html" style="text-decoration: none; color: #212529; background-color: #e9ecef; font-size: 11px; font-weight: 700; padding: 6px 12px; border-radius: 5px; transition: opacity 0.2s; display: inline-block;">
-                    Sign up (register)
+                <a href="register.html" style="text-decoration: none; color: #cbd5e1; background-color: rgba(255,255,255,0.05); font-size: 11px; font-weight: 600; padding: 8px 14px; border-radius: 20px; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.1);">
+                    Register
                 </a>
             </div>
-
-
-
-
-
-
-            <div class="motto-badge" style="font-size: 9px; font-weight: 600; color: #6c757d; background: #e9ecef; padding: 4px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; justify-self: end; text-align: center;">Bank like no Other Banks<br>#APEXONBANK</div>
         </header>
 
-        <!-- Main Dashboard Workspace -->
-        <div class="app-body" style="flex-grow: 1; padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <!-- Main Workspace -->
+        <div class="app-body" style="flex-grow: 1; padding: 20px; display: flex; flex-direction: column; gap: 24px;">
             
+            <!-- Marketing Welcome Pitch -->
+            <div style="text-align: center; margin-top: 10px;">
+                <h1 style="font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;">Secure Borderless Banking</h1>
+                <p style="font-size: 13px; color: #64748b; line-height: 1.4; max-width: 320px; margin: 0 auto;">Experience next-generation asset management, lightning-fast clearings, and absolute custody security.</p>
+            </div>
+
             <!-- Slow-Flipping Credit Card Stage Window -->
-            <div class="card-stage" style="width: 100%; aspect-ratio: 1.58 / 1; perspective: 1000px; flex-shrink: 0;">
+            <div class="card-stage" style="width: 100%; aspect-ratio: 1.58 / 1; perspective: 1000px; margin: 10px 0;">
                 <div class="card-rotator" style="width: 100%; height: 100%; position: relative; transform-style: preserve-3d; animation: slowFlip 12s infinite linear;">
                     
                     <!-- FRONT SIDE OF THE CARD -->
-                    <div class="card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 14px; padding: 20px; color: white; box-shadow: 0 10px 20px rgba(42, 82, 152, 0.15); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); transform: rotateY(0deg);">
-                        <div class="card-chip" style="width: 38px; height: 28px; background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); border-radius: 4px;"></div>
-                        <div class="card-number" style="font-size: clamp(16px, 5.5vw, 20px); letter-spacing: 3px; font-family: monospace; margin: 15px 0;">8628 •••• •••• 4026</div>
-                        <div class="card-footer" style="display: flex; justify-content: space-between; font-size: 11px; opacity: 0.9; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <div class="card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; padding: 24px; color: white; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); transform: rotateY(0deg); border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div class="card-chip" style="width: 42px; height: 32px; background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                            <span style="font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #94a3b8;">PLATINUM</span>
+                        </div>
+                        <div class="card-number" style="font-size: 20px; letter-spacing: 3px; font-family: monospace; font-weight: 600; margin: 15px 0; color: #f8fafc;">8628 •••• •••• 4026</div>
+                        <div class="card-footer" style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8;">
                             <span>Apexon Credit</span>
                             <span>12/30</span>
                         </div>
                     </div>
 
                     <!-- BACK SIDE OF THE CARD -->
-                    <div class="card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 14px; color: white; box-shadow: 0 10px 20px rgba(42, 82, 152, 0.15); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #112244 0%, #1a3668 100%); transform: rotateY(180deg); padding: 20px 0;">
+                    <div class="card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; color: white; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(135deg, #0f172a 0%, #020617 100%); transform: rotateY(180deg); padding: 24px 0; border: 1px solid rgba(255,255,255,0.05);">
                         <div class="card-black-stripe" style="width: 100%; height: 40px; background: #000000; margin-top: 5px;"></div>
-                        <div class="card-signature-box" style="margin: 10px 20px; background: #ffffff; height: 30px; border-radius: 2px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;">
-                            <span class="cvv-digits" style="color: #212529; font-family: 'Courier New', monospace; font-weight: 700; font-style: italic; font-size: 14px; letter-spacing: 1px;">912</span>
+                        <div class="card-signature-box" style="margin: 10px 24px; background: #ffffff; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 12px;">
+                            <span class="cvv-digits" style="color: #0f172a; font-family: 'Courier New', monospace; font-weight: 700; font-style: italic; font-size: 14px; letter-spacing: 1px;">912</span>
                         </div>
-                        <p class="card-back-disclaimer" style="font-size: 8px; opacity: 0.5; padding: 0 20px; line-height: 1.3;">Authorized Signature. Not transferable. International electronic use clearing asset network keys enabled.</p>
+                        <p class="card-back-disclaimer" style="font-size: 8px; color: #475569; padding: 0 24px; line-height: 1.4;">Authorized Signature. Not transferable. Secured assets protected under global cryptographic hardware parameters.</p>
                     </div>
 
                 </div>
             </div>
 
-            <!-- START: 100% INLINE STYLE TICKER ENGINE INSIDE ACTIONS STACK -->
-            <div id="apex-widget-container" style="width: 100%; background: #151f32; border-radius: 16px; padding: 20px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.05); font-family: 'Space Grotesk', sans-serif; color: #ffffff; box-sizing: border-box;">
-                <!-- Top Header Ribbon -->
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 12px; margin-bottom: 14px; box-sizing: border-box;">
-                    <h2 style="margin: 0; font-size: 1.1rem; letter-spacing: 0.5px; font-weight: 700; color: #ffffff;">APEXON Official Rates</h2>
-                    <div style="background: rgba(0, 230, 118, 0.15); color: #00e676; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; display: flex; align-items: center; gap: 6px;">
-                        <div style="width: 6px; height: 6px; background-color: #00e676; border-radius: 50%;"></div> LIVE
-                    </div>
-                </div>
-
-                <!-- Column Headers -->
-                <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; color: #8492a6; font-size: 0.75rem; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; padding-right: 4px;">
-                    <span>Currency</span>
-                    <span style="text-align: right;">We Buy ($)</span>
-                    <span style="text-align: right;">We Sell ($)</span>
-                </div>
-
-                <!-- Currency Ticker List -->
-                <div style="display: flex; flex-direction: column;">
-                    <!-- EUR Pair Row -->
-                    <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-                        <div style="display: flex; flex-direction: column;">
-                            <span style="font-weight: 600; font-size: 1rem; color: #ffffff;">EUR / USD</span>
-                        </div>
-                        <div id="inline-EUR-buy" style="text-align: right; font-family: monospace; font-size: 1.05rem; font-weight: bold; color: #ffffff; transition: color 0.3s;">1.0820</div>
-                        <div id="inline-EUR-sell" style="text-align: right; font-family: monospace; font-size: 1.05rem; font-weight: bold; color: #ffffff; transition: color 0.3s;">1.0845</div>
-                    </div>
-
-                    <!-- GBP Pair Row -->
-                    <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; align-items: center; padding: 10px 0; border-bottom: none;">
-                        <div style="display: flex; flex-direction: column;">
-                            <span style="font-weight: 600; font-size: 1rem; color: #ffffff;">GBP / USD</span>
-                        </div>
-                        <div id="inline-GBP-buy" style="text-align: right; font-family: monospace; font-size: 1.05rem; font-weight: bold; color: #ffffff; transition: color 0.3s;">1.2640</div>
-                        <div id="inline-GBP-sell" style="text-align: right; font-family: monospace; font-size: 1.05rem; font-weight: bold; color: #ffffff; transition: color 0.3s;">1.2672</div>
-                    </div>
-                </div>
-            </div>
-            <!-- END: 100% INLINE STYLE TICKER ENGINE -->
-
-            <!-- 10-SERVICE APP BOX -->
-            <div class="app-card" style="background: white; border-radius: 16px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.03);">
+            <!-- CLEAN MODERN QUICK SERVICES PREVIEW -->
+            <div style="background: #111827; border-radius: 20px; padding: 20px; border: 1px solid rgba(255,255,255,0.03);">
+                <h3 style="font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 16px; text-align: center;">System Services Suite</h3>
+                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    
-                    <button id="withdrawBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatOdd 3.5s ease-in-out infinite alternate;">Withdraw</button>
-                    <button id="depositBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatEven 3.5s ease-in-out infinite alternate;">Deposit</button>
-                    
-                    <button id="buyAirtimeBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatOdd 3.5s ease-in-out infinite alternate; animation-delay: 0.3s;">Buy Airtime</button>
-                    <button id="sellAirtimeBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatEven 3.5s ease-in-out infinite alternate; animation-delay: 0.3s;">Sell Airtime</button>
-                    
-                    <button id="giftCardsBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatOdd 3.5s ease-in-out infinite alternate; animation-delay: 0.6s;">Gift Cards</button>
-                    <button id="cryptoBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatEven 3.5s ease-in-out infinite alternate; animation-delay: 0.6s;">Cryptocurrency</button>
-                    
-                    <button id="exchangeBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatOdd 3.5s ease-in-out infinite alternate; animation-delay: 0.9s;">Currency Exchange</button>
-                    <button id="transferBtn" style="padding: 14px 10px; border: 1px solid #0d6efd; background: #ffffff; color: #0d6efd; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatEven 3.5s ease-in-out infinite alternate; animation-delay: 0.9s;">Transfer</button>
-                    
-                    <button id="retrieveMoneyBtn" style="grid-column: span 2; padding: 14px 12px; border: 1px solid #dc3545; background: #ffffff; color: #dc3545; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatFull 4s ease-in-out infinite alternate;">
-                        Retrieve money sent to a wrong account
-                    </button>
-                    <button id="retrieveCryptoBtn" style="grid-column: span 2; padding: 14px 12px; border: 1px solid #dc3545; background: #ffffff; color: #dc3545; border-radius: 12px; font-weight: 700; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.2s ease-in-out; animation: waveFloatFull 4s ease-in-out infinite alternate; animation-delay: 0.5s;">
-                        Retrieve crypto sent to a wrong address
-                    </button>
-                </div>
-            </div>
+                    <!-- Card 1: Safe Vault -->
+                    <div style="background: #1f2937; border-radius: 14px; padding: 14px; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 20px;">🛡️</span>
+                        <h4 style="font-size: 13px; font-weight: 600;">Secure Vault</h4>
+                        <p style="font-size: 11px; color: #94a3b8; line-height: 1.3;">Hardware isolated custody to safeguard capital limits.</p>
+                    </div>
 
-            <!-- STANDALONE ANALYTICS DISPLAY CONSOLE -->
-            <div class="analytics-box" style="background: #ffffff; border-radius: 16px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 14px; clear: both;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div style="background: #f8f9fa; border-radius: 12px; padding: 12px; border: 1px solid rgba(0,0,0,0.01);">
-                        <div style="font-size: 11px; color: #6c757d; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">total Users Registered</div>
-                        <div id="totalUsersDisplay" style="font-size: 20px; font-weight: 700; color: #212529;">14,230</div>
+                    <!-- Card 2: Instant Clearing -->
+                    <div style="background: #1f2937; border-radius: 14px; padding: 14px; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 20px;">⚡</span>
+                        <h4 style="font-size: 13px; font-weight: 600;">Fast Transfers</h4>
+                        <p style="font-size: 11px; color: #94a3b8; line-height: 1.3;">Seamless interbank outbox pipelines running instantly.</p>
                     </div>
-                    <div style="background: #f8f9fa; border-radius: 12px; padding: 12px; border: 1px solid rgba(0,0,0,0.01);">
-                        <div style="font-size: 11px; color: #6c757d; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">New Users / Wk</div>
-                        <div id="weeklyUsersDisplay" style="font-size: 20px; font-weight: 700; color: #0d6efd;">+57</div>
-                    </div>
-                </div>
 
-                <div style="background: #f8f9fa; border-radius: 12px; padding: 14px; border: 1px solid rgba(0,0,0,0.01); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <div style="font-size: 11px; color: #6c757d; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Daily Live Transactions</div>
-                        <div style="font-size: 12px; color: #198754; font-weight: 500; display: flex; align-items: center; gap: 4px;">
-                            <span style="width: 6px; height: 6px; background-color: #198754; border-radius: 50%; display: inline-block;"></span> Live Feed Processing
-                        </div>
+                    <!-- Card 3: Crypto Trading -->
+                    <div style="background: #1f2937; border-radius: 14px; padding: 14px; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 20px;">🪙</span>
+                        <h4 style="font-size: 13px; font-weight: 600;">Crypto Broker</h4>
+                        <p style="font-size: 11px; color: #94a3b8; line-height: 1.3;">Secure conversion channels for institutional crypto assets.</p>
                     </div>
-                    <div id="dailyTxDisplay" style="font-size: 22px; font-weight: 700; color: #212529; font-family: monospace;">8,421</div>
-                </div>
 
-                <div style="background: linear-gradient(135deg, #112244 0%, #1a3668 100%); border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; color: #ffffff;">
-                    <div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Card Disbursements</div>
-                    </div>
-                    <div style="font-size: 22px; font-weight: 700; font-family: monospace; color: #fcf6ba;">
-                        <span id="cardDisburseDisplay">0</span>+
+                    <!-- Card 4: Liquid Loans -->
+                    <div style="background: #1f2937; border-radius: 14px; padding: 14px; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 8px;">
+                        <span style="font-size: 20px;">💼</span>
+                        <h4 style="font-size: 13px; font-weight: 600;">Asset Financing</h4>
+                        <p style="font-size: 11px; color: #94a3b8; line-height: 1.3;">Flexible low-interest lines of credit for growth capital.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- STANDALONE LOAN OPTIONS & TESTIMONIAL CONSOLE -->
-            <div class="loans-container" style="background: #ffffff; border-radius: 16px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 16px; clear: both;">
-                <div style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px;">
-                    <h3 style="font-size: 15px; font-weight: 700; color: #212529; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;">
-                        <span style="color: #0d6efd;">💰</span> Flexible Loan Matrix
-                    </h3>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div style="background: #f8f9fa; border-radius: 12px; padding: 12px; border: 1px solid rgba(0,0,0,0.01); display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 18px;">⚡</span>
-                        <div style="font-size: 13px; font-weight: 700; color: #212529;">Instant Flash Loan</div>
-                        <div style="font-size: 10px; color: #6c757d; line-height: 1.2;">No collateral required. Disbursed immediately to account.</div>
-                    </div>
-                    <div style="background: #f8f9fa; border-radius: 12px; padding: 12px; border: 1px solid rgba(0,0,0,0.01); display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 18px;">📈</span>
-                        <div style="font-size: 13px; font-weight: 700; color: #212529;">Business Growth Capital</div>
-                        <div style="font-size: 10px; color: #6c757d; line-height: 1.2;">Low-interest funding built to scale your business operations.</div>
-                    </div>
-                    <div style="background: #f8f9fa; border-radius: 12px; padding: 12px; border: 1px solid rgba(0,0,0,0.01); display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 18px;">📱</span>
-                        <div style="font-size: 13px; font-weight: 700; color: #212529;">Asset & Tech Financing</div>
-                        <div style="font-size: 10px; color: #6c757d; line-height: 1.2;">Get cash allocations for laptops, devices, or vital workplace tools.</div>
-                    </div>
-                    <div style="background: #f8f9fa; border-radius: 12px; padding: 12px; border: 1px solid rgba(0,0,0,0.01); display: flex; flex-direction: column; gap: 4px;">
-                        <span style="font-size: 18px;">🌍</span>
-                        <div style="font-size: 13px; font-weight: 700; color: #212529;">FX & Trade Liquidity</div>
-                        <div style="font-size: 10px; color: #6c757d; line-height: 1.2;">Short-term liquidity backing for market trade settlements.</div>
-                    </div>
-                </div>
-
-                <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 12px; padding: 14px; color: #ffffff; min-height: 85px; display: flex; flex-direction: column; justify-content: center; overflow: hidden;">
-                    <div id="apexTestimonialWrapper" style="transition: opacity 0.6s ease-in-out; opacity: 1;">
-                        <p id="testimonialQuote" style="font-size: 12px; font-style: italic; line-height: 1.4; opacity: 0.95; margin-bottom: 6px;">
-                            "Your loan engine saved my retail store! The setup was effortless, and the capital arrived instantly inside my app wallet."
-                        </p>
-                        <div id="testimonialAuthor" style="font-size: 10px; font-weight: 700; color: #ffc107; text-transform: uppercase; letter-spacing: 0.5px; text-align: right;">
-                            — Chidi K., Business Owner
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Contextual Information Stack rows -->
-            <div class="features-stack" style="display: flex; flex-direction: column; gap: 12px;">
-                <div class="feature-item" style="display: flex; align-items: center; padding: 14px 16px; background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.02);">
-                    <div class="feature-meta">
-                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">Instant Clearing Active</h4>
-                        <p style="font-size: 12px; color: #6c757d;">Outbound ledgers settlements processed instantly.</p>
-                    </div>
-                </div>
-                <div class="feature-item" style="display: flex; align-items: center; padding: 14px 16px; background: #ffffff; border-radius: 12px; border: 1px solid rgba(0,0,0,0.02);">
-                    <div class="feature-meta">
-                        <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 2px;">Vault Protection</h4>
-                        <p style="font-size: 12px; color: #6c757d;">Fully hardware isolated cryptographic account keys.</p>
-                    </div>
+            <!-- HARDWARE ISOLATION BANNER -->
+            <div style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 24px; background: rgba(255,255,255,0.1); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; flex-shrink: 0;">🗝️</div>
+                <div>
+                    <h4 style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #ffffff;">2FA Hardware Protection Active</h4>
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin-top: 2px;">All outgoing transactional pipelines strictly demand signed secure keys before dispatch.</p>
                 </div>
             </div>
 
         </div>
+
+        <!-- STYLISH, COMPACT MODERN FOOTER -->
+        <footer style="background-color: #080c14; padding: 24px 20px; border-top: 1px solid rgba(255, 255, 255, 0.04); text-align: center; display: flex; flex-direction: column; gap: 12px; flex-shrink: 0;">
+            <div style="font-family: 'Cinzel', serif; font-size: 15px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                ApexonBank
+            </div>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; font-size: 11px;">
+                <a href="faq.html" style="color: #64748b; text-decoration: none;">FAQ Support</a>
+                <span style="color: #1e293b;">•</span>
+                <a href="help.html" style="color: #64748b; text-decoration: none;">Help Desk</a>
+                <span style="color: #1e293b;">•</span>
+                <a href="customer-service.html" style="color: #64748b; text-decoration: none;">Legal Framework</a>
+            </div>
+
+            <p style="font-size: 10px; color: #475569; line-height: 1.4; max-width: 300px; margin: 4px auto 0 auto;">
+                © 2026 ApexonBank Network Group. Secured cryptographic ledger keys active.
+            </p>
+        </footer>
+
     </div>
-
-    <!-- MAIN SYSTEM RUNTIME ENGINE SCRIPT -->
-    <script>
-    (function() {
-        try {
-            // --- 1. Persistent Daily Transaction Logic ---
-            var savedTx = localStorage.getItem('apex_persistent_tx');
-            var currentTx = savedTx ? parseInt(savedTx, 10) : 8421;
-            var txDisplay = document.getElementById('dailyTxDisplay');
-            if(txDisplay) {
-                txDisplay.innerHTML = currentTx.toLocaleString();
-                setInterval(function() {
-                    currentTx += 3;
-                    localStorage.setItem('apex_persistent_tx', currentTx);
-                    txDisplay.innerHTML = currentTx.toLocaleString();
-                }, 4000);
-            }
-
-            // --- 2. Fixed Weekly Growth Tracker ---
-            var baseEpoch = new Date("2026-07-01").getTime(); 
-            var now = new Date().getTime();
-            var weeksElapsed = Math.floor((now - baseEpoch) / (7 * 24 * 60 * 60 * 1000));
-            if (weeksElapsed < 0) weeksElapsed = 0;
-            var weeklyAddition = (weeksElapsed + 1) * 57;
-            var finalTotalUsers = 14230 + weeklyAddition;
-
-            var weeklyEl = document.getElementById('weeklyUsersDisplay');
-            var totalEl = document.getElementById('totalUsersDisplay');
-            if(weeklyEl) weeklyEl.innerHTML = "+" + weeklyAddition.toLocaleString();
-            if(totalEl) totalEl.innerHTML = finalTotalUsers.toLocaleString();
-
-            // --- 3. Card Fast Counter ---
-            var cardDisplay = document.getElementById('cardDisburseDisplay');
-            if(cardDisplay) {
-                var currentCount = 0;
-                var targetCount = 5000;
-                var speed = 35; 
-                var counterInterval = setInterval(function() {
-                    currentCount += speed;
-                    if(currentCount >= targetCount) {
-                        currentCount = targetCount;
-                        clearInterval(counterInterval);
-                    }
-                    cardDisplay.innerHTML = currentCount.toLocaleString();
-                }, 5);
-            }
-
-            // --- 4. Testimonial Rotator ---
-            var testimonials = [
-                { quote: '"Your loan engine saved my retail store! The setup was effortless, and the capital arrived instantly inside my app wallet."', author: "— Chidi K., Business Owner" },
-                { quote: '"Getting my tech financing approved took less than five minutes. Finally a reliable digital bank that understands urgency."', author: "— Amara O., Software Lead" },
-                { quote: '"The FX liquidity loans are incredibly fast. Clean processing margins, excellent timing support. Highly recommended!"', author: "— Tunde W., Assets Trader" },
-                { quote: '"I mistakenly applied for an asset loan at midnight and woke up to an instant credit alert. You guys are phenomenal!"', author: "— Blessing E., Educator" }
-            ];
-            var currentIndex = 0;
-            var wrapper = document.getElementById('apexTestimonialWrapper');
-            var quoteEl = document.getElementById('testimonialQuote');
-            var authorEl = document.getElementById('testimonialAuthor');
-            if (wrapper && quoteEl && authorEl) {
-                setInterval(function() {
-                    wrapper.style.opacity = 0;
-                    setTimeout(function() {
-                        currentIndex = (currentIndex + 1) % testimonials.length;
-                        quoteEl.innerHTML = testimonials[currentIndex].quote;
-                        authorEl.innerHTML = testimonials[currentIndex].author;
-                        wrapper.style.opacity = 1;
-                    }, 600);
-                }, 5000);
-            }
-
-            // --- 5. Integrated Live FX Ticker Loop ---
-            var coreRates = {
-                EUR: { buy: 1.0820, sell: 1.0845, spread: 0.0008 },
-                GBP: { buy: 1.2640, sell: 1.2672, spread: 0.0010 }
-            };
-            function runTicker() {
-                Object.keys(coreRates).forEach(function(key) {
-                    var data = coreRates[key];
-                    var shift = (Math.random() * 2 - 1) * data.spread;
-                    var bEl = document.getElementById('inline-' + key + '-buy');
-                    var sEl = document.getElementById('inline-' + key + '-sell');
-                    if (bEl && sEl) {
-                        var oldB = parseFloat(bEl.innerText);
-                        var newB = (data.buy + shift).toFixed(4);
-                        var newS = (data.sell + shift).toFixed(4);
-                        var flashColor = (newB > oldB) ? '#00e676' : '#ff5252';
-                        
-                        bEl.style.color = flashColor;
-                        sEl.style.color = flashColor;
-                        bEl.innerText = newB;
-                        sEl.innerText = newS;
-                        
-                        setTimeout(function() {
-                            bEl.style.color = '#ffffff';
-                            sEl.style.color = '#ffffff';
-                        }, 700);
-                    }
-                });
-            }
-            setInterval(runTicker, 2500);
-
-        } catch (err) {
-            console.log("Core system engine context handled safely: ", err);
-        }
-    })();
-    </script>
-
-
-
-
-
-
-
-
-
-
-
-<!-- START: PREMIUM COMPACT MINIMALIST FOOTER -->
-
-
-
-
-
-
-
-
-<footer style="margin-top: auto; background-color: #0f172a; color: #94a3b8; padding: 32px 20px 24px 20px; border-top: 1px solid rgba(255, 255, 255, 0.06); width: 100%; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif;">
-
-
-
-
-   <!-- METADATA & SEAL BAR -->
-    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; font-size: 11px;">
-        <div style="font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            ApexonBank
-        </div>
-
-
-
-
-
-
-    
-    <!-- LINK ENGINE MATRIX GRID -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;">
-        
-        <!-- SYSTEM NAVIGATION CHANNELS -->
-        <div>
-            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #ffffff; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                <span style="color: #38bdf8;">🌐</span> Support Apexon Care Client.
-            </div>
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
-                <li><a href="faq.html" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px;">❓ <span>Apexon FAQ</span></a></li>
-                <li><a href="help.html" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px;">ℹ️ <span>Apexon Help</span></a></li>
-                <li><a href="customer-service.html" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px;">🤝 <span>Customer</span></a></li>
-                <li><a href="agent-support.html" style="color: #4ade80; text-decoration: none; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">⚡ <span>24/7 Live Agent</span></a></li>
-            </ul>
-        </div>
-
-        <!-- RISK & ESCROW CONTROLS -->
-        <div>
-            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #ffffff; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                <span style="color: #f87171;">🛡️</span> Risk & Security
-            </div>
-            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px;">
-                <li><a href="customer-service.html" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px;">🛡️ <span>Security Team</span></a></li>
-                <li><a href="agent-support.html" style="color: #f87171; text-decoration: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;">🚨 <span>Anti-Fraud Section</span></a></li>
-                <li><a href="agent-support.html" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px;">⚖️ <span>Legal Framework</span></a></li>
-                <li><a href="agent-support.html" style="color: #cbd5e1; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 8px;">📣 <span>Whistleblower</span></a></li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- HORIZONTAL DIVIDER BLOCK -->
-    <div style="height: 1px; background: rgba(255,255,255,0.06); width: 100%; margin-bottom: 20px;"></div>
-
-    <!-- REGULATORY CREDENTIALS ROW (ALL CONTIENTS COMPACTED) -->
-    <div style="margin-bottom: 24px;">
-        <div style="font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;">
-            Global Regulatory Credentials & Authorizations
-        </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-family: monospace; font-size: 10px; color: #94a3b8;">
-            <div style="background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
-                🌍 <strong style="color:#fff">AF:</strong> CBN / FSCA <span style="color:#64748b; font-size:9px;">#94026</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
-                🇪🇺 <strong style="color:#fff">EU:</strong> FCA Passport <span style="color:#64748b; font-size:9px;">#74109</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
-                🇺🇸 <strong style="color:#fff">NA:</strong> FinCEN MSB <span style="color:#64748b; font-size:9px;">#31000</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
-                🌏 <strong style="color:#fff">AS:</strong> MAS Ledger <span style="color:#64748b; font-size:9px;">#10492</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
-                🇦🇺 <strong style="color:#fff">OC:</strong> ASIC House <span style="color:#64748b; font-size:9px;">#48261</span>
-            </div>
-            <div style="background: rgba(255,255,255,0.02); padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.03);">
-                🇧🇷 <strong style="color:#fff">SA:</strong> BCB / CMF <span style="color:#64748b; font-size:9px;">#89240</span>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- METADATA & SEAL BAR -->
-    <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; font-size: 11px;">
-        <div style="font-family: 'Cinzel', serif; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            ApexonBank
-        </div>
-
-
-        <div style="color: #64748b; max-width: 450px; font-size: 10px; line-height: 1.4;">
-            Security clearance validation hash check authorized by root ledger signature keys. 
-        </div>
-        <div style="color: #475569; font-size: 10px; margin-top: 4px;">
-            © 2026 ApexonBank Network Group. All systems active.
-        </div>
-    </div>
-</footer>
-<!-- END: PREMIUM COMPACT MINIMALIST FOOTER -->
-
-
-
 
 </body>
 </html>
