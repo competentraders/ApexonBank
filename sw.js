@@ -1,5 +1,7 @@
 const CACHE_NAME = 'apexon-vault-v3';
 const ASSETS = [
+  '/',
+  '/index.html',
   '/user-dashboard.html',
   '/cryptocurrency.html',
   '/loans.html',
@@ -19,19 +21,53 @@ self.addEventListener('install', (e) => {
           });
         })
       );
-    })
+    }).then(() => self.skipWaiting())
   );
 });
 
-// Resilient request interception
+// Activate event: Clean up old caches if CACHE_NAME changes
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log(`Clearing old cache: ${key}`);
+            return caches.delete(key);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+// Resilient Network-First / Cache-Fallback interception
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      // Serve cached file if available, otherwise fetch from network
-      return cachedResponse || fetch(e.request).catch(() => {
-        // Fallback safety so the user doesn't get a browser crash screen
-        console.log('Network request failed and asset not in cache.');
-      });
-    })
+    // Always try the network first so the user gets real-time data
+    fetch(e.request)
+      .then((networkResponse) => {
+        // If the request is successful, clone it and save it to cache
+        if (networkResponse && networkResponse.status === 200 && e.request.method === 'GET') {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseToCache);
+          });
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // If network fails, try to serve from Cache
+        return caches.match(e.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // If BOTH network and cache fail, return a fallback response (prevents browser crash)
+          return new Response('Network connection lost. Please check your internet.', {
+            status: 503,
+            headers: { 'Content-Type': 'text/plain' }
+          });
+        });
+      })
   );
 });

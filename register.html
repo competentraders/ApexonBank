@@ -12,16 +12,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- SERVICE WORKER REGISTRATION SCRIPT -->
+<!-- In your HTML head -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
+      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('Registered with scope:', reg.scope))
         .catch(err => console.log('Registration failed:', err));
     });
   }
 </script>
+
 
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
