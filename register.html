@@ -510,18 +510,24 @@
                 }
             }
 
-            // --- 4. DATA BUILD AND SAVING ---
+
+
+
+                    // --- 4. DATA BUILD AND SAVING ---
             var nationalityValue = document.getElementById('nationality').value;
             var cleanCountryName = nationalityValue.replace(/[\uD83C-\uDBFF][\uDC00-\uDFFF]\s*/g, "").split(" (")[0].trim();
 
             var selectedCurrencySelect = document.getElementById('currency');
             var selectedCurrencyText = selectedCurrencySelect.options[selectedCurrencySelect.selectedIndex].text;
             
+            // Generate standard unique banking parameters
+            var generatedAccountNumber = "30" + Math.floor(10000000 + Math.random() * 90000000); 
             var uniqueNodeId = 'NODE_' + Math.floor(Math.random() * 899999 + 100000);
 
             // Merged data model configuration matching your requirements
             var newUserObject = {
                 id: uniqueNodeId,
+                accountNumber: generatedAccountNumber, // Injected standard 10-digit numerical account number
                 fullName: document.getElementById('fullName').value.trim(),
                 username: usernameInp,
                 email: emailInp,
@@ -569,5 +575,6 @@
         });
     })();
     </script>
+
 </body>
 </html>
