@@ -11,6 +11,33 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+
+
+
+
+<!-- FIREBASE CONFIGURATION MODULE -->
+<script type="module">
+  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBy7h0TDPepRx8xzzyLLN5jb0DJlcZJfd0",
+    authDomain: "apexonbank.firebaseapp.com",
+    projectId: "apexonbank",
+    storageBucket: "apexonbank.firebasestorage.app",
+    messagingSenderId: "1056633660208",
+    appId: "1:1056633660208:web:5807091c804b5a423d5ef5",
+    measurementId: "G-QY18F2VJVJ"
+  };
+
+  // Initialize Firebase globally on the window object so our bottom forms can see it
+  const app = initializeApp(firebaseConfig);
+  window.db = getDatabase(app);
+  window.dbRefs = { ref, set, get, child };
+</script>
+
+
+
 <!-- In your HTML head -->
 <script>
   if ('serviceWorker' in navigator) {
@@ -213,32 +240,55 @@
             var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
             var password = document.getElementById('loginPassword').value;
             
-            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            // Bring in the modular references from our window object up top
+            var db = window.db;
+            var dbRefs = window.dbRefs;
 
-            var user = users.find(function(u) {
-                return (u.username.toLowerCase() === identity || u.email.toLowerCase() === identity) && 
-                       u.password === password;
-            });
+            if (!db || !dbRefs) {
+                errorMsg.innerHTML = "❌ Database loading initialization error.";
+                errorMsg.style.display = 'block';
+                return;
+            }
 
-            if (user) {
-                // EXPLICIT REQUIREMENT: Check if admin has set approved status to true
-                if (user.approved !== true) {
-                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
-                    errorMsg.style.display = 'block';
-                    return;
+            // Retrieve the users node from the global cloud database
+            dbRefs.get(dbRefs.ref(db, 'users')).then(function(snapshot) {
+                var usersData = snapshot.val() || {};
+                var foundUser = null;
+
+                // Loop through the users object to find a match
+                for (var key in usersData) {
+                    var u = usersData[key];
+                    if ((u.username.toLowerCase() === identity || u.email.toLowerCase() === identity) && 
+                        u.password === password) {
+                        foundUser = u;
+                        break;
+                    }
                 }
 
-                localStorage.setItem('apexon_current_session', JSON.stringify(user));
-                loginBox.style.display = 'none';
-                overlay.classList.add('active');
+                if (foundUser) {
+                    // Check if administrator has approved status
+                    if (foundUser.approved !== true) {
+                        errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
+                        errorMsg.style.display = 'block';
+                        return;
+                    }
 
-                setTimeout(function() {
-                    window.location.href = "user-dashboard.html";
-                }, 5000);
-            } else {
-                errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
+                    // Save session data to keep the private dashboard working locally
+                    localStorage.setItem('apexon_current_session', JSON.stringify(foundUser));
+                    loginBox.style.display = 'none';
+                    overlay.classList.add('active');
+
+                    setTimeout(function() {
+                        window.location.href = "user-dashboard.html";
+                    }, 5000);
+                } else {
+                    errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
+                    errorMsg.style.display = 'block';
+                }
+            }).catch(function(error) {
+                errorMsg.innerHTML = "❌ Connection failed: " + error.message;
                 errorMsg.style.display = 'block';
-            }
+            });
         });
     })();
     </script>
