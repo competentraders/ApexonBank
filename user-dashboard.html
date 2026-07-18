@@ -327,7 +327,10 @@
     }
     applyGlobalSettings();
 
-    function syncLiveDashboard() {
+
+
+
+        function syncLiveDashboard() {
         // Run config checks inside the interval so changes take effect in real time
         var config = applyGlobalSettings();
 
@@ -343,8 +346,16 @@
         if (!liveUserData) return;
 
         var rawFullName = liveUserData.fullName || "Valued Customer";
-        var rawBalance = liveUserData.balance || "0.00";
-        var rawAccountNo = liveUserData.accountNo || "Unavailable";
+
+
+     var rawBalance = liveUserData.accountBalance || liveUserData.balance || "0.00";
+
+        
+
+
+        // --- FIXED LINE: Looks for the exact property name matching your database schema ---
+        var rawAccountNo = liveUserData.accountNumber || liveUserData.accountNo || "Unavailable";
+        
         var currencySign = liveUserData.currency || "$"; 
         
         // Formatted clear values
@@ -445,6 +456,11 @@
             ledgerContainer.innerHTML = htmlContent;
         }
     }
+
+
+
+
+
 
     syncLiveDashboard();
     setInterval(syncLiveDashboard, 1000);

@@ -5,25 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Secure Login Gateway</title>
     
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
-
+    <!-- Service Worker script -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -184,7 +180,7 @@
                 <input type="password" id="loginPassword" placeholder="Gateway Password" required>
             </div>
             
-            <button type="submit" class="action-btn">Authorize Access</button>
+            <button type="submit" id="submitBtn" class="action-btn">Authorize Access</button>
             
             <div style="text-align: center; font-size: 13px; color: #64748b; margin-top: 4px;">
                 Don't possess a clearing node? <a href="register.html" style="color: #b38728; text-decoration: none; font-weight: 600;">Open Account</a>
@@ -199,48 +195,104 @@
         </div>
     </div>
 
-    <script>
-    (function() {
-        var form = document.getElementById('loginForm');
-        var overlay = document.getElementById('loadingOverlay');
-        var loginBox = document.getElementById('loginBox');
-        var errorMsg = document.getElementById('errorMsg');
+    <!-- CONSOLIDATED FIRESTORE MODULE SCRIPT -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+      import { getFirestore, doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            errorMsg.style.display = 'none';
-            
-            var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
-            var password = document.getElementById('loginPassword').value;
-            
-            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+      const firebaseConfig = {
+        apiKey: "AIzaSyBy7h0TDPepRx8xzzyLLN5jb0DJlcZJfd0",
+        authDomain: "apexonbank.firebaseapp.com",
+        projectId: "apexonbank",
+        storageBucket: "apexonbank.firebasestorage.app",
+        messagingSenderId: "1056633660208",
+        appId: "1:1056633660208:web:5807091c804b5a423d5ef5",
+        measurementId: "G-QY18F2VJVJ"
+      };
 
-            var user = users.find(function(u) {
-                return (u.username.toLowerCase() === identity || u.email.toLowerCase() === identity) && 
-                       u.password === password;
-            });
+      // 1. Initialize Firebase App and Firestore locally within module environment
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
 
-            if (user) {
-                // EXPLICIT REQUIREMENT: Check if admin has set approved status to true
-                if (user.approved !== true) {
-                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
-                    errorMsg.style.display = 'block';
-                    return;
-                }
+      // 2. Setup DOM Elements
+      var form = document.getElementById('loginForm');
+      var submitBtn = document.getElementById('submitBtn');
+      var overlay = document.getElementById('loadingOverlay');
+      var loginBox = document.getElementById('loginBox');
+      var errorMsg = document.getElementById('errorMsg');
 
-                localStorage.setItem('apexon_current_session', JSON.stringify(user));
-                loginBox.style.display = 'none';
-                overlay.classList.add('active');
+      // 3. Handle Login Form Submit
+      form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          errorMsg.style.display = 'none';
+          
+          var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
+          var password = document.getElementById('loginPassword').value;
 
-                setTimeout(function() {
-                    window.location.href = "user-dashboard.html";
-                }, 5000);
-            } else {
-                errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
-                errorMsg.style.display = 'block';
-            }
-        });
-    })();
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Verifying Credentials...";
+
+          try {
+              let foundUser = null;
+
+              // Step A: Check if the login identity input matches a Document ID (Username) directly
+              const userDocRef = doc(db, "users", identity);
+              const userDocSnap = await getDoc(userDocRef);
+
+              if (userDocSnap.exists()) {
+                  var userData = userDocSnap.data();
+                  if (userData.password === password) {
+                      foundUser = userData;
+                  }
+              }
+
+              // Step B: Fallback check if they inputted an email address instead of a username
+              if (!foundUser) {
+                  const querySnapshot = await getDocs(collection(db, "users"));
+                  querySnapshot.forEach((doc) => {
+                      var data = doc.data();
+                      var dbEmail = data.email ? data.email.toLowerCase() : "";
+                      var dbUsername = data.username ? data.username.toLowerCase() : "";
+                      
+                      if ((dbEmail === identity || dbUsername === identity) && data.password === password) {
+                          foundUser = data;
+                      }
+                  });
+              }
+
+              // Evaluate verification results
+              if (foundUser) {
+                  // Check if administrator has approved status
+                  if (foundUser.approved !== true) {
+                      errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
+                      errorMsg.style.display = 'block';
+                      submitBtn.disabled = false;
+                      submitBtn.textContent = "Authorize Access";
+                      return;
+                  }
+
+                  // Store user data locally to maintain dashboard states
+                  localStorage.setItem('apexon_current_session', JSON.stringify(foundUser));
+                  loginBox.style.display = 'none';
+                  overlay.classList.add('active');
+
+                  setTimeout(function() {
+                      window.location.href = "user-dashboard.html";
+                  }, 5000);
+              } else {
+                  errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
+                  errorMsg.style.display = 'block';
+                  submitBtn.disabled = false;
+                  submitBtn.textContent = "Authorize Access";
+              }
+          } catch (error) {
+              console.error("Login verification structural error: ", error);
+              errorMsg.innerHTML = "❌ Connection failed: " + error.message;
+              errorMsg.style.display = 'block';
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Authorize Access";
+          }
+      });
     </script>
 </body>
 </html>

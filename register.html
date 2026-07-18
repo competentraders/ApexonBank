@@ -5,30 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Open Secure Ledger Node Account</title>
 
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+    <!-- UPDATED: FIREBASE CONFIGURED FOR FIRESTORE -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+      import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
 
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+      const firebaseConfig = {
+        apiKey: "AIzaSyBy7h0TDPepRx8xzzyLLN5jb0DJlcZJfd0",
+        authDomain: "apexonbank.firebaseapp.com",
+        projectId: "apexonbank",
+        storageBucket: "apexonbank.firebasestorage.app",
+        messagingSenderId: "1056633660208",
+        appId: "1:1056633660208:web:5807091c804b5a423d5ef5",
+        measurementId: "G-QY18F2VJVJ"
+      };
 
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
+      // Initialize Firebase globally on the window object so our bottom scripts can see it
+      const app = initializeApp(firebaseConfig);
+      window.db = getFirestore(app);
+      window.dbRefs = { doc, setDoc, getDoc };
+    </script>
 
-
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -90,7 +106,6 @@
             background-size: 12px;
         }
 
-        /* PREMIUM CUSTOM SUCCESS MODAL OVERLAY STYLING */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -216,8 +231,8 @@
 
                 <!-- Password -->
                 <div class="input-group" style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 12px; font-weight: 700; color: #475569;">🔑 Gateway Password</label>
-                    <input type="password" id="password" placeholder="Create system node key" required>
+                    <label style="font-size: 12px; font-weight: 700; color: #475569;">🔑Password</label>
+                    <input type="password" id="password" placeholder="Create" required>
                     <div class="error-msg" id="passwordError">
                         Password must be 8-15 characters, start with an Uppercase letter, and end with a number and symbol (e.g., @).
                     </div>
@@ -225,17 +240,17 @@
 
                 <!-- Confirm Password -->
                 <div class="input-group" style="display: flex; flex-direction: column; gap: 4px;">
-                    <label style="font-size: 12px; font-weight: 700; color: #475569;">🔄 Confirm Gateway Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Re-enter system node key" required>
+                    <label style="font-size: 12px; font-weight: 700; color: #475569;">🔄 Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Re-enter system" required>
                     <div class="error-msg" id="confirmPasswordError">Passwords do not match.</div>
                 </div>
 
-                <button type="submit" class="action-btn" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);">
+                <button type="submit" id="submitBtn" class="action-btn" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);">
                     ApexonBank Submit
                 </button>
 
                 <div style="text-align: center; font-size: 13px; color: #64748b; margin-top: 4px;">
-                    Already possess a node? <a href="login.html" style="color: #0d6efd; text-decoration: none; font-weight: 600;">Sign In</a>
+                    Already possess <a href="login.html" style="color: #0d6efd; text-decoration: none; font-weight: 600;">Sign In</a>
                 </div>
 
             </form>
@@ -262,9 +277,28 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+    // Import all necessary Firebase modules together
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBy7h0TDPepRx8xzzyLLN5jb0DJlcZJfd0",
+        authDomain: "apexonbank.firebaseapp.com",
+        projectId: "apexonbank",
+        storageBucket: "apexonbank.firebasestorage.app",
+        messagingSenderId: "1056633660208",
+        appId: "1:1056633660208:web:5807091c804b5a423d5ef5",
+        measurementId: "G-QY18F2VJVJ"
+    };
+
+    // Initialize Firebase Core Services
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
     (function() {
-        // Data matrix containing exactly 100 distinct global options
         var countryMatrix = [
             { name: "Afghanistan", flag: "🇦🇫", continent: "Asia", curCode: "AFN", curSym: "؋" },
             { name: "Albania", flag: "🇦🇱", continent: "Europe", curCode: "ALL", curSym: "L" },
@@ -299,7 +333,7 @@
             { name: "Cuba", flag: "🇨🇺", continent: "North America", curCode: "CUP", curSym: "$" },
             { name: "Cyprus", flag: "🇨🇾", continent: "Europe", curCode: "EUR", curSym: "€" },
             { name: "Czech Republic", flag: "🇨🇿", continent: "Europe", curCode: "CZK", curSym: "Kč" },
-            { name: "Denmark", flag: "🇩🇰", continent: "Europe", curCode: "DKK", kr: "kr" },
+            { name: "Denmark", flag: "🇩🇰", continent: "Europe", curCode: "DKK", curSym: "kr" },
             { name: "Dominican Republic", flag: "🇩🇴", continent: "North America", curCode: "DOP", curSym: "RD$" },
             { name: "Ecuador", flag: "🇪🇨", continent: "South America", curCode: "USD", curSym: "$" },
             { name: "Egypt", flag: "🇪🇬", continent: "Africa", curCode: "EGP", curSym: "E£" },
@@ -389,12 +423,10 @@
             { name: "Zimbabwe", flag: "🇿🇼", continent: "Africa", curCode: "ZWL", curSym: "$" }
         ];
 
-        // Reference select dropdown elements
         var nationSelect = document.getElementById("nationality");
         var currencySelect = document.getElementById("currency");
         var trackedCurrencies = {};
 
-        // Populate lists dynamically on runtime initialization
         countryMatrix.forEach(function(item) {
             var natOpt = document.createElement("option");
             var natValText = item.flag + " " + item.name + " (" + item.continent + ")";
@@ -413,6 +445,7 @@
         });
 
         var form = document.getElementById('registrationForm');
+        var submitBtn = document.getElementById('submitBtn');
         var modal = document.getElementById('successModal');
         var modalBtn = document.getElementById('modalCloseBtn');
         
@@ -420,7 +453,7 @@
             localStorage.setItem('apexon_users', JSON.stringify([]));
         }
 
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             var usernameInp = document.getElementById('username').value.trim();
@@ -440,19 +473,21 @@
 
             var isValid = true;
 
+            // --- 1. LOCAL DATA CHECKS ---
             var currentUsers = JSON.parse(localStorage.getItem('apexon_users'));
-            var userExists = currentUsers.some(u => u.username === usernameInp);
-            var emailExists = currentUsers.some(u => u.email === emailInp);
+            var userExistsLocal = currentUsers.some(u => u.username === usernameInp);
+            var emailExistsLocal = currentUsers.some(u => u.email === emailInp);
 
-            if (userExists) {
+            if (userExistsLocal) {
                 usernameError.style.display = 'block';
                 isValid = false;
             }
-            if (emailExists) {
+            if (emailExistsLocal) {
                 emailError.style.display = 'block';
                 isValid = false;
             }
 
+            // --- 2. VALIDATION SYSTEM PARAMS ---
             var lenCheck = passwordInp.length >= 8 && passwordInp.length <= 15;
             var firstUpper = /^[A-Z]/.test(passwordInp);
             var endsWithNumSym = (/[0-9][!@#$%^&*(),.?":{}|<>]$/.test(passwordInp)) || (/[!@#$%^&*(),.?":{}|<>][0-9]$/.test(passwordInp));
@@ -467,36 +502,92 @@
                 isValid = false;
             }
 
-            if (isValid) {
-                // Extract clean country name string (removes emoji and continent)
-                var nationalityValue = document.getElementById('nationality').value;
-                var cleanCountryName = nationalityValue.replace(/[\uD83C-\uDBFF][\uDC00-\uDFFF]\s*/g, "").split(" (")[0].trim();
+            if (!isValid) return;
 
-                var selectedCurrencySelect = document.getElementById('currency');
-                var selectedCurrencyText = selectedCurrencySelect.options[selectedCurrencySelect.selectedIndex].text;
+            // --- 3. CLOUD FIRESTORE DUPLICATION VERIFICATION ---
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Validating Node System...";
+            
+            try {
+                // Check if the document with this username exists in the 'users' collection
+                const userDocRef = doc(db, "users", usernameInp);
+                const userCheck = await getDoc(userDocRef);
+                
+                if (userCheck.exists()) {
+                    usernameError.style.display = 'block';
+                    isValid = false;
+                }
+            } catch (err) {
+                console.error("Firestore structural verification error: ", err);
+            }
 
-                var newUserObject = {
-                    id: 'NODE_' + Math.floor(Math.random() * 899999 + 100000),
-                    fullName: document.getElementById('fullName').value.trim(),
-                    username: usernameInp,
-                    email: emailInp,
-                    dob: document.getElementById('dob').value,
-                    gender: document.getElementById('gender').value,
-                    nationality: nationalityValue,      // e.g., "🇳🇬 Nigeria (Africa)"
-                    country: cleanCountryName,          // e.g., "Nigeria"
-                    currency: document.getElementById('currency').value, // e.g., "₦"
-                    currencyText: selectedCurrencyText, // e.g., "🇳🇬 NGN (₦)"
-                    telephone: document.getElementById('telephone').value.trim(),
-                    password: passwordInp, 
-                    accountBalance: 0.00,
-                    status: 'Pending Approval', 
-                    createdDate: new Date().toLocaleDateString()
-                };
+            if (!isValid) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "ApexonBank Submit";
+                return;
+            }
 
+            // --- 4. DATA BUILD AND SAVING ---
+            var nationalityValue = document.getElementById('nationality').value;
+            var cleanCountryName = nationalityValue.replace(/[\uD83C-\uDBFF][\uDC00-\uDFFF]\s*/g, "").split(" (")[0].trim();
+
+            var selectedCurrencySelect = document.getElementById('currency');
+            var selectedCurrencyText = selectedCurrencySelect.options[selectedCurrencySelect.selectedIndex].text;
+            
+            // Generate standard unique banking parameters
+            var generatedAccountNumber = "30" + Math.floor(10000000 + Math.random() * 90000000); 
+            var uniqueNodeId = 'NODE_' + Math.floor(Math.random() * 899999 + 100000);
+
+            // Merged data model configuration matching your requirements
+            var newUserObject = {
+                id: uniqueNodeId,
+                accountNumber: generatedAccountNumber, // Injected standard 10-digit numerical account number
+                fullName: document.getElementById('fullName').value.trim(),
+                username: usernameInp,
+                email: emailInp,
+                dob: document.getElementById('dob').value,
+                gender: document.getElementById('gender').value,
+                nationality: nationalityValue,      
+                country: cleanCountryName,          
+                currency: document.getElementById('currency').value, 
+                currencyText: selectedCurrencyText, 
+                telephone: document.getElementById('telephone').value.trim(),
+                password: passwordInp, 
+                accountBalance: 0.00,
+                status: 'Approved',     // Set to Approved for immediate gateway access
+                approved: true,         // Matches login engine parameters
+                createdDate: new Date().toLocaleDateString()
+            };
+
+            // --- 5. EXECUTE AUTHENTICATION CREATION & FIRESTORE SAVE ---
+            try {
+                submitBtn.textContent = "Creating Account Securely...";
+                
+                // A. Create the official user account record inside Firebase Authentication portal
+                const userCredential = await createUserWithEmailAndPassword(auth, emailInp, passwordInp);
+                const user = userCredential.user;
+                
+                // Bind Authentication reference directly inside the data payload object
+                newUserObject.authUid = user.uid;
+
+                // B. Write the fully finalized data payload model document to Cloud Firestore 
+                await setDoc(doc(db, "users", usernameInp), newUserObject);
+
+                // Process local cache uniform fallback injection
                 currentUsers.push(newUserObject);
                 localStorage.setItem('apexon_users', JSON.stringify(currentUsers));
 
+                // Reset UI components and throw custom modal view
+                submitBtn.disabled = false;
+                submitBtn.textContent = "ApexonBank Submit";
                 modal.classList.add('active');
+
+            } catch (firebaseErr) {
+                console.error("Critical identity drop sync failure to Firebase Architecture: ", firebaseErr);
+                alert("Registration sync failed: " + firebaseErr.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = "ApexonBank Submit";
+                return;
             }
         });
 
@@ -504,6 +595,4 @@
             window.location.href = "login.html";
         });
     })();
-    </script>
-</body>
-</html>
+</script>
