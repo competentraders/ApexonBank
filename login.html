@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Secure Login Gateway</title>
     
-    <!-- PWA MANIFEST LINK -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js', { scope: '/' })
-            .then(reg => console.log('Registered with scope:', reg.scope))
-            .catch(err => console.log('Registration failed:', err));
-        });
-      }
-    </script>
+<!-- PWA MANIFEST LINK -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- In your HTML head -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('Registered with scope:', reg.scope))
+        .catch(err => console.log('Registration failed:', err));
+    });
+  }
+</script>
+
+
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,11 +83,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .input-group {
-            position: relative;
-            width: 100%;
-        }
-
         .input-group input {
             width: 100%;
             padding: 14px 16px;
@@ -99,32 +99,6 @@
         .input-group input:focus {
             border-color: #b38728;
             box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.15);
-        }
-
-        /* Pad the text inside the password field so it doesn't run into the eye button */
-        .input-group input[type="password"], 
-        .input-group input[type="text"]#loginPassword {
-            padding-right: 48px;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4px;
-            color: #64748b;
-            transition: color 0.2s ease;
-        }
-
-        .toggle-password:hover {
-            color: #b38728;
         }
 
         .action-btn {
@@ -199,7 +173,7 @@
 
         <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
             <div id="errorMsg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; font-weight: 600;">
-                ❌ Invalid credentials.
+                ❌ Invalid credentials or node mismatch.
             </div>
             
             <div class="input-group">
@@ -208,13 +182,6 @@
             
             <div class="input-group">
                 <input type="password" id="loginPassword" placeholder="Gateway Password" required>
-                <!-- SVG Eye Icon for toggle functionality -->
-                <button type="button" class="toggle-password" id="togglePasswordBtn">
-                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
             </div>
             
             <button type="submit" class="action-btn">Authorize Access</button>
@@ -232,57 +199,48 @@
         </div>
     </div>
 
-<script type="module">
-    var form = document.getElementById('loginForm');
-    var overlay = document.getElementById('loadingOverlay');
-    var loginBox = document.getElementById('loginBox');
-    var errorMsg = document.getElementById('errorMsg');
-    
-    var passwordInput = document.getElementById('loginPassword');
-    var togglePasswordBtn = document.getElementById('togglePasswordBtn');
-    var eyeIcon = document.getElementById('eyeIcon');
+    <script>
+    (function() {
+        var form = document.getElementById('loginForm');
+        var overlay = document.getElementById('loadingOverlay');
+        var loginBox = document.getElementById('loginBox');
+        var errorMsg = document.getElementById('errorMsg');
 
-    // Password Visibility Toggle Logic
-    togglePasswordBtn.addEventListener('click', function() {
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            // Swap to an eye-off icon using inline SVG manipulation
-            eyeIcon.innerHTML = `
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                <line x1="1" y1="1" x2="23" y2="23"></line>
-            `;
-        } else {
-            passwordInput.type = 'password';
-            // Swap back to standard open eye icon
-            eyeIcon.innerHTML = `
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-            `;
-        }
-    });
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        errorMsg.style.display = 'none';
-        
-        var identity = document.getElementById('loginIdentity').value.trim();
-        var password = passwordInput.value;
-
-        if (identity.length >= 3 && password.length >= 6) {
-            localStorage.setItem('userSessionIdentity', identity);
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            errorMsg.style.display = 'none';
             
-            loginBox.style.display = 'none';
-            overlay.classList.add('active');
-
-            setTimeout(function() {
-                window.location.href = "user-dashboard.html";
-            }, 5000);
+            var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
+            var password = document.getElementById('loginPassword').value;
             
-        } else {
-            errorMsg.innerHTML = "❌ Invalid credentials format. Identity must be 3+ chars, password 6+ chars.";
-            errorMsg.style.display = 'block';
-        }
-    });
-</script>
+            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+
+            var user = users.find(function(u) {
+                return (u.username.toLowerCase() === identity || u.email.toLowerCase() === identity) && 
+                       u.password === password;
+            });
+
+            if (user) {
+                // EXPLICIT REQUIREMENT: Check if admin has set approved status to true
+                if (user.approved !== true) {
+                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                localStorage.setItem('apexon_current_session', JSON.stringify(user));
+                loginBox.style.display = 'none';
+                overlay.classList.add('active');
+
+                setTimeout(function() {
+                    window.location.href = "user-dashboard.html";
+                }, 5000);
+            } else {
+                errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
+                errorMsg.style.display = 'block';
+            }
+        });
+    })();
+    </script>
 </body>
 </html>

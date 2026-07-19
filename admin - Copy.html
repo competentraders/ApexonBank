@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apexon Bank | Admin Command Matrix</title>
+
+
+<!-- PWA MANIFEST LINK -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- SERVICE WORKER REGISTRATION SCRIPT -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Apexon App Node Engine Registered Successfully.'))
+        .catch(err => console.log('Registration failed:', err));
+    });
+  }
+</script>
+
+
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Space Grotesk', sans-serif; }
+        body { background-color: #f8fafc; color: #0f172a; padding: 30px 20px; position: relative; }
+        .admin-container { max-width: 900px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 2px solid #e2e8f0; }
+        .logo { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 700; background: linear-gradient(135deg, #BF953F 0%, #B38728 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px; text-transform: uppercase; }
+        .badge-pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .badge-approved { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .user-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 15px; }
+        @media(min-width: 768px) { .user-card { flex-direction: row; justify-content: space-between; align-items: center; } }
+        .info-block h4 { font-size: 18px; color: #0f172a; margin-bottom: 4px; }
+        .info-block p { font-size: 13px; color: #64748b; }
+        .actions-block { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .btn { padding: 10px 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; border: none; transition: transform 0.1s ease; }
+        .btn:active { transform: scale(0.97); }
+        .btn-approve { background: #166534; color: #ffffff; }
+        .btn-credit { background: #0f172a; color: #ffffff; border: 1px solid #b38728; }
+        .btn-delete { background: #ef4444; color: #ffffff; }
+        .btn-delete:hover { background: #dc2626; }
+        .empty-state { text-align: center; padding: 40px; color: #64748b; font-weight: 500; }
+        
+        /* AUDIO INTERACTION UNLOCK OVERLAY */
+        #audioUnlockOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.1);
+            backdrop-filter: blur(2px);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .unlock-box {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="audioUnlockOverlay" onclick="unlockAudioSystem()">
+        <div class="unlock-box">
+            <p style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">Click Anywhere to Initialize Matrix</p>
+            <p style="font-size: 12px; color: #64748b;">Enables automated network chime notifications</p>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <header>
+            <div>
+                <div class="logo">APEXON CENTRAL</div>
+                <p style="font-size: 12px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Master Control Node</p>
+            </div>
+            <div style="text-align: right;">
+                <span style="background: #0f172a; color: #b38728; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: 1px solid #b38728;">System Admin Active</span>
+            </div>
+        </header>
+
+        <h3 style="margin-bottom: 20px; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; color: #475569;">User Account Registries</h3>
+        
+        <div id="usersList"></div>
+    </div>
+
+    <script>
+        var lastCachedUserCount = null;
+        var audioContextInstance = null;
+
+        // Global Dynamic Global Bank Layout Database Matrix compiled from your specifications
+        var globalCountryRegistry = {
+            "nigeria": { len: 10 }, "united states": { len: 12 }, "usa": { len: 12 }, "canada": { len: 10 },
+            "united kingdom": { len: 8 }, "uk": { len: 8 }, "germany": { len: 10 }, "france": { len: 11 },
+            "spain": { len: 10 }, "italy": { len: 12 }, "netherlands": { len: 10 }, "belgium": { len: 7 },
+            "switzerland": { len: 10 }, "austria": { len: 11 }, "portugal": { len: 11 }, "ireland": { len: 8 },
+            "denmark": { len: 10 }, "sweden": { len: 9 }, "norway": { len: 11 }, "finland": { len: 9 },
+            "poland": { len: 26 }, "czech republic": { len: 14 }, "slovakia": { len: 14 }, "hungary": { len: 20 },
+            "romania": { len: 15 }, "greece": { len: 15 }, "turkey": { len: 16 }, "russia": { len: 20 },
+            "ukraine": { len: 29 }, "india": { len: 12 }, "pakistan": { len: 15 }, "bangladesh": { len: 13 },
+            "sri lanka": { len: 12 }, "nepal": { len: 12 }, "china": { len: 18 }, "japan": { len: 7 },
+            "south korea": { len: 12 }, "singapore": { len: 10 }, "malaysia": { len: 12 }, "indonesia": { len: 12 },
+            "philippines": { len: 12 }, "thailand": { len: 10 }, "vietnam": { len: 12 }, "australia": { len: 8 },
+            "new zealand": { len: 15 }, "south africa": { len: 10 }, "kenya": { len: 11 }, "ghana": { len: 11 },
+            "egypt": { len: 17 }, "saudi arabia": { len: 18 }, "united arab emirates": { len: 19 }, "uae": { len: 19 },
+            "qatar": { len: 18 }, "brazil": { len: 9 }, "algeria": { len: 20 }, "angola": { len: 21 },
+            "argentina": { len: 22 }, "armenia": { len: 16 }, "azerbaijan": { len: 18 }, "bahrain": { len: 12 },
+            "belarus": { len: 24 }, "bolivia": { len: 14 }, "bosnia and herzegovina": { len: 16 }, "botswana": { len: 12 },
+            "brunei": { len: 11 }, "bulgaria": { len: 10 }, "cambodia": { len: 12 }, "cameroon": { len: 11 },
+            "chile": { len: 12 }, "colombia": { len: 12 }, "costa rica": { len: 17 }, "croatia": { len: 10 },
+            "cyprus": { len: 16 }, "dominican republic": { len: 14 }, "ecuador": { len: 11 }, "el salvador": { len: 13 },
+            "estonia": { len: 12 }, "ethiopia": { len: 13 }, "georgia": { len: 15 }, "guatemala": { len: 13 },
+            "honduras": { len: 13 }, "iceland": { len: 22 }, "iraq": { len: 14 }, "israel": { len: 12 },
+            "jamaica": { len: 11 }, "jordan": { len: 16 }, "kazakhstan": { len: 18 }, "kuwait": { len: 20 },
+            "kyrgyzstan": { len: 14 }, "laos": { len: 12 }, "latvia": { len: 12 }, "lebanon": { len: 18 },
+            "libya": { len: 15 }, "lithuania": { len: 10 }, "luxembourg": { len: 13 }, "madagascar": { len: 11 },
+            "malawi": { len: 12 }, "malta": { len: 18 }, "mauritius": { len: 12 }, "moldova": { len: 16 },
+            "mongolia": { len: 12 }, "montenegro": { len: 18 }, "morocco": { len: 24 }, "mozambique": { len: 21 }
+        };
+
+        function unlockAudioSystem() {
+            try {
+                audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
+                document.getElementById('audioUnlockOverlay').style.display = 'none';
+            } catch(e) { console.error("Audio engine failed: ", e); }
+        }
+
+        function playChimeNotification() {
+            if (!audioContextInstance) return;
+            try {
+                if (audioContextInstance.state === 'suspended') { audioContextInstance.resume(); }
+                var osc1 = audioContextInstance.createOscillator();
+                var gain1 = audioContextInstance.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(587.33, audioContextInstance.currentTime);
+                gain1.gain.setValueAtTime(0.1, audioContextInstance.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, audioContextInstance.currentTime + 0.4);
+                osc1.connect(gain1);
+                gain1.connect(audioContextInstance.destination);
+                osc1.start();
+                osc1.stop(audioContextInstance.currentTime + 0.4);
+
+                setTimeout(function() {
+                    var osc2 = audioContextInstance.createOscillator();
+                    var gain2 = audioContextInstance.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(880, audioContextInstance.currentTime);
+                    gain2.gain.setValueAtTime(0.1, audioContextInstance.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, audioContextInstance.currentTime + 0.6);
+                    osc2.connect(gain2);
+                    gain2.connect(audioContextInstance.destination);
+                    osc2.start();
+                    osc2.stop(audioContextInstance.currentTime + 0.6);
+                }, 120);
+            } catch(e) { console.log("Chime node bypass caught: ", e); }
+        }
+
+        // Helper function to scan all case combinations of country data keys safely
+        function extractUserCountry(userObj) {
+            if (!userObj) return "";
+            var countryVal = userObj.country || userObj.Country || userObj.COUNTRY || "";
+            return countryVal.toString().trim();
+        }
+
+        // INTELLIGENT WORLDWIDE ACCOUNT ALLOCATION ENGINE
+        function generateInternationalAccount(countryName) {
+            var normCountry = (countryName || '').trim().toLowerCase();
+            var digitCount = 10; // Default safety fallback length
+
+            if (globalCountryRegistry[normCountry]) {
+                digitCount = globalCountryRegistry[normCountry].len;
+            }
+
+            var generatedNumber = '';
+            generatedNumber += Math.floor(Math.random() * 9 + 1).toString(); // Prevent leading zero
+            for (var i = 1; i < digitCount; i++) {
+                generatedNumber += Math.floor(Math.random() * 10).toString();
+            }
+            return generatedNumber;
+        }
+
+        function loadUsers() {
+            var usersListContainer = document.getElementById('usersList');
+            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+
+            if (lastCachedUserCount !== null && users.length > lastCachedUserCount) {
+                playChimeNotification();
+            }
+            lastCachedUserCount = users.length;
+
+            if (users.length === 0) {
+                usersListContainer.innerHTML = '<div class="empty-state">No users registered inside the node infrastructure yet.</div>';
+                return;
+            }
+
+            var masterHTML = '';
+            users.forEach(function(user, index) {
+                var statusBadge = user.approved ? '<span class="badge badge-approved">Approved</span>' : '<span class="badge badge-pending">Pending Approval</span>';
+                var currentBalance = parseFloat(user.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
+                var assignedCurrency = user.currency || "$";
+                
+                // Read clean string using our diagnostic safety extractor
+                var displayCountry = extractUserCountry(user) || 'Not Specified';
+
+                masterHTML += `
+                    <div class="user-card">
+                        <div class="info-block">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                <h4>${user.fullName}</h4>
+                                ${statusBadge}
+                            </div>
+                            <p><strong>Email:</strong> ${user.email} | <strong>User:</strong> ${user.username}</p>
+                            <p style="margin-top: 4px;"><strong>Country:</strong> <span style="color:#1e40af; font-weight:700; text-transform: capitalize;">${displayCountry}</span></p>
+                            <p style="margin-top: 2px;"><strong>Acc No:</strong> <span style="color:#b38728; font-weight:700; font-size:14px; letter-spacing:0.5px;">${user.accountNo || 'Pending Base Allocation'}</span></p>
+                            <p style="font-size: 16px; color: #166534; font-weight: 700; margin-top: 6px;">Current Ledger Balance: ${assignedCurrency}${currentBalance}</p>
+                        </div>
+                        <div class="actions-block">
+                            ${!user.approved ? `<button class="btn btn-approve" onclick="approveUser(${index})">Approve & Assign Acc</button>` : ''}
+                            <button class="btn btn-credit" onclick="creditUser(${index})">Modify Balance</button>
+                            <button class="btn btn-delete" onclick="deleteUser(${index})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            usersListContainer.innerHTML = masterHTML;
+        }
+
+        function approveUser(index) {
+            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            var targetUser = users[index];
+            
+            // Check country with the safety loop extractor
+            var detectedCountry = extractUserCountry(targetUser);
+            
+            // PROFESSIONAL FALLBACK: If country data is missing, request validation manually instantly
+            if (!detectedCountry || detectedCountry.toLowerCase() === 'not specified') {
+                var manualInput = prompt(`System could not read a valid country parameter for ${targetUser.fullName}.\n\nPlease type the country name manually to execute precise length mapping (e.g., United States, Germany, Poland):`);
+                if (manualInput !== null && manualInput.trim() !== "") {
+                    detectedCountry = manualInput.trim();
+                    // Save it securely back into database records so it reflects permanently
+                    users[index].country = detectedCountry;
+                } else {
+                    alert("Approval paused. A country selection is required for specific digit parsing.");
+                    return;
+                }
+            }
+            
+            // Generate exact format based on the verified country string match
+            users[index].accountNo = generateInternationalAccount(detectedCountry);
+            users[index].approved = true;
+            
+            localStorage.setItem('apexon_users', JSON.stringify(users));
+            loadUsers();
+        }
+
+        function creditUser(index) {
+            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            var targetUser = users[index];
+            var newBalanceInput = prompt(`Enter new absolute balance amount for ${targetUser.fullName}:`, targetUser.balance || "0");
+            
+            if (newBalanceInput !== null) {
+                var cleanAmount = parseFloat(newBalanceInput);
+                if (isNaN(cleanAmount) || cleanAmount < 0) {
+                    alert("Please enter a valid positive numerical amount.");
+                    return;
+                }
+                users[index].balance = cleanAmount.toFixed(2);
+                localStorage.setItem('apexon_users', JSON.stringify(users));
+                loadUsers();
+            }
+        }
+
+        function deleteUser(index) {
+            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            var targetUser = users[index];
+            var confirmation = confirm(`🚨 WARNING: Are you absolutely certain you want to permanently delete the account for ${targetUser.fullName}?\n\nThis will purge their files completely. They will be locked out and cannot log back in.`);
+            
+            if (confirmation) {
+                users.splice(index, 1);
+                localStorage.setItem('apexon_users', JSON.stringify(users));
+                loadUsers();
+            }
+        }
+
+        window.onload = loadUsers;
+        // Periodic check loop for interface accuracy updates
+        setInterval(loadUsers, 2000);
+    </script>
+</body>
+</html>

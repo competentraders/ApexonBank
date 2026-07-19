@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apexon | Admin Airtime Portal</title>
+
+
+<!-- PWA MANIFEST LINK -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- In your HTML head -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('Registered with scope:', reg.scope))
+        .catch(err => console.log('Registration failed:', err));
+    });
+  }
+</script>
+
+
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        body {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 15px;
+        }
+        h1 { font-size: 24px; color: #0f172a; }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .queue-count {
+            background: #b38728;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+        .pulse-alert {
+            animation: badgePulse 0.5s double alternate;
+            background: #ef4444 !important;
+        }
+        @keyframes badgePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+        .empty-state {
+            background: #ffffff;
+            padding: 40px;
+            text-align: center;
+            border-radius: 16px;
+            color: #64748b;
+            border: 1px dashed #cbd5e1;
+        }
+        .ticket-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            animation: cardSlideIn 0.3s ease-out;
+        }
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+        .user-info h3 { font-size: 16px; color: #1e293b; }
+        .user-info p { font-size: 13px; color: #64748b; }
+        .tx-value { font-size: 18px; font-weight: 700; color: #b38728; }
+        .ticket-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 14px;
+            color: #475569;
+            margin-bottom: 16px;
+        }
+        .input-reason {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 12px;
+            font-size: 13px;
+            outline: none;
+        }
+        .input-reason:focus { border-color: #b38728; }
+        .action-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        .btn:hover { opacity: 0.9; }
+        .btn-approve { background: #10b981; color: white; }
+        .btn-reject { background: #ef4444; color: white; }
+        
+        .audio-status-banner {
+            font-size: 11px;
+            background: #e2e8f0;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1>Airtime Approval Node</h1>
+                <p style="font-size: 13px; color: #64748b;">Process incoming global telco recharge payloads</p>
+            </div>
+            <div class="header-actions">
+                <div class="audio-status-banner" id="audioNotice">🔔 Audio Ready</div>
+                <span class="queue-count" id="queueBadge">0 Pending</span>
+            </div>
+        </header>
+
+        <div id="queueContainer">
+            <!-- Dynamic elements load here -->
+        </div>
+    </div>
+
+    <script>
+        var usersArray = [];
+        var currentKnownPendingCount = 0;
+        var initialLoadCompleted = false;
+
+        // Native Synthetic Audio Notification Generator Engine (Bypasses local asset paths)
+        function triggerChimeNotification() {
+            try {
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                var ctx = new AudioContext();
+                
+                // Primary High Harmonic chime
+                var osc1 = ctx.createOscillator();
+                var gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 Note
+                gain1.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                
+                // Secondary Support Harmonic chime
+                setTimeout(function() {
+                    var osc2 = ctx.createOscillator();
+                    var gain2 = ctx.createGain();
+                    osc2.type = 'sine';
+                    osc2.frequency.setValueAtTime(880.00, ctx.currentTime); // A5 Note
+                    gain2.gain.setValueAtTime(0.10, ctx.currentTime);
+                    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+                    osc2.connect(gain2);
+                    gain2.connect(ctx.destination);
+                    osc2.start();
+                    osc2.stop(ctx.currentTime + 0.6);
+                }, 120);
+
+                osc1.start();
+                osc1.stop(ctx.currentTime + 0.5);
+            } catch (e) {
+                console.log("Audio contextual block context: ", e);
+            }
+        }
+
+        function syncAndEvaluateLedgerQueue() {
+            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            var tempPendingCount = 0;
+
+            // Pre-count matches inside local arrays
+            usersArray.forEach(function(user) {
+                if (user.transactions) {
+                    user.transactions.forEach(function(tx) {
+                        if (tx.status === "Pending Approval" && (tx.description.includes("Mobile Top-Up") || tx.description.includes("Global Top-Up"))) {
+                            tempPendingCount++;
+                        }
+                    });
+                }
+            });
+
+            // If a change occurs in incoming count lengths, mutate the structural display engine
+            if (tempPendingCount !== currentKnownPendingCount || !initialLoadCompleted) {
+                
+                // Trigger notification sounds if new pending items are pushed into data fields
+                if (initialLoadCompleted && tempPendingCount > currentKnownPendingCount) {
+                    triggerChimeNotification();
+                    var badge = document.getElementById('queueBadge');
+                    badge.classList.add('pulse-alert');
+                    setTimeout(function() { badge.classList.remove('pulse-alert'); }, 600);
+                }
+
+                currentKnownPendingCount = tempPendingCount;
+                renderDOMQueue();
+                initialLoadCompleted = true;
+            }
+        }
+
+        function renderDOMQueue() {
+            var queueContainer = document.getElementById('queueContainer');
+            queueContainer.innerHTML = '';
+            var displayedCount = 0;
+
+            usersArray.forEach(function(user, userIdx) {
+                if (user.transactions) {
+                    user.transactions.forEach(function(tx, txIdx) {
+                        if (tx.status === "Pending Approval" && (tx.description.includes("Mobile Top-Up") || tx.description.includes("Global Top-Up"))) {
+                            displayedCount++;
+                            
+                            var symbol = user.currency || "$";
+                            var card = document.createElement('div');
+                            card.className = 'ticket-card';
+                            card.innerHTML = `
+                                <div class="ticket-header">
+                                    <div class="user-info">
+                                        <h3>${user.fullName} (@${user.username})</h3>
+                                        <p>Current Balance Ledger: ${symbol}${parseFloat(user.balance).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                                    </div>
+                                    <div class="tx-value">${symbol}${parseFloat(tx.amount).toFixed(2)}</div>
+                                </div>
+                                <div class="ticket-details">
+                                    <div><strong>Network Operator:</strong> ${tx.description.replace(" Mobile Top-Up", "").replace(" Global Top-Up", "")}</div>
+                                    <div><strong>Target Terminal Line:</strong> ${tx.receiver}</div>
+                                    <div><strong>Matrix Timestamp:</strong> ${tx.date} | ${tx.time}</div>
+                                </div>
+                                <input type="text" class="input-reason" id="reason_${userIdx}_${txIdx}" placeholder="Provide rejection reasoning note (Only required if declining)...">
+                                <div class="action-group">
+                                    <button class="btn btn-reject" onclick="processRequest(${userIdx}, ${txIdx}, 'Reject')">Decline Request</button>
+                                    <button class="btn btn-approve" onclick="processRequest(${userIdx}, ${txIdx}, 'Approve')">Authorize Release</button>
+                                </div>
+                            `;
+                            queueContainer.appendChild(card);
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('queueBadge').innerText = displayedCount + " Pending";
+            if (displayedCount === 0) {
+                queueContainer.innerHTML = '<div class="empty-state"><h3>Gateway Is Clear</h3><p style="margin-top:5px; font-size:14px;">No transactions are currently awaiting manual review loops.</p></div>';
+            }
+        }
+
+        function processRequest(userIdx, txIdx, finalAction) {
+            var targetUser = usersArray[userIdx];
+            var targetTx = targetUser.transactions[txIdx];
+            var txAmount = parseFloat(targetTx.amount);
+            var reasonInput = document.getElementById(`reason_${userIdx}_${txIdx}`).value.trim();
+
+            if (finalAction === 'Approve') {
+                var currentBal = parseFloat(targetUser.balance || 0);
+                
+                if (currentBal < txAmount) {
+                    alert("Operation halted: Target node balance is insufficient for settlement.");
+                    return;
+                }
+                
+                targetUser.balance = (currentBal - txAmount).toFixed(2);
+                targetTx.status = "Successful";
+                delete targetTx.rejectionReason; 
+            } else {
+                targetTx.status = "Rejected";
+                targetTx.rejectionReason = reasonInput || "Security framework configuration mismatch / Network failure.";
+            }
+
+            // Sync array updates back to persistent local storage matrix
+            localStorage.setItem('apexon_users', JSON.stringify(usersArray));
+            
+            // Immediately run a synchronization lifecycle pass
+            syncAndEvaluateLedgerQueue();
+        }
+
+        // Initialize background heartbeat observation engine loops
+        syncAndEvaluateLedgerQueue();
+        setInterval(syncAndEvaluateLedgerQueue, 1500);
+
+        // Web Audio API unlock handler for browser security constraints
+        document.body.addEventListener('click', function() {
+            document.getElementById('audioNotice').style.display = 'none';
+        }, { once: true });
+    </script>
+</body>
+</html>
