@@ -262,248 +262,212 @@
         </div>
     </div>
 
-    <script>
-    (function() {
-        // Data matrix containing exactly 100 distinct global options
-        var countryMatrix = [
-            { name: "Afghanistan", flag: "🇦🇫", continent: "Asia", curCode: "AFN", curSym: "؋" },
-            { name: "Albania", flag: "🇦🇱", continent: "Europe", curCode: "ALL", curSym: "L" },
-            { name: "Algeria", flag: "🇩🇿", continent: "Africa", curCode: "DZD", curSym: "د.ج" },
-            { name: "Andorra", flag: "🇦🇩", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Angola", flag: "🇦🇴", continent: "Africa", curCode: "AOA", curSym: "Kz" },
-            { name: "Argentina", flag: "🇦🇷", continent: "South America", curCode: "ARS", curSym: "$" },
-            { name: "Armenia", flag: "🇦🇲", continent: "Asia", curCode: "AMD", curSym: "֏" },
-            { name: "Australia", flag: "🇦🇺", continent: "Oceania", curCode: "AUD", curSym: "$" },
-            { name: "Austria", flag: "🇦🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Azerbaijan", flag: "🇦🇿", continent: "Asia", curCode: "AZN", curSym: "₼" },
-            { name: "Bahamas", flag: "🇧🇸", continent: "North America", curCode: "BSD", curSym: "$" },
-            { name: "Bahrain", flag: "🇧🇭", continent: "Asia", curCode: "BHD", curSym: ".د.ب" },
-            { name: "Bangladesh", flag: "🇧🇩", continent: "Asia", curCode: "BDT", curSym: "৳" },
-            { name: "Barbados", flag: "🇧🇧", continent: "North America", curCode: "BBD", curSym: "$" },
-            { name: "Belgium", flag: "🇧🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Belize", flag: "🇧🇿", continent: "North America", curCode: "BZD", curSym: "$" },
-            { name: "Benin", flag: "🇧🇯", continent: "Africa", curCode: "XOF", curSym: "CFA" },
-            { name: "Bermuda", flag: "🇧🇲", continent: "North America", curCode: "BMD", curSym: "$" },
-            { name: "Bolivia", flag: "🇧🇴", continent: "South America", curCode: "BOB", curSym: "Bs." },
-            { name: "Botswana", flag: "🇧🇼", continent: "Africa", curCode: "BWP", curSym: "P" },
-            { name: "Brazil", flag: "🇧🇷", continent: "South America", curCode: "BRL", curSym: "R$" },
-            { name: "Bulgaria", flag: "🇧🇬", continent: "Europe", curCode: "BGN", curSym: "лв" },
-            { name: "Cambodia", flag: "🇰🇭", continent: "Asia", curCode: "KHR", curSym: "៛" },
-            { name: "Cameroon", flag: "🇨🇲", continent: "Africa", curCode: "XAF", curSym: "FCFA" },
-            { name: "Canada", flag: "🇨🇦", continent: "North America", curCode: "CAD", curSym: "$" },
-            { name: "Chile", flag: "🇨🇱", continent: "South America", curCode: "CLP", curSym: "$" },
-            { name: "China", flag: "🇨🇳", continent: "Asia", curCode: "CNY", curSym: "¥" },
-            { name: "Colombia", flag: "🇨🇴", continent: "South America", curCode: "COP", curSym: "$" },
-            { name: "Costa Rica", flag: "🇨🇷", continent: "North America", curCode: "CRC", curSym: "₡" },
-            { name: "Croatia", flag: "🇭🇷", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Cuba", flag: "🇨🇺", continent: "North America", curCode: "CUP", curSym: "$" },
-            { name: "Cyprus", flag: "🇨🇾", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Czech Republic", flag: "🇨🇿", continent: "Europe", curCode: "CZK", curSym: "Kč" },
-            { name: "Denmark", flag: "🇩🇰", continent: "Europe", curCode: "DKK", kr: "kr" },
-            { name: "Dominican Republic", flag: "🇩🇴", continent: "North America", curCode: "DOP", curSym: "RD$" },
-            { name: "Ecuador", flag: "🇪🇨", continent: "South America", curCode: "USD", curSym: "$" },
-            { name: "Egypt", flag: "🇪🇬", continent: "Africa", curCode: "EGP", curSym: "E£" },
-            { name: "El Salvador", flag: "🇸🇻", continent: "North America", curCode: "USD", curSym: "$" },
-            { name: "Estonia", flag: "🇪🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Ethiopia", flag: "🇪🇹", continent: "Africa", curCode: "ETB", curSym: "Br" },
-            { name: "Fiji", flag: "🇫🇯", continent: "Oceania", curCode: "FJD", curSym: "$" },
-            { name: "Finland", flag: "🇫🇮", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "France", flag: "🇫🇷", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Georgia", flag: "🇬🇪", continent: "Asia", curCode: "GEL", curSym: "₾" },
-            { name: "Germany", flag: "🇩🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Ghana", flag: "🇬🇭", continent: "Africa", curCode: "GHS", curSym: "₵" },
-            { name: "Greece", flag: "🇬🇷", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Guatemala", flag: "🇬🇹", continent: "North America", curCode: "GTQ", curSym: "Q" },
-            { name: "Honduras", flag: "🇭🇳", continent: "North America", curCode: "HNL", curSym: "L" },
-            { name: "Hong Kong", flag: "🇭🇰", continent: "Asia", curCode: "HKD", curSym: "$" },
-            { name: "Hungary", flag: "🇭🇺", continent: "Europe", curCode: "HUF", curSym: "Ft" },
-            { name: "Iceland", flag: "🇮🇸", continent: "Europe", curCode: "ISK", curSym: "kr" },
-            { name: "India", flag: "🇮🇳", continent: "Asia", curCode: "INR", curSym: "₹" },
-            { name: "Indonesia", flag: "🇮🇩", continent: "Asia", curCode: "IDR", curSym: "Rp" },
-            { name: "Iran", flag: "🇮🇷", continent: "Asia", curCode: "IRR", curSym: "﷼" },
-            { name: "Iraq", flag: "🇮🇶", continent: "Asia", curCode: "IQD", curSym: "ع.د" },
-            { name: "Ireland", flag: "🇮🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Israel", flag: "🇮🇱", continent: "Asia", curCode: "ILS", curSym: "₪" },
-            { name: "Italy", flag: "🇮🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Jamaica", flag: "🇯🇲", continent: "North America", curCode: "JMD", curSym: "$" },
-            { name: "Japan", flag: "🇯🇵", continent: "Asia", curCode: "JPY", curSym: "¥" },
-            { name: "Jordan", flag: "🇯🇴", continent: "Asia", curCode: "JOD", curSym: "د.ا" },
-            { name: "Kazakhstan", flag: "🇰🇿", continent: "Asia", curCode: "KZT", curSym: "₸" },
-            { name: "Kenya", flag: "🇰🇪", continent: "Africa", curCode: "KES", curSym: "KSh" },
-            { name: "Kuwait", flag: "🇰🇼", continent: "Asia", curCode: "KWD", curSym: "د.ك" },
-            { name: "Lebanon", flag: "🇱🇧", continent: "Asia", curCode: "LBP", curSym: "ل.ل" },
-            { name: "Libya", flag: "🇱🇾", continent: "Africa", curCode: "LYD", curSym: "ل.د" },
-            { name: "Luxembourg", flag: "🇱🇺", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Malaysia", flag: "🇲🇾", continent: "Asia", curCode: "MYR", curSym: "RM" },
-            { name: "Maldives", flag: "🇲🇻", continent: "Asia", curCode: "MVR", curSym: ".ރ" },
-            { name: "Malta", flag: "🇲🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Mauritius", flag: "🇲🇺", continent: "Africa", curCode: "MUR", curSym: "₨" },
-            { name: "Mexico", flag: "🇲🇽", continent: "North America", curCode: "MXN", curSym: "$" },
-            { name: "Monaco", flag: "🇲🇨", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Morocco", flag: "🇲🇦", continent: "Africa", curCode: "MAD", curSym: "د.م." },
-            { name: "Mozambique", flag: "🇲🇿", continent: "Africa", curCode: "MZN", curSym: "MT" },
-            { name: "Nepal", flag: "🇳🇵", continent: "Asia", curCode: "NPR", curSym: "रू" },
-            { name: "Netherlands", flag: "🇳🇱", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "New Zealand", flag: "🇳🇿", continent: "Oceania", curCode: "NZD", curSym: "$" },
-            { name: "Nicaragua", flag: "🇳🇮", continent: "North America", curCode: "NIO", curSym: "C$" },
-            { name: "Nigeria", flag: "🇳🇬", continent: "Africa", curCode: "NGN", curSym: "₦" },
-            { name: "Norway", flag: "🇳🇴", continent: "Europe", curCode: "NOK", curSym: "kr" },
-            { name: "Oman", flag: "🇴🇲", continent: "Asia", curCode: "OMR", curSym: "ر.ع." },
-            { name: "Pakistan", flag: "🇵🇰", continent: "Asia", curCode: "PKR", curSym: "₨" },
-            { name: "Panama", flag: "🇵🇦", continent: "North America", curCode: "PAB", curSym: "B/." },
-            { name: "Paraguay", flag: "🇵🇾", continent: "South America", curCode: "PYG", curSym: "₲" },
-            { name: "Peru", flag: "🇵🇪", continent: "South America", curCode: "PEN", curSym: "S/." },
-            { name: "Philippines", flag: "🇵🇭", continent: "Asia", curCode: "PHP", curSym: "₱" },
-            { name: "Poland", flag: "🇵🇱", continent: "Europe", curCode: "PLN", curSym: "zł" },
-            { name: "Portugal", flag: "🇵🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Qatar", flag: "🇶🇦", continent: "Asia", curCode: "QAR", curSym: "ر.ق" },
-            { name: "Romania", flag: "🇷🇴", continent: "Europe", curCode: "RON", curSym: "lei" },
-            { name: "Russia", flag: "🇷🇺", continent: "Asia/Europe", curCode: "RUB", curSym: "₽" },
-            { name: "Saudi Arabia", flag: "🇸🇦", continent: "Asia", curCode: "SAR", curSym: "ر.س" },
-            { name: "Senegal", flag: "🇸🇳", continent: "Africa", curCode: "XOF", curSym: "CFA" },
-            { name: "Serbia", flag: "🇷🇸", continent: "Europe", curCode: "RSD", curSym: "дин." },
-            { name: "Singapore", flag: "🇸🇬", continent: "Asia", curCode: "SGD", curSym: "$" },
-            { name: "Slovakia", flag: "🇸🇰", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Slovenia", flag: "🇸🇮", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "South Africa", flag: "🇿🇦", continent: "Africa", curCode: "ZAR", curSym: "R" },
-            { name: "South Korea", flag: "🇰🇷", continent: "Asia", curCode: "KRW", curSym: "₩" },
-            { name: "Spain", flag: "🇪🇸", continent: "Europe", curCode: "EUR", curSym: "€" },
-            { name: "Sri Lanka", flag: "🇱🇰", continent: "Asia", curCode: "LKR", curSym: "Rs" },
-            { name: "Sweden", flag: "🇸🇪", continent: "Europe", curCode: "SEK", curSym: "kr" },
-            { name: "Switzerland", flag: "🇨🇭", continent: "Europe", curCode: "CHF", curSym: "CHF" },
-            { name: "Taiwan", flag: "🇹🇼", continent: "Asia", curCode: "TWD", curSym: "NT$" },
-            { name: "Tanzania", flag: "🇹🇿", continent: "Africa", curCode: "TZS", curSym: "TSh" },
-            { name: "Thailand", flag: "🇹🇭", continent: "Asia", curCode: "THB", curSym: "฿" },
-            { name: "Tunisia", flag: "🇹🇳", continent: "Africa", curCode: "TND", curSym: "د.ت" },
-            { name: "Turkey", flag: "🇹🇷", continent: "Asia/Europe", curCode: "TRY", curSym: "₺" },
-            { name: "Uganda", flag: "🇺🇬", continent: "Africa", curCode: "UGX", curSym: "USh" },
-            { name: "Ukraine", flag: "🇺🇦", continent: "Europe", curCode: "UAH", curSym: "₴" },
-            { name: "United Arab Emirates", flag: "🇦🇪", continent: "Asia", curCode: "AED", curSym: "د.إ" },
-            { name: "United Kingdom", flag: "🇬🇧", continent: "Europe", curCode: "GBP", curSym: "£" },
-            { name: "United States", flag: "🇺🇸", continent: "North America", curCode: "USD", curSym: "$" },
-            { name: "Uruguay", flag: "🇺🇾", continent: "South America", curCode: "UYU", curSym: "$" },
-            { name: "Uzbekistan", flag: "🇺🇿", continent: "Asia", curCode: "UZS", curSym: "soʻm" },
-            { name: "Venezuela", flag: "🇻🇪", continent: "South America", curCode: "VES", curSym: "Bs.S" },
-            { name: "Vietnam", flag: "🇻🇳", continent: "Asia", curCode: "VND", curSym: "₫" },
-            { name: "Zambia", flag: "🇿🇲", continent: "Africa", curCode: "ZMW", curSym: "ZK" },
-            { name: "Zimbabwe", flag: "🇿🇼", continent: "Africa", curCode: "ZWL", curSym: "$" }
-        ];
+    <!-- Insert this directly before the closing </body> tag in register.html -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Reference select dropdown elements
-        var nationSelect = document.getElementById("nationality");
-        var currencySelect = document.getElementById("currency");
-        var trackedCurrencies = {};
+    const firebaseConfig = {
+        apiKey: "AIzaSyDDlUOp8GbW4mgBE7X07x9Hhb0bxZW1Q54",
+        authDomain: "apexonbank-84f29.firebaseapp.com",
+        projectId: "apexonbank-84f29",
+        storageBucket: "apexonbank-84f29.firebasestorage.app",
+        messagingSenderId: "263439967946",
+        appId: "1:263439967946:web:1fffcec41cf7f81f6b7633",
+        measurementId: "G-QLDNNBLYDN"
+    };
 
-        // Populate lists dynamically on runtime initialization
-        countryMatrix.forEach(function(item) {
-            var natOpt = document.createElement("option");
-            var natValText = item.flag + " " + item.name + " (" + item.continent + ")";
-            natOpt.value = natValText;
-            natOpt.textContent = natValText;
-            nationSelect.appendChild(natOpt);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-            var curKey = item.curCode + "_" + item.curSym;
-            if (!trackedCurrencies[curKey]) {
-                trackedCurrencies[curKey] = true;
-                var curOpt = document.createElement("option");
-                curOpt.value = item.curSym; 
-                curOpt.textContent = item.flag + " " + item.curCode + " (" + item.curSym + ")";
-                currencySelect.appendChild(curOpt);
-            }
-        });
+    var countryMatrix = [
+        { name: "Afghanistan", flag: "🇦🇫", continent: "Asia", curCode: "AFN", curSym: "؋" },
+        { name: "Albania", flag: "🇦🇱", continent: "Europe", curCode: "ALL", curSym: "L" },
+        { name: "Algeria", flag: "🇩🇿", continent: "Africa", curCode: "DZD", curSym: "د.ج" },
+        { name: "Andorra", flag: "🇦🇩", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Angola", flag: "🇦🇴", continent: "Africa", curCode: "AOA", curSym: "Kz" },
+        { name: "Argentina", flag: "🇦🇷", continent: "South America", curCode: "ARS", curSym: "$" },
+        { name: "Armenia", flag: "🇦🇲", continent: "Asia", curCode: "AMD", curSym: "֏" },
+        { name: "Australia", flag: "🇦🇺", continent: "Oceania", curCode: "AUD", curSym: "$" },
+        { name: "Austria", flag: "🇦🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Azerbaijan", flag: "🇦🇿", continent: "Asia", curCode: "AZN", curSym: "₼" },
+        { name: "Bahamas", flag: "🇧🇸", continent: "North America", curCode: "BSD", curSym: "$" },
+        { name: "Bahrain", flag: "🇧🇭", continent: "Asia", curCode: "BHD", curSym: ".د.ب" },
+        { name: "Bangladesh", flag: "🇧🇩", continent: "Asia", curCode: "BDT", curSym: "৳" },
+        { name: "Barbados", flag: "🇧🇧", continent: "North America", curCode: "BBD", curSym: "$" },
+        { name: "Belgium", flag: "🇧🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Belize", flag: "🇧🇿", continent: "North America", curCode: "BZD", curSym: "$" },
+        { name: "Benin", flag: "🇧🇯", continent: "Africa", curCode: "XOF", curSym: "CFA" },
+        { name: "Bermuda", flag: "🇧🇲", continent: "North America", curCode: "BMD", curSym: "$" },
+        { name: "Bolivia", flag: "🇧🇴", continent: "South America", curCode: "BOB", curSym: "Bs." },
+        { name: "Botswana", flag: "🇧🇼", continent: "Africa", curCode: "BWP", curSym: "P" },
+        { name: "Brazil", flag: "🇧🇷", continent: "South America", curCode: "BRL", curSym: "R$" },
+        { name: "Bulgaria", flag: "🇧🇬", continent: "Europe", curCode: "BGN", curSym: "лв" },
+        { name: "Cambodia", flag: "🇰🇭", continent: "Asia", curCode: "KHR", curSym: "៛" },
+        { name: "Cameroon", flag: "🇨🇲", continent: "Africa", curCode: "XAF", curSym: "FCFA" },
+        { name: "Canada", flag: "🇨🇦", continent: "North America", curCode: "CAD", curSym: "$" },
+        { name: "Chile", flag: "🇨🇱", continent: "South America", curCode: "CLP", curSym: "$" },
+        { name: "China", flag: "🇨🇳", continent: "Asia", curCode: "CNY", curSym: "¥" },
+        { name: "Colombia", flag: "🇨🇴", continent: "South America", curCode: "COP", curSym: "$" },
+        { name: "Costa Rica", flag: "🇨🇷", continent: "North America", curCode: "CRC", curSym: "₡" },
+        { name: "Croatia", flag: "🇭🇷", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Cuba", flag: "🇨🇺", continent: "North America", curCode: "CUP", curSym: "$" },
+        { name: "Cyprus", flag: "🇨🇾", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Czech Republic", flag: "🇨🇿", continent: "Europe", curCode: "CZK", curSym: "Kč" },
+        { name: "Denmark", flag: "🇩🇰", continent: "Europe", curCode: "DKK", krSym: "kr" },
+        { name: "Dominican Republic", flag: "🇩🇴", continent: "North America", curCode: "DOP", curSym: "RD$" },
+        { name: "Ecuador", flag: "🇪🇨", continent: "South America", curCode: "USD", curSym: "$" },
+        { name: "Egypt", flag: "🇪🇬", continent: "Africa", curCode: "EGP", curSym: "E£" },
+        { name: "El Salvador", flag: "🇸🇻", continent: "North America", curCode: "USD", curSym: "$" },
+        { name: "Estonia", flag: "🇪🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Ethiopia", flag: "🇪🇹", continent: "Africa", curCode: "ETB", curSym: "Br" },
+        { name: "Fiji", flag: "🇫🇯", continent: "Oceania", curCode: "FJD", curSym: "$" },
+        { name: "Finland", flag: "🇫🇮", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "France", flag: "🇫🇷", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Georgia", flag: "🇬🇪", continent: "Asia", curCode: "GEL", curSym: "₾" },
+        { name: "Germany", flag: "🇩🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Ghana", flag: "🇬🇭", continent: "Africa", curCode: "GHS", curSym: "₵" },
+        { name: "Greece", flag: "🇬🇷", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Guatemala", flag: "🇬🇹", continent: "North America", curCode: "GTQ", curSym: "Q" },
+        { name: "Honduras", flag: "🇭🇳", continent: "North America", curCode: "HNL", curSym: "L" },
+        { name: "Hong Kong", flag: "🇭🇰", continent: "Asia", curCode: "HKD", curSym: "$" },
+        { name: "Hungary", flag: "🇭🇺", continent: "Europe", curCode: "HUF", curSym: "Ft" },
+        { name: "Iceland", flag: "🇮🇸", continent: "Europe", curCode: "ISK", curSym: "kr" },
+        { name: "India", flag: "🇮🇳", continent: "Asia", curCode: "INR", curSym: "₹" },
+        { name: "Indonesia", flag: "🇮🇩", continent: "Asia", curCode: "IDR", curSym: "Rp" },
+        { name: "Iran", flag: "🇮🇷", continent: "Asia", curCode: "IRR", curSym: "﷼" },
+        { name: "Iraq", flag: "🇮🇶", continent: "Asia", curCode: "IQD", curSym: "ع.د" },
+        { name: "Ireland", flag: "🇮🇪", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Israel", flag: "🇮🇱", continent: "Asia", curCode: "ILS", curSym: "₪" },
+        { name: "Italy", flag: "🇮🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Jamaica", flag: "🇯🇲", continent: "North America", curCode: "JMD", curSym: "$" },
+        { name: "Japan", flag: "🇯🇵", continent: "Asia", curCode: "JPY", curSym: "¥" },
+        { name: "Jordan", flag: "🇯🇴", continent: "Asia", curCode: "JOD", curSym: "د.ا" },
+        { name: "Kazakhstan", flag: "🇰🇿", continent: "Asia", curCode: "KZT", curSym: "₸" },
+        { name: "Kenya", flag: "🇰🇪", continent: "Africa", curCode: "KES", curSym: "KSh" },
+        { name: "Kuwait", flag: "🇰🇼", continent: "Asia", curCode: "KWD", curSym: "د.ك" },
+        { name: "Lebanon", flag: "🇱🇧", continent: "Asia", curCode: "LBP", curSym: "ل.ل" },
+        { name: "Libya", flag: "🇱🇾", continent: "Africa", curCode: "LYD", curSym: "ل.د" },
+        { name: "Luxembourg", flag: "🇱🇺", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Malaysia", flag: "🇲🇾", continent: "Asia", curCode: "MYR", curSym: "RM" },
+        { name: "Maldives", flag: "🇲🇻", continent: "Asia", curCode: "MVR", curSym: ".ރ" },
+        { name: "Malta", flag: "🇲🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Mauritius", flag: "🇲🇺", continent: "Africa", curCode: "MUR", curSym: "₨" },
+        { name: "Mexico", flag: "🇲🇽", continent: "North America", curCode: "MXN", curSym: "$" },
+        { name: "Monaco", flag: "🇲🇨", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Morocco", flag: "🇲🇦", continent: "Africa", curCode: "MAD", curSym: "د.م." },
+        { name: "Mozambique", flag: "🇲🇿", continent: "Africa", curCode: "MZN", curSym: "MT" },
+        { name: "Nepal", flag: "🇳🇵", continent: "Asia", curCode: "NPR", curSym: "रू" },
+        { name: "Netherlands", flag: "🇳🇱", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "New Zealand", flag: "🇳🇿", continent: "Oceania", curCode: "NZD", curSym: "$" },
+        { name: "Nicaragua", flag: "🇳🇮", continent: "North America", curCode: "NIO", curSym: "C$" },
+        { name: "Nigeria", flag: "🇳🇬", continent: "Africa", curCode: "NGN", curSym: "₦" },
+        { name: "Norway", flag: "🇳🇴", continent: "Europe", curCode: "NOK", curSym: "kr" },
+        { name: "Oman", flag: "🇴🇲", continent: "Asia", curCode: "OMR", curSym: "ر.ع." },
+        { name: "Pakistan", flag: "🇵🇰", continent: "Asia", curCode: "PKR", curSym: "₨" },
+        { name: "Panama", flag: "🇵🇦", continent: "North America", curCode: "PAB", curSym: "B/." },
+        { name: "Paraguay", flag: "🇵🇾", continent: "South America", curCode: "PYG", curSym: "₲" },
+        { name: "Peru", flag: "🇵🇪", continent: "South America", curCode: "PEN", curSym: "S/." },
+        { name: "Philippines", flag: "🇵🇭", continent: "Asia", curCode: "PHP", curSym: "₱" },
+        { name: "Poland", flag: "🇵🇱", continent: "Europe", curCode: "PLN", curSym: "zł" },
+        { name: "Portugal", flag: "🇵🇹", continent: "Europe", curCode: "EUR", curSym: "€" },
+        { name: "Qatar", flag: "🇶🇦", continent: "Asia", curCode: "QAR", curSym: "ر.ق" },
+        { name: "Romania", flag: "🇷🇴", continent: "Europe", curCode: "RON", curSym: "lei" },
+        { name: "Russia", flag: "🇷🇺", continent: "Asia/Europe", curCode: "RUB", curSym: "₽" },
+        { name: "Saudi Arabia", flag: "🇸🇦", continent: "Asia", curCode: "SAR", curSym: "ر.س" },
+        { name: "Senegal", flag: "🇸🇳", continent: "Africa", curCode: "XOF", curSym: "CFA" },
+        { name: "Serbia", flag: "🇷🇸", continent: "Europe", curCode: "RSD", curSym: "din" }
+    ];
 
-        var form = document.getElementById('registrationForm');
-        var modal = document.getElementById('successModal');
-        var modalBtn = document.getElementById('modalCloseBtn');
+    const natSelect = document.getElementById('nationality');
+    const curSelect = document.getElementById('currency');
+    
+    countryMatrix.forEach(c => {
+        let optNat = document.createElement('option');
+        optNat.value = c.name;
+        optNat.innerText = `${c.flag} ${c.name} (${c.continent})`;
+        natSelect.appendChild(optNat);
+
+        let optCur = document.createElement('option');
+        optCur.value = c.curSym;
+        optCur.innerText = `${c.curCode} (${c.curSym})`;
+        curSelect.appendChild(optCur);
+    });
+
+    const form = document.getElementById('registrationForm');
+    const modal = document.getElementById('successModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        if (!localStorage.getItem('apexon_users')) {
-            localStorage.setItem('apexon_users', JSON.stringify([]));
+        document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const username = document.getElementById('username').value.trim().toLowerCase();
+        const email = document.getElementById('email').value.trim();
+        const dob = document.getElementById('dob').value;
+        const gender = document.getElementById('gender').value;
+        const nationality = document.getElementById('nationality').value;
+        const currency = document.getElementById('currency').value;
+        const telephone = document.getElementById('telephone').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!email.endsWith('@gmail.com')) {
+            document.getElementById('emailError').style.display = 'block';
+            return;
         }
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            var usernameInp = document.getElementById('username').value.trim();
-            var emailInp = document.getElementById('email').value.trim().toLowerCase();
-            var passwordInp = document.getElementById('password').value;
-            var confirmPasswordInp = document.getElementById('confirmPassword').value;
-            
-            var usernameError = document.getElementById('usernameError');
-            var emailError = document.getElementById('emailError');
-            var passwordError = document.getElementById('passwordError');
-            var confirmPasswordError = document.getElementById('confirmPasswordError');
+        const passRegex = /^[A-Z].{6,13}[0-9][@#\$%\^&\*\+=!]$/;
+        if (!passRegex.test(password)) {
+            document.getElementById('passwordError').style.display = 'block';
+            return;
+        }
 
-            usernameError.style.display = 'none';
-            emailError.style.display = 'none';
-            passwordError.style.display = 'none';
-            confirmPasswordError.style.display = 'none';
+        if (password !== confirmPassword) {
+            document.getElementById('confirmPasswordError').style.display = 'block';
+            return;
+        }
 
-            var isValid = true;
-
-            var currentUsers = JSON.parse(localStorage.getItem('apexon_users'));
-            var userExists = currentUsers.some(u => u.username === usernameInp);
-            var emailExists = currentUsers.some(u => u.email === emailInp);
-
-            if (userExists) {
-                usernameError.style.display = 'block';
-                isValid = false;
-            }
-            if (emailExists) {
-                emailError.style.display = 'block';
-                isValid = false;
+        try {
+            const uQuery = query(collection(db, "users"), where("username", "==", username));
+            const uSnap = await getDocs(uQuery);
+            if (!uSnap.empty) {
+                document.getElementById('usernameError').style.display = 'block';
+                return;
             }
 
-            var lenCheck = passwordInp.length >= 8 && passwordInp.length <= 15;
-            var firstUpper = /^[A-Z]/.test(passwordInp);
-            var endsWithNumSym = (/[0-9][!@#$%^&*(),.?":{}|<>]$/.test(passwordInp)) || (/[!@#$%^&*(),.?":{}|<>][0-9]$/.test(passwordInp));
+            // Directly initialize account via Firebase Auth without blocking on location
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
 
-            if (!lenCheck || !firstUpper || !endsWithNumSym) {
-                passwordError.style.display = 'block';
-                isValid = false;
-            }
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                fullName: fullName,
+                username: username,
+                email: email,
+                dob: dob,
+                gender: gender,
+                nationality: nationality,
+                currency: currency,
+                telephone: telephone,
+                balance: 0.00, 
+                accountNo: "APX" + Math.floor(10000000 + Math.random() * 90000000),
+                approved: true 
+            });
 
-            if (passwordInp !== confirmPasswordInp) {
-                confirmPasswordError.style.display = 'block';
-                isValid = false;
-            }
+            modal.classList.add('active');
+        } catch (err) {
+            alert("Registration Error: " + err.message);
+        }
+    });
 
-            if (isValid) {
-                // Extract clean country name string (removes emoji and continent)
-                var nationalityValue = document.getElementById('nationality').value;
-                var cleanCountryName = nationalityValue.replace(/[\uD83C-\uDBFF][\uDC00-\uDFFF]\s*/g, "").split(" (")[0].trim();
-
-                var selectedCurrencySelect = document.getElementById('currency');
-                var selectedCurrencyText = selectedCurrencySelect.options[selectedCurrencySelect.selectedIndex].text;
-
-                var newUserObject = {
-                    id: 'NODE_' + Math.floor(Math.random() * 899999 + 100000),
-                    fullName: document.getElementById('fullName').value.trim(),
-                    username: usernameInp,
-                    email: emailInp,
-                    dob: document.getElementById('dob').value,
-                    gender: document.getElementById('gender').value,
-                    nationality: nationalityValue,      // e.g., "🇳🇬 Nigeria (Africa)"
-                    country: cleanCountryName,          // e.g., "Nigeria"
-                    currency: document.getElementById('currency').value, // e.g., "₦"
-                    currencyText: selectedCurrencyText, // e.g., "🇳🇬 NGN (₦)"
-                    telephone: document.getElementById('telephone').value.trim(),
-                    password: passwordInp, 
-                    accountBalance: 0.00,
-                    status: 'Pending Approval', 
-                    createdDate: new Date().toLocaleDateString()
-                };
-
-                currentUsers.push(newUserObject);
-                localStorage.setItem('apexon_users', JSON.stringify(currentUsers));
-
-                modal.classList.add('active');
-            }
-        });
-
-        modalBtn.addEventListener('click', function() {
-            window.location.href = "login.html";
-        });
-    })();
-    </script>
+    modalCloseBtn.addEventListener('click', function() {
+        window.location.href = "login.html";
+    });
+</script>
 </body>
 </html>

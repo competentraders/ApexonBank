@@ -199,48 +199,91 @@
         </div>
     </div>
 
-    <script>
-    (function() {
-        var form = document.getElementById('loginForm');
-        var overlay = document.getElementById('loadingOverlay');
-        var loginBox = document.getElementById('loginBox');
-        var errorMsg = document.getElementById('errorMsg');
+  <!-- Insert this directly before the closing </body> tag in login.html -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            errorMsg.style.display = 'none';
-            
-            var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
-            var password = document.getElementById('loginPassword').value;
-            
-            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+    const firebaseConfig = {
+        apiKey: "AIzaSyDDlUOp8GbW4mgBE7X07x9Hhb0bxZW1Q54",
+        authDomain: "apexonbank-84f29.firebaseapp.com",
+        projectId: "apexonbank-84f29",
+        storageBucket: "apexonbank-84f29.firebasestorage.app",
+        messagingSenderId: "263439967946",
+        appId: "1:263439967946:web:1fffcec41cf7f81f6b7633",
+        measurementId: "G-QLDNNBLYDN"
+    };
 
-            var user = users.find(function(u) {
-                return (u.username.toLowerCase() === identity || u.email.toLowerCase() === identity) && 
-                       u.password === password;
-            });
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-            if (user) {
-                // EXPLICIT REQUIREMENT: Check if admin has set approved status to true
-                if (user.approved !== true) {
-                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
+    var form = document.getElementById('loginForm');
+    var overlay = document.getElementById('loadingOverlay');
+    var loginBox = document.getElementById('loginBox');
+    var errorMsg = document.getElementById('errorMsg');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        errorMsg.style.display = 'none';
+        
+        var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
+        var password = document.getElementById('loginPassword').value;
+        
+        let targetedEmail = identity;
+
+        try {
+            if (!identity.endsWith('@gmail.com')) {
+                const userQuery = query(collection(db, "users"), where("username", "==", identity));
+                const userSnap = await getDocs(userQuery);
+                
+                if (userSnap.empty) {
+                    errorMsg.innerHTML = "❌ Invalid credentials.";
                     errorMsg.style.display = 'block';
                     return;
                 }
+                targetedEmail = userSnap.docs[0].data().email;
+            }
 
-                localStorage.setItem('apexon_current_session', JSON.stringify(user));
+            // Authenticate user via Firebase Auth Engine
+            const userCredential = await signInWithEmailAndPassword(auth, targetedEmail, password);
+            const verifiedUser = userCredential.user;
+
+            // Fetch record profile instance from Cloud Firestore
+            const docRef = doc(db, "users", verifiedUser.uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const userData = docSnap.data();
+
+                // Admin status flag approval verification check remains standard
+                if (userData.approved !== true) {
+                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
+                    errorMsg.style.display = 'block';
+                    await signOut(auth);
+                    return;
+                }
+
+                // All IP and location checks are removed. Login succeeds instantly on correct password.
                 loginBox.style.display = 'none';
                 overlay.classList.add('active');
 
                 setTimeout(function() {
                     window.location.href = "user-dashboard.html";
                 }, 5000);
+
             } else {
-                errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
+                errorMsg.innerHTML = "❌ Account data profile missing from server.";
                 errorMsg.style.display = 'block';
+                await signOut(auth);
             }
-        });
-    })();
-    </script>
+
+        } catch (err) {
+            errorMsg.innerHTML = "❌ Access Denied: Invalid credentials.";
+            errorMsg.style.display = 'block';
+        }
+    });
+</script>
 </body>
 </html>
