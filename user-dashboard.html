@@ -313,8 +313,7 @@
             <div>Settings</div>
         </a>
     </div>
-
-    <script>
+<script>
     // Paste this at the start of your script blocks on ALL pages to keep sync:
     function applyGlobalSettings() {
         var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
@@ -327,35 +326,39 @@
     }
     applyGlobalSettings();
 
+    // GLOBAL APP LIFECYCLE LISTENERS
+    function monitorSessionAndLoadData() {
+        // Step 1: Use Firebase Auth instead of localStorage to identify who is looking at the screen
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                // If there's no active session on this browser, redirect cleanly
+                window.location.href = "login.html";
+                return;
+            }
 
+            // Step 2: Grab data directly from the Firestore collection in real-time
+            // If you use document names based on user IDs, switch .doc(user.email) to .doc(user.uid)
+            db.collection("users").doc(user.email).onSnapshot((doc) => {
+                if (!doc.exists) {
+                    console.error("User profile document not found in cloud database.");
+                    return;
+                }
 
+                var liveUserData = doc.data();
+                renderDashboardUI(liveUserData);
+            }, (error) => {
+                console.error("Firestore sync subscription failed:", error);
+            });
+        });
+    }
 
-        function syncLiveDashboard() {
-        // Run config checks inside the interval so changes take effect in real time
+    // INTERACTIVE UI RENDERING ENGINE
+    function renderDashboardUI(liveUserData) {
         var config = applyGlobalSettings();
 
-        var currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
-        if (!currentSession) {
-            window.location.href = "login.html";
-            return;
-        }
-
-        var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
-        var liveUserData = users.find(u => u.username === currentSession.username);
-
-        if (!liveUserData) return;
-
         var rawFullName = liveUserData.fullName || "Valued Customer";
-
-
-     var rawBalance = liveUserData.accountBalance || liveUserData.balance || "0.00";
-
-        
-
-
-        // --- FIXED LINE: Looks for the exact property name matching your database schema ---
+        var rawBalance = liveUserData.accountBalance || liveUserData.balance || "0.00";
         var rawAccountNo = liveUserData.accountNumber || liveUserData.accountNo || "Unavailable";
-        
         var currencySign = liveUserData.currency || "$"; 
         
         // Formatted clear values
@@ -457,18 +460,15 @@
         }
     }
 
-
-
-
-
-
-    syncLiveDashboard();
-    setInterval(syncLiveDashboard, 1000);
+    // Run the centralized live initialization listener block
+    monitorSessionAndLoadData();
 
     function handleLogout() {
-        localStorage.removeItem('apexon_current_session');
-        window.location.href = "login.html";
+        firebase.auth().signOut().then(() => {
+            window.location.href = "login.html";
+        });
     }
-    </script>
+</script>
+
 </body>
 </html>
