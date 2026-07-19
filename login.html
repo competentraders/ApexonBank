@@ -5,25 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Secure Login Gateway</title>
     
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
-
+    <!-- In your HTML head -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -199,7 +195,6 @@
         </div>
     </div>
 
-  <!-- Insert this directly before the closing </body> tag in login.html -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -255,17 +250,7 @@
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                const userData = docSnap.data();
-
-                // Admin status flag approval verification check remains standard
-                if (userData.approved !== true) {
-                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
-                    errorMsg.style.display = 'block';
-                    await signOut(auth);
-                    return;
-                }
-
-                // All IP and location checks are removed. Login succeeds instantly on correct password.
+                // All approval and location restrictions are bypassed. Login succeeds instantly.
                 loginBox.style.display = 'none';
                 overlay.classList.add('active');
 
