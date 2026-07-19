@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- In your HTML head -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -258,22 +257,25 @@
             
             var identity = document.getElementById('loginIdentity').value.trim();
             
-            // Bypass all validation arrays and check states entirely. 
-            // Generate an ephemeral operational session layout using the input text values.
+            // Accept any value for development/testing and create a mock object
             var syntheticUser = {
                 username: identity.includes('@') ? identity.split('@')[0] : identity,
                 email: identity.includes('@') ? identity : identity + "@apexon.internal",
-                approved: true
+                authenticated: true,
+                timestamp: new Date().getTime()
             };
 
+            // Commit session state locally
             localStorage.setItem('apexon_current_session', JSON.stringify(syntheticUser));
             
+            // Trigger visual transitions
             loginBox.style.display = 'none';
             overlay.classList.add('active');
 
+            // Standard timeout before redirection
             setTimeout(function() {
                 window.location.href = "user-dashboard.html";
-            }, 2000); // Reduced delay slightly for a cleaner local testing workflow
+            }, 1500); 
         });
     })();
     </script>
