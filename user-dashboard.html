@@ -326,14 +326,18 @@
     }
     applyGlobalSettings();
 
-    function monitorSessionAndLoadData() {
+
+
+
+
+function monitorSessionAndLoadData() {
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "login.html";
                 return;
             }
 
-            // FIXED RESOLVER: Query the collection directly for the document matching your authenticated UID field
+            // Fix: Query the collection for the document matching your authenticated UID field
             db.collection("users").where("authUid", "==", user.uid).onSnapshot((querySnapshot) => {
                 if (!querySnapshot.empty) {
                     // Grab the first matching document (e.g., "Oreva")
@@ -347,6 +351,12 @@
             });
         });
     }
+
+
+
+
+
+
 
     function renderDashboardUI(liveUserData) {
         var config = applyGlobalSettings();
@@ -458,3 +468,8 @@
 </script>
 </body>
 </html>
+
+
+
+
+    
