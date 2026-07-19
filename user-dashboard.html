@@ -5,26 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Clearing Matrix Dashboard</title>
     <!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
-
-
-
-
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -208,7 +201,6 @@
         .nav-item.active { color: #b38728; }
         .nav-icon { font-size: 20px; margin-bottom: 2px; }
         
-        /* Interactive dynamic overrides */
         .card-title-text { font-size: 13px; font-weight: 700; color: var(--text-dark-override); }
         .card-label-style { font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
         .card-value-style { color: var(--text-dark-override); font-weight: 600; }
@@ -286,7 +278,7 @@
         <div class="transaction-list">
             <h3 style="font-size: 14px; font-weight: 700; color: var(--text-dark-override); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Recent Activity</h3>
             <div id="ledgerContainer">
-                <!-- Transactions will be loaded here dynamically by JavaScript -->
+                <!-- Transactions loaded dynamically -->
             </div>
         </div>
     </div>
@@ -313,8 +305,16 @@
             <div>Settings</div>
         </a>
     </div>
+
+<!-- REQUIRED FIREBASE SDK INJECTIONS -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<!-- EXTERNAL CENTRAL CONFIGURATION CONNECTION -->
+<script src="firebase-config.js"></script> 
+
 <script>
-    // Paste this at the start of your script blocks on ALL pages to keep sync:
     function applyGlobalSettings() {
         var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
         if (config.darkMode) {
@@ -326,33 +326,33 @@
     }
     applyGlobalSettings();
 
-    // GLOBAL APP LIFECYCLE LISTENERS
     function monitorSessionAndLoadData() {
-        // Step 1: Use Firebase Auth instead of localStorage to identify who is looking at the screen
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
-                // If there's no active session on this browser, redirect cleanly
                 window.location.href = "login.html";
                 return;
             }
 
-            // Step 2: Grab data directly from the Firestore collection in real-time
-            // If you use document names based on user IDs, switch .doc(user.email) to .doc(user.uid)
+            // SMART RESOLVER: Pull down data by trying Email first, then fallback to UID names automatically
             db.collection("users").doc(user.email).onSnapshot((doc) => {
-                if (!doc.exists) {
-                    console.error("User profile document not found in cloud database.");
-                    return;
+                if (doc.exists) {
+                    renderDashboardUI(doc.data());
+                } else {
+                    // Fallback structural check for UID based schemas
+                    db.collection("users").doc(user.uid).onSnapshot((subDoc) => {
+                        if (subDoc.exists) {
+                            renderDashboardUI(subDoc.data());
+                        } else {
+                            console.error("Profile missing on both email and UID lookups.");
+                        }
+                    });
                 }
-
-                var liveUserData = doc.data();
-                renderDashboardUI(liveUserData);
             }, (error) => {
-                console.error("Firestore sync subscription failed:", error);
+                console.error("Firestore initialization listener exception:", error);
             });
         });
     }
 
-    // INTERACTIVE UI RENDERING ENGINE
     function renderDashboardUI(liveUserData) {
         var config = applyGlobalSettings();
 
@@ -361,25 +361,22 @@
         var rawAccountNo = liveUserData.accountNumber || liveUserData.accountNo || "Unavailable";
         var currencySign = liveUserData.currency || "$"; 
         
-        // Formatted clear values
         var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
         document.getElementById('accountNumber').innerText = rawAccountNo;
 
-        // CHECK EYE-HIDE CONFIGURATION STATE FOR THE MAIN BALANCE DISPLAY
         if (config.hideBalance === true) {
-            document.getElementById('accountBalance').innerText = "••••••";
+            document.getElementById('accountBalance').innerText = "•••••";
         } else {
             document.getElementById('accountBalance').innerText = formattedBalance;
         }
 
-        // DYNAMIC TRANSACTION LEDGER ENGINE
         var ledgerContainer = document.getElementById('ledgerContainer');
         var transactions = liveUserData.transactions || [];
 
         if (transactions.length === 0) {
-            var initialDisplayBalance = config.hideBalance === true ? "••••••" : formattedBalance;
+            var initialDisplayBalance = config.hideBalance === true ? "•••••" : formattedBalance;
             ledgerContainer.innerHTML = `
                 <div class="transaction-item">
                     <div>
@@ -399,7 +396,6 @@
                 var isCredit = tx.type.toLowerCase() === 'credit' || tx.type.toLowerCase() === 'deposit';
                 var txStatus = tx.status || "Successful";
                 
-                // Color formatting configurations mapping
                 var amtColor = "var(--text-dark-override)"; 
                 var prefix = "";
                 var badgeBg = "rgba(100, 116, 139, 0.1)";
@@ -422,10 +418,9 @@
                     badgeText = "#f57f17";
                 }
 
-                // Check Eye-Hide configurations specifically for individual transaction ledger list values
                 var txAmountDisplay = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                 if (config.hideBalance === true) {
-                    txAmountDisplay = prefix + "••••••";
+                    txAmountDisplay = prefix + "•••••";
                 }
 
                 var partnerLabel = isCredit ? "From: " + (tx.sender || "External Sender") : "To: " + (tx.receiver || tx.description || "Beneficiary");
@@ -437,8 +432,6 @@
                             <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
                             <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">${partnerLabel}</p>
                             <p style="font-size: 10px; color: var(--text-sub); margin-top: 1px;">${txTimestamp}</p>
-                            
-                            <!-- WRITTEN NOTE REJECTION WARNING BANNER INJECTION -->
                             ${txStatus === 'Rejected' && tx.rejectionReason ? `
                                 <div style="margin-top: 8px; padding: 8px 12px; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 4px;">
                                     <p style="color: #ef4444; font-size: 11px; font-weight: 600; line-height: 1.4;">
@@ -460,7 +453,6 @@
         }
     }
 
-    // Run the centralized live initialization listener block
     monitorSessionAndLoadData();
 
     function handleLogout() {
@@ -469,6 +461,5 @@
         });
     }
 </script>
-
 </body>
 </html>
