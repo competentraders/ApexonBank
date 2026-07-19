@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apexon Bank | Secure Login Gateway</title>
+    <title>Apexon Bank | Secure Login</title>
     
     <!-- PWA MANIFEST LINK -->
     <link rel="manifest" href="manifest.json">
@@ -169,7 +169,7 @@
 
         <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
             <div id="errorMsg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; font-weight: 600;">
-                ❌ Invalid credentials or node mismatch.
+                ❌ Invalid credentials
             </div>
             
             <div class="input-group">
@@ -180,10 +180,10 @@
                 <input type="password" id="loginPassword" placeholder="Gateway Password" required>
             </div>
             
-            <button type="submit" id="submitBtn" class="action-btn">Authorize Access</button>
+            <button type="submit" id="submitBtn" class="action-btn">Login to ApexonBank</button>
             
             <div style="text-align: center; font-size: 13px; color: #64748b; margin-top: 4px;">
-                Don't possess a clearing node? <a href="register.html" style="color: #b38728; text-decoration: none; font-weight: 600;">Open Account</a>
+                Don't possess. <a href="register.html" style="color: #b38728; text-decoration: none; font-weight: 600;">Open Account</a>
             </div>
         </form>
     </div>
@@ -280,7 +280,7 @@
                       window.location.href = "user-dashboard.html";
                   }, 5000);
               } else {
-                  errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
+                  errorMsg.innerHTML = "❌ Invalid credentials.";
                   errorMsg.style.display = 'block';
                   submitBtn.disabled = false;
                   submitBtn.textContent = "Authorize Access";
