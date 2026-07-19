@@ -5,26 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Clearing Matrix Dashboard</title>
     <!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
-
-
-
-
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -208,7 +201,6 @@
         .nav-item.active { color: #b38728; }
         .nav-icon { font-size: 20px; margin-bottom: 2px; }
         
-        /* Interactive dynamic overrides */
         .card-title-text { font-size: 13px; font-weight: 700; color: var(--text-dark-override); }
         .card-label-style { font-size: 12px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; }
         .card-value-style { color: var(--text-dark-override); font-weight: 600; }
@@ -240,7 +232,7 @@
             <div style="border-top: 1px solid var(--border-color); padding-top: 14px; display: flex; justify-content: space-between; font-size: 13px;">
                 <div>
                     <span style="color: var(--text-sub);">Account No:</span>
-                    <span class="card-value-style" style="margin-left: 4px;" id="accountNumber">0000000000</span>
+                    <span class="card-value-style" style="margin-left: 4px;" id="accountNumber">Loading...</span>
                 </div>
                 <div>
                     <span style="color: var(--text-sub);">Routing :</span>
@@ -314,145 +306,161 @@
         </a>
     </div>
 
-    <script>
-    // Paste this at the start of your script blocks on ALL pages to keep sync:
-    function applyGlobalSettings() {
-        var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
-        if (config.darkMode) {
-            document.body.classList.add('dark-theme-active');
-        } else {
-            document.body.classList.remove('dark-theme-active');
-        }
-        return config;
-    }
-    applyGlobalSettings();
+    <!-- FIREBASE MODULE DEPENDENCIES LINK ENGINE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    function syncLiveDashboard() {
-        // Run config checks inside the interval so changes take effect in real time
-        var config = applyGlobalSettings();
+        // Firebase Setup matrix configuration mapping
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMIBJ3RPL3O7VuiZHcZ8o9IdIIbnY8iGs",
+            authDomain: "apxbnk.firebaseapp.com",
+            projectId: "apxbnk",
+            storageBucket: "apxbnk.firebasestorage.app",
+            messagingSenderId: "568114352915",
+            appId: "1:568114352915:web:e3714bad7241a13bc5c0e6",
+            measurementId: "G-R8C9N48RMX"
+        };
 
-        var currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
-        if (!currentSession) {
-            window.location.href = "login.html";
-            return;
-        }
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
-        var liveUserData = users.find(u => u.username === currentSession.username);
-
-        if (!liveUserData) return;
-
-        var rawFullName = liveUserData.fullName || "Valued Customer";
-        var rawBalance = liveUserData.balance || "0.00";
-        var rawAccountNo = liveUserData.accountNo || "Unavailable";
-        var currencySign = liveUserData.currency || "$"; 
-        
-        // Formatted clear values
-        var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-        document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
-        document.getElementById('accountNumber').innerText = rawAccountNo;
-
-        // CHECK EYE-HIDE CONFIGURATION STATE FOR THE MAIN BALANCE DISPLAY
-        if (config.hideBalance === true) {
-            document.getElementById('accountBalance').innerText = "••••••";
-        } else {
-            document.getElementById('accountBalance').innerText = formattedBalance;
-        }
-
-        // DYNAMIC TRANSACTION LEDGER ENGINE
-        var ledgerContainer = document.getElementById('ledgerContainer');
-        var transactions = liveUserData.transactions || [];
-
-        if (transactions.length === 0) {
-            var initialDisplayBalance = config.hideBalance === true ? "••••••" : formattedBalance;
-            ledgerContainer.innerHTML = `
-                <div class="transaction-item">
-                    <div>
-                        <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">Initial Account Provision</p>
-                        <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">System Setup Allocation</p>
-                    </div>
-                    <div style="text-align: right;">
-                        <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${initialDisplayBalance}</p>
-                        <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">Settled</p>
-                    </div>
-                </div>
-            `;
-        } else {
-            var htmlContent = "";
-            for (var i = transactions.length - 1; i >= 0; i--) {
-                var tx = transactions[i];
-                var isCredit = tx.type.toLowerCase() === 'credit' || tx.type.toLowerCase() === 'deposit';
-                var txStatus = tx.status || "Successful";
-                
-                // Color formatting configurations mapping
-                var amtColor = "var(--text-dark-override)"; 
-                var prefix = "";
-                var badgeBg = "rgba(100, 116, 139, 0.1)";
-                var badgeText = "var(--text-sub)";
-
-                if (txStatus === "Successful") {
-                    amtColor = isCredit ? "#166534" : "#ef4444";
-                    prefix = isCredit ? "+ " : "- "; 
-                    badgeBg = "#e8f5e9";
-                    badgeText = "#2e7d32";
-                } else if (txStatus === "Rejected") {
-                    amtColor = "var(--text-sub)"; 
-                    prefix = ""; 
-                    badgeBg = "#ffebee";
-                    badgeText = "#c62828";
-                } else if (txStatus === "Pending Approval") {
-                    amtColor = "#b38728";
-                    prefix = "";
-                    badgeBg = "#fff8e1";
-                    badgeText = "#f57f17";
-                }
-
-                // Check Eye-Hide configurations specifically for individual transaction ledger list values
-                var txAmountDisplay = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                if (config.hideBalance === true) {
-                    txAmountDisplay = prefix + "••••••";
-                }
-
-                var partnerLabel = isCredit ? "From: " + (tx.sender || "External Sender") : "To: " + (tx.receiver || tx.description || "Beneficiary");
-                var txTimestamp = tx.date + " • " + (tx.time || "");
-
-                htmlContent += `
-                    <div class="transaction-item">
-                        <div style="flex-grow: 1; padding-right: 12px;">
-                            <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
-                            <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">${partnerLabel}</p>
-                            <p style="font-size: 10px; color: var(--text-sub); margin-top: 1px;">${txTimestamp}</p>
-                            
-                            <!-- WRITTEN NOTE REJECTION WARNING BANNER INJECTION -->
-                            ${txStatus === 'Rejected' && tx.rejectionReason ? `
-                                <div style="margin-top: 8px; padding: 8px 12px; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 4px;">
-                                    <p style="color: #ef4444; font-size: 11px; font-weight: 600; line-height: 1.4;">
-                                        ⚠️ <strong>Note:</strong> ${tx.rejectionReason}
-                                    </p>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div style="text-align: right; flex-shrink: 0;">
-                            <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${txAmountDisplay}</p>
-                            <span style="background: ${badgeBg}; color: ${badgeText}; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
-                                ${txStatus}
-                            </span>
-                        </div>
-                    </div>
-                `;
+        function applyGlobalSettings() {
+            var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
+            if (config.darkMode) {
+                document.body.classList.add('dark-theme-active');
+            } else {
+                document.body.classList.remove('dark-theme-active');
             }
-            ledgerContainer.innerHTML = htmlContent;
+            return config;
         }
-    }
+        applyGlobalSettings();
 
-    syncLiveDashboard();
-    setInterval(syncLiveDashboard, 1000);
+        // Check if an authentic session tracking item exists
+        var currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
+        if (!currentSession || !currentSession.username) {
+            window.location.href = "login.html";
+        } else {
+            // FIREBASE LIVE SNAPSHOT LISTENER INJECTION
+            onSnapshot(doc(db, "users", currentSession.username), (docSnapshot) => {
+                if (!docSnapshot.exists()) {
+                    console.log("No user document record entry found.");
+                    return;
+                }
 
-    function handleLogout() {
-        localStorage.removeItem('apexon_current_session');
-        window.location.href = "login.html";
-    }
+                var liveUserData = docSnapshot.data();
+                var config = applyGlobalSettings();
+
+                var rawFullName = liveUserData.fullName || "Valued Customer";
+                // targets "accountBalance" field name inside Firestore
+                var rawBalance = liveUserData.accountBalance !== undefined ? liveUserData.accountBalance : 0.00;
+                var rawAccountNo = liveUserData.accountNumber || "Not Assigned";
+                var currencySign = liveUserData.currency || "$"; 
+                
+                var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
+                document.getElementById('accountNumber').innerText = rawAccountNo;
+
+                if (config.hideBalance === true) {
+                    document.getElementById('accountBalance').innerText = "••••••";
+                } else {
+                    document.getElementById('accountBalance').innerText = formattedBalance;
+                }
+
+                // TRANSACTION ENGINE RENDERING MAPPING LOOP
+                var ledgerContainer = document.getElementById('ledgerContainer');
+                var transactions = liveUserData.transactions || [];
+
+                if (transactions.length === 0) {
+                    var initialDisplayBalance = config.hideBalance === true ? "••••••" : formattedBalance;
+                    ledgerContainer.innerHTML = `
+                        <div class="transaction-item">
+                            <div>
+                                <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">Initial Account Provision</p>
+                                <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">System Setup Allocation</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${initialDisplayBalance}</p>
+                                <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">Settled</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    var htmlContent = "";
+                    for (var i = transactions.length - 1; i >= 0; i--) {
+                        var tx = transactions[i];
+                        var isCredit = tx.type.toLowerCase() === 'credit' || tx.type.toLowerCase() === 'deposit';
+                        var txStatus = tx.status || "Successful";
+                        
+                        var amtColor = "var(--text-dark-override)"; 
+                        var prefix = "";
+                        var badgeBg = "rgba(100, 116, 139, 0.1)";
+                        var badgeText = "var(--text-sub)";
+
+                        if (txStatus === "Successful") {
+                            amtColor = isCredit ? "#166534" : "#ef4444";
+                            prefix = isCredit ? "+ " : "- "; 
+                            badgeBg = "#e8f5e9";
+                            badgeText = "#2e7d32";
+                        } else if (txStatus === "Rejected") {
+                            amtColor = "var(--text-sub)"; 
+                            prefix = ""; 
+                            badgeBg = "#ffebee";
+                            badgeText = "#c62828";
+                        } else if (txStatus === "Pending Approval") {
+                            amtColor = "#b38728";
+                            prefix = "";
+                            badgeBg = "#fff8e1";
+                            badgeText = "#f57f17";
+                        }
+
+                        var txAmountDisplay = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                        if (config.hideBalance === true) {
+                            txAmountDisplay = prefix + "••••••";
+                        }
+
+                        var partnerLabel = isCredit ? "From: " + (tx.sender || "External Sender") : "To: " + (tx.receiver || tx.description || "Beneficiary");
+                        var txTimestamp = tx.date + " • " + (tx.time || "");
+
+                        htmlContent += `
+                            <div class="transaction-item">
+                                <div style="flex-grow: 1; padding-right: 12px;">
+                                    <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
+                                    <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">${partnerLabel}</p>
+                                    <p style="font-size: 10px; color: var(--text-sub); margin-top: 1px;">${txTimestamp}</p>
+                                    ${txStatus === 'Rejected' && tx.rejectionReason ? `
+                                        <div style="margin-top: 8px; padding: 8px 12px; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 4px;">
+                                            <p style="color: #ef4444; font-size: 11px; font-weight: 600; line-height: 1.4;">
+                                                ⚠️ <strong>Note:</strong> ${tx.rejectionReason}
+                                            </p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div style="text-align: right; flex-shrink: 0;">
+                                    <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${txAmountDisplay}</p>
+                                    <span style="background: ${badgeBg}; color: ${badgeText}; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                        ${txStatus}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    ledgerContainer.innerHTML = htmlContent;
+                }
+
+                // Keep local browser cache updated for companion internal pages
+                localStorage.setItem('apexon_current_session', JSON.stringify(liveUserData));
+            }, (error) => {
+                console.error("Firestore synchronizer error link:", error);
+            });
+        }
+
+        // Global signout script mapping access
+        window.handleLogout = function() {
+            localStorage.removeItem('apexon_current_session');
+            window.location.href = "login.html";
+        }
     </script>
 </body>
 </html>

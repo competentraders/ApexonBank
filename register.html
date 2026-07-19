@@ -609,23 +609,28 @@
 
                     var nodeId = 'NODE_' + Math.floor(Math.random() * 899999 + 100000);
 
-                    var newUserObject = {
-                        id: nodeId,
-                        fullName: document.getElementById('fullName').value.trim(),
-                        username: usernameInp,
-                        email: emailInp,
-                        dob: document.getElementById('dob').value,
-                        gender: document.getElementById('gender').value,
-                        nationality: nationalityValue,
-                        country: cleanCountryName,
-                        currency: document.getElementById('currency').value,
-                        currencyText: selectedCurrencyText,
-                        telephone: document.getElementById('telephone').value.trim(),
-                        password: passwordInp,
-                        accountBalance: 0.00,
-                        status: 'Pending Approval',
-                        createdDate: new Date().toLocaleDateString()
-                    };
+                    // Generate a clean, realistic 10-digit unique account number string
+var generatedAccNum = '309' + Math.floor(Math.random() * 8999999 + 1000000); 
+var nodeId = 'NODE_' + Math.floor(Math.random() * 899999 + 100000);
+
+var newUserObject = {
+    id: nodeId,
+    accountNumber: generatedAccNum, // <-- Added this field!
+    fullName: document.getElementById('fullName').value.trim(),
+    username: usernameInp,
+    email: emailInp,
+    dob: document.getElementById('dob').value,
+    gender: document.getElementById('gender').value,
+    nationality: nationalityValue,
+    country: cleanCountryName,
+    currency: document.getElementById('currency').value,
+    currencyText: selectedCurrencyText,
+    telephone: document.getElementById('telephone').value.trim(),
+    password: passwordInp,
+    accountBalance: 0.00,           // <-- Explicitly starting at zero
+    status: 'Pending Approval',
+    createdDate: new Date().toLocaleDateString()
+};
 
                     await setDoc(doc(db, "users", usernameInp), newUserObject);
                     modal.classList.add('active');
