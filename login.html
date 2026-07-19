@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- In your HTML head -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -169,7 +168,7 @@
 
         <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
             <div id="errorMsg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; font-weight: 600;">
-                ❌ Invalid credentials or node mismatch.
+                ❌ Invalid credentials.
             </div>
             
             <div class="input-group">
@@ -196,76 +195,34 @@
     </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDDlUOp8GbW4mgBE7X07x9Hhb0bxZW1Q54",
-        authDomain: "apexonbank-84f29.firebaseapp.com",
-        projectId: "apexonbank-84f29",
-        storageBucket: "apexonbank-84f29.firebasestorage.app",
-        messagingSenderId: "263439967946",
-        appId: "1:263439967946:web:1fffcec41cf7f81f6b7633",
-        measurementId: "G-QLDNNBLYDN"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
     var form = document.getElementById('loginForm');
     var overlay = document.getElementById('loadingOverlay');
     var loginBox = document.getElementById('loginBox');
     var errorMsg = document.getElementById('errorMsg');
 
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
         errorMsg.style.display = 'none';
         
-        var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
+        var identity = document.getElementById('loginIdentity').value.trim();
         var password = document.getElementById('loginPassword').value;
-        
-        let targetedEmail = identity;
 
-        try {
-            if (!identity.endsWith('@gmail.com')) {
-                const userQuery = query(collection(db, "users"), where("username", "==", identity));
-                const userSnap = await getDocs(userQuery);
-                
-                if (userSnap.empty) {
-                    errorMsg.innerHTML = "❌ Invalid credentials.";
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-                targetedEmail = userSnap.docs[0].data().email;
-            }
+        // Basic verification to make sure fields are not just blank space
+        if (identity.length >= 3 && password.length >= 6) {
+            
+            // Save identity local session state context for dashboard referencing
+            localStorage.setItem('userSessionIdentity', identity);
+            
+            // Animate interface transitional sequence
+            loginBox.style.display = 'none';
+            overlay.classList.add('active');
 
-            // Authenticate user via Firebase Auth Engine
-            const userCredential = await signInWithEmailAndPassword(auth, targetedEmail, password);
-            const verifiedUser = userCredential.user;
-
-            // Fetch record profile instance from Cloud Firestore
-            const docRef = doc(db, "users", verifiedUser.uid);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                // All approval and location restrictions are bypassed. Login succeeds instantly.
-                loginBox.style.display = 'none';
-                overlay.classList.add('active');
-
-                setTimeout(function() {
-                    window.location.href = "user-dashboard.html";
-                }, 5000);
-
-            } else {
-                errorMsg.innerHTML = "❌ Account data profile missing from server.";
-                errorMsg.style.display = 'block';
-                await signOut(auth);
-            }
-
-        } catch (err) {
-            errorMsg.innerHTML = "❌ Access Denied: Invalid credentials.";
+            setTimeout(function() {
+                window.location.href = "user-dashboard.html";
+            }, 5000);
+            
+        } else {
+            errorMsg.innerHTML = "❌ Invalid credentials format. Identity must be 3+ chars, password 6+ chars.";
             errorMsg.style.display = 'block';
         }
     });
