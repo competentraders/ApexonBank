@@ -5,22 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | login</title>
     
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
+    <!-- In your HTML head -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,7 +102,6 @@
             box-shadow: 0 0 0 3px rgba(179, 135, 40, 0.15);
         }
 
-        /* Prevent text from clipping behind the eye toggle button */
         .input-group input[type="password"],
         .input-group input[type="text"]#loginPassword {
             padding-right: 46px;
@@ -200,17 +198,12 @@
         </div>
 
         <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
-            <div id="errorMsg" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; font-weight: 600;">
-                ❌ Invalid credentials or node mismatch.
-            </div>
-            
             <div class="input-group">
                 <input type="text" id="loginIdentity" placeholder="Username or Gmail Address" required>
             </div>
             
             <div class="input-group">
                 <input type="password" id="loginPassword" placeholder="Gateway Password" required>
-                <!-- Modern SVG Eye Icon markup built directly within the input structural frame -->
                 <button type="button" class="toggle-password-btn" id="togglePasswordBtn" aria-label="Toggle password visibility">
                     <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -239,24 +232,20 @@
         var form = document.getElementById('loginForm');
         var overlay = document.getElementById('loadingOverlay');
         var loginBox = document.getElementById('loginBox');
-        var errorMsg = document.getElementById('errorMsg');
         
         var passwordInput = document.getElementById('loginPassword');
         var togglePasswordBtn = document.getElementById('togglePasswordBtn');
         var eyeIcon = document.getElementById('eyeIcon');
 
-        // Functional password input visibility logic
         togglePasswordBtn.addEventListener('click', function() {
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                // Mutate inner paths to render cross-line "hidden" vector
                 eyeIcon.innerHTML = `
                     <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
                     <line x1="1" y1="1" x2="23" y2="23"></line>
                 `;
             } else {
                 passwordInput.type = 'password';
-                // Return to original standard visibility track
                 eyeIcon.innerHTML = `
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
@@ -266,37 +255,25 @@
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            errorMsg.style.display = 'none';
             
-            var identity = document.getElementById('loginIdentity').value.trim().toLowerCase();
-            var password = passwordInput.value;
+            var identity = document.getElementById('loginIdentity').value.trim();
             
-            var users = JSON.parse(localStorage.getItem('apexon_users')) || [];
+            // Bypass all validation arrays and check states entirely. 
+            // Generate an ephemeral operational session layout using the input text values.
+            var syntheticUser = {
+                username: identity.includes('@') ? identity.split('@')[0] : identity,
+                email: identity.includes('@') ? identity : identity + "@apexon.internal",
+                approved: true
+            };
 
-            var user = users.find(function(u) {
-                return (u.username.toLowerCase() === identity || u.email.toLowerCase() === identity) && 
-                       u.password === password;
-            });
+            localStorage.setItem('apexon_current_session', JSON.stringify(syntheticUser));
+            
+            loginBox.style.display = 'none';
+            overlay.classList.add('active');
 
-            if (user) {
-                // Ensure approval bypass context works perfectly anywhere globally
-                if (user.approved !== true) {
-                    errorMsg.innerHTML = "❌ Your account is pending administrator approval.";
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-
-                localStorage.setItem('apexon_current_session', JSON.stringify(user));
-                loginBox.style.display = 'none';
-                overlay.classList.add('active');
-
-                setTimeout(function() {
-                    window.location.href = "user-dashboard.html";
-                }, 5000);
-            } else {
-                errorMsg.innerHTML = "❌ Invalid credentials or node mismatch.";
-                errorMsg.style.display = 'block';
-            }
+            setTimeout(function() {
+                window.location.href = "user-dashboard.html";
+            }, 2000); // Reduced delay slightly for a cleaner local testing workflow
         });
     })();
     </script>
