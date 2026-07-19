@@ -308,54 +308,61 @@
         </a>
     </div>
 
-<!-- REQUIRED FIREBASE SDK INJECTIONS -->
+
+
+
+
+
+
+    <!-- FIREBASE SDKs (Switched to matching v8 versions to align with your script syntax) -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-<!-- EXTERNAL CENTRAL CONFIGURATION CONNECTION -->
-<script src="firebase-config.js"></script> 
-
 <script>
-// 1. Define Logout GLOBALLY at the absolute top so it never errors out
+// 1. ISOLATED LOGOUT REGISTRATION (Guarantees the button functions instantly)
 window.handleLogout = function() {
     try {
         firebase.auth().signOut().then(() => {
             window.location.replace("login.html");
-        }).catch((error) => {
-            console.error("Logout Error:", error);
-            window.location.replace("login.html");
+        }).catch((err) => {
+            console.error(err);
+            window.location.href = "login.html";
         });
     } catch(e) {
         window.location.replace("login.html");
     }
 };
 
+// 2. HARDCODED CONFIGURATION INJECTION (Bypasses the missing firebase-config.js file completely)
+const firebaseConfig = {
+    apiKey: "AIzaSyBy7h0TDPepRx8xzzyLLN5jb0DJlcZJfd0",
+    authDomain: "apexonbank.firebaseapp.com",
+    projectId: "apexonbank",
+    storageBucket: "apexonbank.firebasestorage.app",
+    messagingSenderId: "1056633660208",
+    appId: "1:1056633660208:web:5807091c804b5a423d5ef5",
+    measurementId: "G-QY18F2VJVJ"
+};
+
+// Initialize Firebase safely
+if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// 3. CORE PROCESSING LOGIC
 (function() {
-    // 2. Initialize DB safely
-    let db;
-    try {
-        db = firebase.firestore();
-    } catch (error) {
-        console.error("Firestore failed to initialize. Your firebase-config.js file is missing or contains incorrect settings.", error);
-        alert("System Configuration Missing: Ensure firebase-config.js is correctly positioned in your root directory.");
-        return; 
-    }
+    var db = firebase.firestore();
 
     function applyGlobalSettings() {
         var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
-        if (config.darkMode) {
-            document.body.classList.add('dark-theme-active');
-        } else {
-            document.body.classList.remove('dark-theme-active');
-        }
+        document.body.classList.toggle('dark-theme-active', !!config.darkMode);
         return config;
     }
     applyGlobalSettings();
 
     function renderDashboardUI(liveUserData) {
         var config = applyGlobalSettings();
-
         var rawFullName = liveUserData.fullName || "Valued Customer";
         var rawBalance = liveUserData.accountBalance !== undefined ? liveUserData.accountBalance : (liveUserData.balance || "0.00");
         var rawAccountNo = liveUserData.accountNumber || liveUserData.accountNo || "Unavailable";
@@ -365,18 +372,12 @@ window.handleLogout = function() {
 
         document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
         document.getElementById('accountNumber').innerText = rawAccountNo;
-
-        if (config.hideBalance === true) {
-            document.getElementById('accountBalance').innerText = "•••••";
-        } else {
-            document.getElementById('accountBalance').innerText = formattedBalance;
-        }
+        document.getElementById('accountBalance').innerText = config.hideBalance ? "•••••" : formattedBalance;
 
         var ledgerContainer = document.getElementById('ledgerContainer');
         var transactions = liveUserData.transactions || [];
 
         if (transactions.length === 0) {
-            var initialDisplayBalance = config.hideBalance === true ? "•••••" : formattedBalance;
             ledgerContainer.innerHTML = `
                 <div class="transaction-item">
                     <div>
@@ -384,98 +385,65 @@ window.handleLogout = function() {
                         <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">System Setup Allocation</p>
                     </div>
                     <div style="text-align: right;">
-                        <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${initialDisplayBalance}</p>
+                        <p style="font-size: 13px; font-weight: 700; color: #166534;">+ ${config.hideBalance ? '•••••' : formattedBalance}</p>
                         <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">Settled</p>
                     </div>
-                </div>
-            `;
-        } else {
-            var htmlContent = "";
-            for (var i = transactions.length - 1; i >= 0; i--) {
-                var tx = transactions[i];
-                var isCredit = tx.type.toLowerCase() === 'credit' || tx.type.toLowerCase() === 'deposit';
-                var txStatus = tx.status || "Successful";
-                
-                var amtColor = "var(--text-dark-override)"; 
-                var prefix = "";
-                var badgeBg = "rgba(100, 116, 139, 0.1)";
-                var badgeText = "var(--text-sub)";
-
-                if (txStatus === "Successful") {
-                    amtColor = isCredit ? "#166534" : "#ef4444";
-                    prefix = isCredit ? "+ " : "- "; 
-                    badgeBg = "#e8f5e9";
-                    badgeText = "#2e7d32";
-                } else if (txStatus === "Rejected") {
-                    amtColor = "var(--text-sub)"; 
-                    prefix = ""; 
-                    badgeBg = "#ffebee";
-                    badgeText = "#c62828";
-                } else if (txStatus === "Pending Approval") {
-                    amtColor = "#b38728";
-                    prefix = "";
-                    badgeBg = "#fff8e1";
-                    badgeText = "#f57f17";
-                }
-
-                var txAmountDisplay = prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                if (config.hideBalance === true) {
-                    txAmountDisplay = prefix + "•••••";
-                }
-
-                var partnerLabel = isCredit ? "From: " + (tx.sender || "External Sender") : "To: " + (tx.receiver || tx.description || "Beneficiary");
-                var txTimestamp = tx.date + " • " + (tx.time || "");
-
-                htmlContent += `
-                    <div class="transaction-item">
-                        <div style="flex-grow: 1; padding-right: 12px;">
-                            <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
-                            <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">${partnerLabel}</p>
-                            <p style="font-size: 10px; color: var(--text-sub); margin-top: 1px;">${txTimestamp}</p>
-                            ${txStatus === 'Rejected' && tx.rejectionReason ? `
-                                <div style="margin-top: 8px; padding: 8px 12px; background: rgba(239, 68, 68, 0.08); border-left: 3px solid #ef4444; border-radius: 4px;">
-                                    <p style="color: #ef4444; font-size: 11px; font-weight: 600; line-height: 1.4;">
-                                        ⚠️ <strong>Note:</strong> ${tx.rejectionReason}
-                                    </p>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div style="text-align: right; flex-shrink: 0;">
-                            <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${txAmountDisplay}</p>
-                            <span style="background: ${badgeBg}; color: ${badgeText}; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;">
-                                ${txStatus}
-                            </span>
-                        </div>
-                    </div>
-                `;
-            }
-            ledgerContainer.innerHTML = htmlContent;
+                </div>`;
+            return;
         }
-    }
 
-    function monitorSessionAndLoadData() {
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.replace("login.html");
-                return;
+        var htmlContent = "";
+        for (var i = transactions.length - 1; i >= 0; i--) {
+            var tx = transactions[i];
+            var isCredit = tx.type.toLowerCase() === 'credit' || tx.type.toLowerCase() === 'deposit';
+            var txStatus = tx.status || "Successful";
+            var amtColor = "var(--text-dark-override)", prefix = "", badgeBg = "rgba(100,116,139,0.1)", badgeText = "var(--text-sub)";
+
+            if (txStatus === "Successful") {
+                amtColor = isCredit ? "#166534" : "#ef4444"; prefix = isCredit ? "+ " : "- "; badgeBg = "#e8f5e9"; badgeText = "#2e7d32";
+            } else if (txStatus === "Rejected") {
+                badgeBg = "#ffebee"; badgeText = "#c62828";
+            } else if (txStatus === "Pending Approval") {
+                amtColor = "#b38728"; badgeBg = "#fff8e1"; badgeText = "#f57f17";
             }
 
-            db.collection("users").where("authUid", "==", user.uid).onSnapshot((querySnapshot) => {
-                if (!querySnapshot.empty) {
-                    renderDashboardUI(querySnapshot.docs[0].data());
-                } else {
-                    db.collection("users").where("email", "==", user.email).onSnapshot((emailSnapshot) => {
-                        if (!emailSnapshot.empty) {
-                            renderDashboardUI(emailSnapshot.docs[0].data());
-                        }
-                    });
-                }
-            });
-        });
+            var txAmountDisplay = config.hideBalance ? prefix + "•••••" : prefix + currencySign + parseFloat(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            var partnerLabel = isCredit ? "From: " + (tx.sender || "External Source") : "To: " + (tx.receiver || tx.description || "Beneficiary");
+
+            htmlContent += `
+                <div class="transaction-item">
+                    <div style="flex-grow: 1; padding-right: 12px;">
+                        <p style="font-size: 13px; font-weight: 600; color: var(--text-dark-override);">${tx.description || (isCredit ? "Funds Received" : "Transfer Out")}</p>
+                        <p style="font-size: 11px; color: var(--text-sub); margin-top: 2px;">${partnerLabel}</p>
+                        <p style="font-size: 10px; color: var(--text-sub); margin-top: 1px;">${tx.date} • ${tx.time || ''}</p>
+                        ${txStatus === 'Rejected' && tx.rejectionReason ? `
+                            <div style="margin-top: 6px; padding: 6px 10px; background: rgba(239,68,68,0.06); border-left: 2px solid #ef4444; border-radius: 4px;">
+                                <p style="color: #ef4444; font-size: 11px; line-height: 1.3;">⚠️ ${tx.rejectionReason}</p>
+                            </div>` : ''}
+                    </div>
+                    <div style="text-align: right; flex-shrink: 0;">
+                        <p style="font-size: 13px; font-weight: 700; color: ${amtColor};">${txAmountDisplay}</p>
+                        <span style="background: ${badgeBg}; color: ${badgeText}; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; text-transform: uppercase;">${txStatus}</span>
+                    </div>
+                </div>`;
+        }
+        ledgerContainer.innerHTML = htmlContent;
     }
 
-    monitorSessionAndLoadData();
+    firebase.auth().onAuthStateChanged((user) => {
+        if (!user) { window.location.replace("login.html"); return; }
+
+        db.collection("users").where("authUid", "==", user.uid).onSnapshot((snap) => {
+            if (!snap.empty) { renderDashboardUI(snap.docs[0].data()); } 
+            else {
+                db.collection("users").where("email", "==", user.email).onSnapshot((emSnap) => {
+                    if (!emSnap.empty) renderDashboardUI(emSnap.docs[0].data());
+                });
+            }
+        });
+    });
 })();
 </script>
+
 </body>
 </html>
