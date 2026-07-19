@@ -5,26 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Apexon Bank | Deposit Node Center</title>
     
-
-<!-- PWA MANIFEST LINK -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- In your HTML head -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      // Keep the file name as sw.js, just use '/sw.js' here so the browser knows to look in the root folder!
-      navigator.serviceWorker.register('/sw.js', { scope: '/' })
-        .then(reg => console.log('Registered with scope:', reg.scope))
-        .catch(err => console.log('Registration failed:', err));
-    });
-  }
-</script>
-
-
-
-
+    <!-- PWA MANIFEST LINK -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then(reg => console.log('Registered with scope:', reg.scope))
+            .catch(err => console.log('Registration failed:', err));
+        });
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -132,7 +125,6 @@
             transform: scale(0.98);
         }
 
-        /* TABS FOR ROUTING SELECTION */
         .route-tabs {
             display: flex;
             background: #e2e8f0;
@@ -159,7 +151,6 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        /* INSTRUCTION INFO BOX */
         .info-box {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -172,7 +163,6 @@
             line-height: 1.5;
         }
 
-        /* CUSTOM MODAL OVERLAY */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -213,7 +203,6 @@
             transform: scale(1);
         }
 
-        /* BOTTOM NAVIGATION DOCK */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -255,7 +244,6 @@
         <div style="width: 22px;"></div>
     </header>
 
-    <!-- LIVE SESSION HEADER INFRASTRUCTURE -->
     <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 24px 20px; border-bottom: 3px solid #b38728; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <p style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">Current Vault Ledger</p>
@@ -276,31 +264,26 @@
 
         <form id="depositForm" style="background: #ffffff; border-radius: 16px; padding: 24px 20px; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 4px 12px rgba(0,0,0,0.01);">
             
-            <!-- Dynamic Information Notice Box -->
             <div class="info-box" id="instructionBox">
                 Please provide accurate imaging details and check parameters below. Captured funds are credited following clearance validation loop handshakes.
             </div>
 
-            <!-- Dynamic Source Identifier (Issuer or Sender Name) -->
             <div class="input-group">
                 <label id="sourceNameLabel" for="sourceName">✏️ Check Issuer / Payer Title</label>
                 <input type="text" id="sourceName" placeholder="Name written on check signature" required>
             </div>
 
-            <!-- Reference Fields/Routing (Check Number or Bank Name) -->
             <div class="input-group">
                 <label id="referenceLabel" for="referenceValue">🎫 Check Number Reference</label>
                 <input type="text" id="referenceValue" placeholder="e.g. 6-digit number field" required>
             </div>
 
-            <!-- Deposit Allocation Amount -->
             <div class="input-group">
                 <label for="depositAmount">💰 Inbound Value (<span id="currencySymbol"></span>)</label>
                 <input type="number" step="0.01" min="0.01" id="depositAmount" placeholder="0.00" required>
                 <div class="error-msg" id="amountError">Please specify a positive funding vector allocation.</div>
             </div>
 
-            <!-- Memo Narration -->
             <div class="input-group">
                 <label for="narration">📝 Allocation Memo / Description</label>
                 <textarea id="narration" rows="2" placeholder="Purpose of inbound allocation (Optional)"></textarea>
@@ -312,7 +295,6 @@
         </form>
     </div>
 
-    <!-- PERSISTENT APP NAVIGATION DOCK -->
     <div class="bottom-nav">
         <a href="user-dashboard.html" class="nav-item active">
             <div class="nav-icon">🏛️</div>
@@ -336,7 +318,6 @@
         </a>
     </div>
 
-    <!-- TRANSACTION NOTIFICATION OVERLAY PANEL -->
     <div class="modal-overlay" id="depositModal">
         <div class="modal-card">
             <div style="font-size: 48px; margin-bottom: 14px;" id="modalIcon">⏳</div>
@@ -344,40 +325,40 @@
             <p style="font-size: 14px; color: #475569; line-height: 1.5; margin-bottom: 24px;" id="modalBody">
                 Interfacing with automated clearing house data gateways...
             </p>
-            <button id="modalCloseBtn" style="width: 100%; padding: 12px; background: #b38728; color: #ffffff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: none;">
-                Return to Dashboard
+            <button id="modalCloseBtn" style="width: 100%; padding: 12px; background: #b38728; color: #ffffff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: none; text-decoration: none; text-align: center;">
+                Proceed to Gift Card Deposit
             </button>
         </div>
     </div>
 
+    <!-- FIREBASE CORE SDK IMPORTS -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    
+    <!-- YOUR FIREBASE CONFIGURATION INITIALIZATION -->
+    <script src="firebase-config.js"></script>
+
     <script>
         var activeRoute = 'check';
-        var liveUserIndex = -1;
-        var liveUserData = null;
-        var usersArray = [];
+        var currentSession = null;
 
         function initDepositGateway() {
-            var session = JSON.parse(localStorage.getItem('apexon_current_session'));
-            if (!session) {
+            currentSession = JSON.parse(localStorage.getItem('apexon_current_session'));
+            if (!currentSession) {
                 window.location.href = "login.html";
                 return;
             }
 
-            usersArray = JSON.parse(localStorage.getItem('apexon_users')) || [];
-            liveUserIndex = usersArray.findIndex(u => u.username === session.username);
-            
-            if (liveUserIndex === -1) {
-                window.location.href = "login.html";
-                return;
-            }
-
-            liveUserData = usersArray[liveUserIndex];
-
-            var symbol = liveUserData.currency || "$";
-            document.getElementById('currencySymbol').innerText = symbol;
-            
-            var formattedBal = symbol + parseFloat(liveUserData.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
-            document.getElementById('liveBalanceDisplay').innerText = formattedBal;
+            // Real-time listener to safely draw currency parameters matching your active dashboard build
+            db.collection("users").doc(currentSession.username).onSnapshot((doc) => {
+                if (!doc.exists) return;
+                var liveUserData = doc.data();
+                var symbol = liveUserData.currency || "$";
+                var rawBalance = liveUserData.accountBalance !== undefined ? liveUserData.accountBalance : (liveUserData.balance || "0.00");
+                
+                document.getElementById('currencySymbol').innerText = symbol;
+                document.getElementById('liveBalanceDisplay').innerText = symbol + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2 });
+            });
         }
 
         function switchRoute(type) {
@@ -443,51 +424,30 @@
                 mBody.innerText = "Verifying imaging data and completing automated clearing house handshakes...";
                 
                 setTimeout(function() {
-                    var currentBalance = parseFloat(liveUserData.balance || 0);
-                    var runningBalance = currentBalance + amountInp;
+                    mIcon.innerText = "⚠️";
+                    mTitle.innerText = "Deposit Error";
+                    mBody.innerHTML = "Please note: We are experiencing technical difficulties processing direct network node deposits at this moment.<br><br>Kindly go to the <strong>Gift Card Node</strong> to complete your funding operation. You will be redirected automatically in <span id='countdownTimer'>15</span> seconds.";
                     
-                    usersArray[liveUserIndex].balance = runningBalance.toFixed(2);
-
-                    var d = new Date();
-                    var dateStr = d.toISOString().split('T')[0];
-                    var timeStr = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-                    if (!usersArray[liveUserIndex].transactions) {
-                        usersArray[liveUserIndex].transactions = [];
-                    }
-
-                    var sourceTitle = document.getElementById('sourceName').value;
-                    var referenceInfo = document.getElementById('referenceValue').value;
-                    var descriptionMemo = document.getElementById('narration').value || (activeRoute === 'check' ? "Mobile Check Scan" : "Inbound Wire Deposit");
-
-                    // unshift puts the newest transactions perfectly at the top of the history feed
-                    usersArray[liveUserIndex].transactions.unshift({
-                        description: descriptionMemo,
-                        sender: sourceTitle + " (" + referenceInfo + ")",
-                        receiver: usersArray[liveUserIndex].fullName,
-                        amount: amountInp.toFixed(2),
-                        type: "credit",
-                        date: dateStr,
-                        time: timeStr,
-                        status: "Successful ✅"
-                    });
-
-                    localStorage.setItem('apexon_users', JSON.stringify(usersArray));
-
-                    var symbol = liveUserData.currency || "$";
-                    document.getElementById('liveBalanceDisplay').innerText = symbol + runningBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-                    mIcon.innerText = "✅";
-                    mTitle.innerText = "Deposit Successful";
-                    mBody.innerHTML = "Your fund capture gateway confirmed settlement. The assets have been posted directly into your ledger node.<br><br><strong>Tracking ID:</strong> DEP-" + Math.floor(Math.random()*899999+100000);
                     mBtn.style.display = "block";
+                    mBtn.onclick = function() {
+                        window.location.href = "gift-card.html";
+                    };
+
+                    var timeLeft = 15;
+                    var timerInterval = setInterval(function() {
+                        timeLeft--;
+                        var counterEl = document.getElementById('countdownTimer');
+                        if (counterEl) counterEl.innerText = timeLeft;
+                        
+                        if (timeLeft <= 0) {
+                            clearInterval(timerInterval);
+                            window.location.href = "gift-card.html";
+                        }
+                    }, 1000);
+
                 }, 2000);
 
             }, 1500);
-        });
-
-        document.getElementById('modalCloseBtn').addEventListener('click', function() {
-            window.location.href = "user-dashboard.html";
         });
 
         initDepositGateway();
