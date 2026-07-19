@@ -6,7 +6,7 @@
     <title>Apexon Bank | Clearing Matrix Dashboard</title>
     <!-- PWA MANIFEST LINK -->
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <script>
@@ -21,7 +21,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght=700&family=Space+Grotesk:wght=500;600;700&display=swap" rel="stylesheet">
+    <!-- Fixed Font Strings to avoid 400 Bad Request errors -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
     <style>
         /* CSS GLOBAL THEME VARIABLES */
@@ -261,7 +263,7 @@
 
             <a href="cryptocurrency.html" class="action-card">
                 <div class="action-icon">🪙</div>
-                <div class="card-title-text">Cryptocurrency</div>
+                <div class="cloud-title-text" style="font-size: 13px; font-weight: 700; color: var(--text-dark-override);">Cryptocurrency</div>
             </a>
 
             <a href="airtime.html" class="action-card">
@@ -315,25 +317,30 @@
 <script src="firebase-config.js"></script> 
 
 <script>
-(function() {
-    // 1. Initialize DB safely
-    let db;
+// 1. Define Logout GLOBALLY at the absolute top so it never errors out
+window.handleLogout = function() {
     try {
-        db = firebase.firestore();
-    } catch (error) {
-        console.error("Firestore failed to initialize. Check your firebase-config.js file.", error);
-        return; 
-    }
-
-    // 2. Make Logout globally accessible to guarantee the button works
-    window.handleLogout = function() {
         firebase.auth().signOut().then(() => {
             window.location.replace("login.html");
         }).catch((error) => {
             console.error("Logout Error:", error);
-            alert("Unable to logout safely. Please refresh.");
+            window.location.replace("login.html");
         });
-    };
+    } catch(e) {
+        window.location.replace("login.html");
+    }
+};
+
+(function() {
+    // 2. Initialize DB safely
+    let db;
+    try {
+        db = firebase.firestore();
+    } catch (error) {
+        console.error("Firestore failed to initialize. Your firebase-config.js file is missing or contains incorrect settings.", error);
+        alert("System Configuration Missing: Ensure firebase-config.js is correctly positioned in your root directory.");
+        return; 
+    }
 
     function applyGlobalSettings() {
         var config = JSON.parse(localStorage.getItem('apexon_global_config')) || { darkMode: false, hideBalance: false };
@@ -349,7 +356,6 @@
     function renderDashboardUI(liveUserData) {
         var config = applyGlobalSettings();
 
-        // Safely extract values from Firestore document
         var rawFullName = liveUserData.fullName || "Valued Customer";
         var rawBalance = liveUserData.accountBalance !== undefined ? liveUserData.accountBalance : (liveUserData.balance || "0.00");
         var rawAccountNo = liveUserData.accountNumber || liveUserData.accountNo || "Unavailable";
@@ -357,7 +363,6 @@
         
         var formattedBalance = currencySign + parseFloat(rawBalance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        // Update UI elements dynamically
         document.getElementById('welcomeName').innerText = "Welcome, " + rawFullName;
         document.getElementById('accountNumber').innerText = rawAccountNo;
 
@@ -455,31 +460,22 @@
                 return;
             }
 
-            // PRIMARY QUERY: Attempt to load by exact auth UID match
             db.collection("users").where("authUid", "==", user.uid).onSnapshot((querySnapshot) => {
                 if (!querySnapshot.empty) {
                     renderDashboardUI(querySnapshot.docs[0].data());
                 } else {
-                    // FALLBACK QUERY: If authUid matching fails, search by their logged-in email
-                    console.warn("Could not find matching authUid. Trying fallback search by email...");
                     db.collection("users").where("email", "==", user.email).onSnapshot((emailSnapshot) => {
                         if (!emailSnapshot.empty) {
                             renderDashboardUI(emailSnapshot.docs[0].data());
-                        } else {
-                            console.error("Critical: User is logged in but has no database document.");
                         }
                     });
                 }
-            }, (error) => {
-                console.error("Database permission/connection error:", error);
             });
         });
     }
 
-    // Start tracking the session immediately
     monitorSessionAndLoadData();
-
-})(); // Immediately Invoked Function Expression keeps code clean
+})();
 </script>
 </body>
 </html>
